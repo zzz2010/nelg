@@ -8,5 +8,18 @@
 			<attribute name="javadoc_location" value="jar:file:/Users/zhangzhizhuo/Desktop/eclipse/library/commons-cli-1.2/commons-cli-1.2-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Users/zhangzhizhuo/Nutstore/tribble-read-only/dist/CountRecords.jar" sourcepath="/Users/zhangzhizhuo/Nutstore/tribble-read-only/src"/>
+	<classpathentry kind="lib" path="/Users/zhangzhizhuo/Nutstore/tribble-read-only/dist/IndexToTable.jar"/>
+	<classpathentry kind="lib" path="/Users/zhangzhizhuo/Nutstore/tribble-read-only/dist/IndicesAreEqual.jar"/>
+	<classpathentry kind="lib" path="/Users/zhangzhizhuo/Nutstore/tribble-read-only/dist/junit-4.5.jar"/>
+	<classpathentry kind="lib" path="/Users/zhangzhizhuo/Nutstore/tribble-read-only/dist/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="/Users/zhangzhizhuo/Nutstore/tribble-read-only/dist/ProfileIndexReading.jar"/>
+	<classpathentry kind="lib" path="/Users/zhangzhizhuo/Nutstore/tribble-read-only/dist/testng-5.5-jdk15.jar"/>
+	<classpathentry kind="lib" path="/Users/zhangzhizhuo/Nutstore/tribble-read-only/dist/tribble-0.2.jar"/>
+	<classpathentry kind="lib" path="/Users/zhangzhizhuo/Desktop/eclipse/library/concurrent-1.3.4.jar" sourcepath="/Users/zhangzhizhuo/Desktop/eclipse/library/">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/zhangzhizhuo/Desktop/eclipse/library/concurrent.zip!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
