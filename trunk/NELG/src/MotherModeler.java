@@ -86,9 +86,9 @@ public class MotherModeler {
 			 Collections.sort(ValThereFeatures);
 			 Collections.sort(IsThereFeatures);
 			 int TopN=20; //selected best TopN features
-			 ClassificationJob ValThereJob=new ClassificationJob((ArrayList<FeatureSignal>) ValThereFeatures.subList(0, TopN), target_TrackId+"_ValThere", targetNormValue) ;
+			 ClassificationJob ValThereJob=new ClassificationJob((ArrayList<FeatureSignal>) ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size())), target_TrackId+"_ValThere", targetNormValue) ;
 			 ValThereJob.Regression=true;
-			 ClassificationJob IsThereJob=new ClassificationJob((ArrayList<FeatureSignal>) ValThereFeatures.subList(0, TopN), target_TrackId+"_IsThere", targetValue) ;
+			 ClassificationJob IsThereJob=new ClassificationJob((ArrayList<FeatureSignal>) IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size())), target_TrackId+"_IsThere", targetValue) ;
 		     //put job to the execution queue
 			 try {
 				executor.execute(IsThereJob);
