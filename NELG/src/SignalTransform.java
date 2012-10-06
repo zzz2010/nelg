@@ -13,13 +13,13 @@ public	static ArrayList<BEDFeature> NormalizedSignal(List<BEDFeature> inputSigna
 }
 
 
-public	static ArrayList<BEDFeature> ExtracePositveSignal(List<BEDFeature> target_signal)
+public	static ArrayList<BEDFeature> ExtracePositveSignal(TrackRecord target_signal)
 {
-	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>(target_signal.size());
+	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>();
 	return outputSignal;
 }
 	
-public	static ArrayList<ArrayList<Float>> OverlapBinSignal(List<BEDFeature> feature_signal, List<BEDFeature> target_signal,int numbin)
+public	static ArrayList<ArrayList<Float>> OverlapBinSignal(TrackRecord feature_signal, List<BEDFeature> target_signal,int numbin)
 {
 	///need to consider strand direction
 	ArrayList<ArrayList<Float>>outputSignal=new ArrayList<ArrayList<Float>>(numbin);

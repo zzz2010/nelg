@@ -23,22 +23,14 @@ public class NELGMain {
 		for (int i = 0; i < Assembly.size(); i++) {
 			
 			//load general track
-			List<String> GeneralTrackList=StorageDB.getTrackId_inCellLine(Assembly.get(i),"");
+			List<TrackRecord> GeneralTrackList=StorageDB.getTrackId_inCellLine(Assembly.get(i),"-");
 			//load cell line
 			List<String>cell_lines=StorageDB.getCellLineName(Assembly.get(i));
 		for (int j = 0; j < cell_lines.size(); j++) {
 			//load track ids in the given cell line
-			List<String> TrackList=StorageDB.getTrackId_inCellLine(Assembly.get(i),cell_lines.get(j));	
-			HashMap<String, List<BEDFeature>> SignalPool=new HashMap<String, List<BEDFeature>>();
-			for (int k = 0; k < TrackList.size(); k++) {
-				String TargetTrackId=TrackList.get(k);
-				//Library Loading
-				List<BEDFeature> TrackData=StorageDB.getTrackById(TargetTrackId);
-				SignalPool.put(TargetTrackId, TrackData);
-			}	
-			
-	
-			MotherModeler MainModelMachine=new MotherModeler(SignalPool);
+			List<TrackRecord> TrackList=StorageDB.getTrackId_inCellLine(Assembly.get(i),cell_lines.get(j));	
+
+			MotherModeler MainModelMachine=new MotherModeler(TrackList);
 			
 		}
 		
