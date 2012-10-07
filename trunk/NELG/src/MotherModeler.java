@@ -43,13 +43,13 @@ public class MotherModeler {
 			        if (feature_signal.ExperimentId!=(target_signal.ExperimentId))
 			        {
 			        	
-			        	ArrayList<ArrayList<Float>> feature_BinSignal=SignalTransform.OverlapBinSignal(feature_signal, target_signal_filtered,21);
-			        ArrayList<ArrayList<Float>> feature_BinSignal_bg=SignalTransform.OverlapBinSignal(feature_signal, target_signal_bg,21);
+			        	List<List<Float>> feature_BinSignal=SignalTransform.OverlapBinSignal(feature_signal, target_signal_filtered,21);
+			        	List<List<Float>> feature_BinSignal_bg=SignalTransform.OverlapBinSignal(feature_signal, target_signal_bg,21);
 			        	/***************isthere task****************/
 			        float maxScore=Float.MIN_VALUE;
 			        int bestBin=-1;
 			        	for (int i = 0; i < feature_BinSignal.size(); i++) {
-			        		ArrayList<Float> featureValue=feature_BinSignal.get(i);
+			        		List<Float> featureValue=feature_BinSignal.get(i);
 			        		featureValue.addAll(feature_BinSignal_bg.get(i));
 			        		float score=SignalComparator.getDiscriminativeCapbaility(featureValue, targetValue);
 			        		if(score>maxScore)
@@ -59,7 +59,7 @@ public class MotherModeler {
 			        		}
 						}
 			        	//bestBin idea, consider strand
-			        	ArrayList<Float> featureBestBinValue=feature_BinSignal.get(bestBin);
+			        	List<Float> featureBestBinValue=feature_BinSignal.get(bestBin);
 			        	featureBestBinValue.addAll(feature_BinSignal_bg.get(bestBin));
 			        	IsThereFeatures.add(new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin));
 			        	
@@ -67,7 +67,7 @@ public class MotherModeler {
 			        	maxScore=Float.MIN_VALUE;
 				    bestBin=-1;
 			        	for (int i = 0; i < feature_BinSignal.size(); i++) {
-			        		ArrayList<Float> featureValue=feature_BinSignal.get(i);
+			        		List<Float> featureValue=feature_BinSignal.get(i);
 			        		float score=SignalComparator.getCorrelation(featureValue, targetValue);
 			        		if(score>maxScore)
 			        		{

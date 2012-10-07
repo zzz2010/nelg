@@ -1,9 +1,10 @@
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class FeatureSignal implements Comparable  {
 
-	public ArrayList<Float> featureValue;
+	public List<Float> featureValue;
 	public String FeatureId;
 	public float featureSelectScore;
 	public int binId=-1;
@@ -15,10 +16,10 @@ public class FeatureSignal implements Comparable  {
 		this.featureSelectScore = featureSelectScore;
 		
 	}
-	public FeatureSignal(ArrayList<Float> featureValue, String featureId,
+	public FeatureSignal(List<Float> featureBestBinValue, String featureId,
 			float featureSelectScore, int binId) {
 		super();
-		this.featureValue = featureValue;
+		this.featureValue = featureBestBinValue;
 		FeatureId = featureId;
 		this.featureSelectScore = featureSelectScore;
 		this.binId = binId;

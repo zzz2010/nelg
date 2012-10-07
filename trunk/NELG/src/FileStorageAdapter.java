@@ -10,7 +10,20 @@ import java.util.List;
 
 import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
 
+
+import org.broad.igv.bbfile.BBFileHeader;
+import org.broad.igv.bbfile.BBFileReader;
+import org.broad.igv.bbfile.BigWigIterator;
+import org.broad.igv.bbfile.RPChromosomeRegion;
+import org.broad.igv.bbfile.WigItem;
+import org.broad.igv.bbfile.ZoomDataRecord;
+import org.broad.igv.bbfile.ZoomLevelIterator;
+import org.broad.tribble.AbstractFeatureReader;
+import org.broad.tribble.Feature;
+import org.broad.tribble.annotation.Strand;
+import org.broad.tribble.bed.BEDCodec;
 import org.broad.tribble.bed.BEDFeature;
+import org.broad.tribble.bed.SimpleBEDFeature;
 
 import com.thoughtworks.qdox.directorywalker.DirectoryScanner;
 import com.thoughtworks.qdox.directorywalker.Filter;
@@ -129,5 +142,235 @@ public class FileStorageAdapter implements StorageAdapter {
 		// TODO Auto-generated method stub
 		return DataBase.get(trackId);
 	}
+
+	@Override
+	public List<BEDFeature> getPeakData(TrackRecord tr) {
+		// TODO Auto-generated method stub
+		ArrayList<BEDFeature> peakList=new ArrayList<BEDFeature>();
+		if(tr.hasPeak)
+		{
+		String bedFile = dataDir+"/"+tr.FilePrefix+tr.peakSuffix;
+		BEDCodec codec = new BEDCodec();
+		AbstractFeatureReader<BEDFeature> reader = AbstractFeatureReader.getFeatureReader(bedFile, codec, false);
+		Iterable<BEDFeature> iter;
+		try {
+			iter = reader.iterator();
+	        for (BEDFeature feat : iter) {
+	        	peakList.add(feat);    
+			}
+	        reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+        }
+		
+		return peakList;
+	}
+
+	@Override
+	public List<BEDFeature> getSignalContigRegion(TrackRecord tr) {
+		// TODO Auto-generated method stub
+		List<BEDFeature> SignalRegion=new ArrayList<BEDFeature>();
+		if(tr.hasSignal)
+		{	
+			for (int i = 0; i < tr.ReplicateSuffix.size(); i++) {
+				String filename=dataDir+"/"+tr.FilePrefix+tr.ReplicateSuffix.get(i);
+				List<BEDFeature> ContigRegions=new ArrayList<BEDFeature>();
+				try {
+					BBFileReader bbReader = new BBFileReader(filename);
+					BBFileHeader bbFileHdr=bbReader.getBBFileHeader();
+			       
+			        // get zoom level data
+			        int zoomLevels = bbReader.getZoomLevelCount();
+			        ZoomLevelIterator zoomIterator = null;
+			        boolean contained=true;
+			        int level=2; //Arbitrary select the middle level
+			        contained = true;
+			        // get all zoom level chromosome regions
+			        RPChromosomeRegion chromosomeBounds = bbReader.getZoomLevelBounds(level);
+			        zoomIterator = bbReader.getZoomLevelIterator(level, chromosomeBounds, contained);
+			        // read out the all zoom data records and compare
+			        // against zoom level format Table O itemCount
+			        int zoomRecordCount = bbReader.getZoomLevelRecordCount(level);
+			        // read out the zoom data records
+			        ZoomDataRecord nextRecord = null;
+			        int recordReadCount=0;
+			        while (zoomIterator.hasNext()) {
+			            nextRecord = zoomIterator.next();
+			            if (nextRecord == null)
+			                break;
+			            SimpleBEDFeature temp=new SimpleBEDFeature(nextRecord.getChromStart(), nextRecord.getChromEnd(), nextRecord.getChromName());
+			           ContigRegions.add(temp);
+			            ++recordReadCount;
+			        }
+			        if(SignalRegion.size()==0)
+			        {
+			        	SignalRegion.addAll(ContigRegions);
+			        }
+			        else
+			        {
+			        	SignalRegion=SignalTransform.IntersectSortedRegions(SignalRegion, ContigRegions);
+			        }
+			       
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return SignalRegion;
+	}
+	
+	
+public List<List<Float>> OverlapBinSignal(TrackRecord tr, List<BEDFeature> query_regions,int numbin)
+{
+	///need to consider strand direction
+	List<List<Float>>outputSignal=new ArrayList<List<Float>>(query_regions.size());
+	//initialize
+	 ArrayList<Float> zerosVec=new ArrayList<Float>(numbin);
+	for (int i = 0; i < numbin; i++) {
+		zerosVec.add((float) 0.0);
+	}
+	for (int i = 0; i < query_regions.size(); i++) {
+		outputSignal.add((ArrayList<Float>) zerosVec.clone());
+	}
+	if(tr.hasSignal)
+	{
+		for (int i = 0; i < tr.ReplicateSuffix.size(); i++) {
+			String filename=dataDir+"/"+tr.FilePrefix+tr.ReplicateSuffix.get(i);		
+				BBFileReader bbReader;
+				try {
+					bbReader = new BBFileReader(filename);
+				      // get zoom level data
+			        int zoomLevels = bbReader.getZoomLevelCount();
+			        int queryid=-1;
+					for(BEDFeature query:query_regions)
+					{
+						queryid+=1;
+						BigWigIterator iter = bbReader.getBigWigIterator(query.getChr(), query.getStart(), query.getChr(), query.getEnd(), false);
+//						int chromId=bbReader.getChromosomeID(query.getChr());
+//						 RPChromosomeRegion chromosomeBounds = new RPChromosomeRegion(chromId, query.getStart(), chromId, query.getEnd());
+//					    //arbitary use zoomlevel-1 
+//						 ZoomLevelIterator zoomIterator = bbReader.getZoomLevelIterator(8, chromosomeBounds, false);
+					    int start=query.getStart();
+					    int sumValues=0;
+					    int stepWidth=(query.getEnd()-start)/numbin;
+					    int binId=0;
+					    if(stepWidth<1)
+					    	continue;
+						 while(iter.hasNext())
+					    {
+					    	WigItem nextRecord = iter.next();				    	
+					    	if((nextRecord.getStartBase()-stepWidth)>=start)
+					    	{
+					    		query.getStrand();
+								if(query.getStrand()== Strand.NEGATIVE)
+					    		{
+					    			outputSignal.get(queryid).set(numbin-binId-1, sumValues+outputSignal.get(queryid).get(numbin-binId-1));
+					    		}
+					    		else
+					    			outputSignal.get(queryid).set(binId, sumValues+outputSignal.get(queryid).get(binId));
+					    		binId+=1;
+					    		if(binId>=numbin)
+					    			break;
+					    		start=start+stepWidth;
+					    		sumValues=0;
+					    		//check whether jump several bins
+					    		if(start+stepWidth<nextRecord.getStartBase())
+					    		{
+					    			int jumpNum=(nextRecord.getStartBase()-start)/stepWidth;
+					    			for (int j = 0; j < jumpNum; j++) {
+					    				binId+=1;
+					    				start+=stepWidth;
+									}
+					    		}
+					    	}
+					    	sumValues+=nextRecord.getWigValue();
+					    	
+					    }
+					}
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			
+		}
+	}
+	return outputSignal;
+}
+	 //**************************** helper functions *************************
+
+    private void printRegion(String name, RPChromosomeRegion region) {
+        String regionValues = String.format(name + " StartChromID =  %d, StartBase = %d,"
+                + " EndChromID =  %d, EndBase = %d", region.getStartChromID(),
+                region.getStartBase(), region.getEndChromID(), region.getEndBase());
+
+        System.out.println(regionValues);
+    }
+
+   
+    /*
+    *   Method rus a ZoomLevelIterator which traverses all zoom data for that level.
+    *
+    *   Note: BBFileReader method getChromosomeIDMap can be used to find all chromosomes in the file
+    *   and the method getChromosomeBounds can be used to provide a selection region for an ID range.
+    * */
+    private int runZoomIterator(String methodType, ZoomLevelIterator zoomIterator, int zoomRecordCount) {
+
+        ZoomDataRecord nextRecord = null;
+        int recordReadCount = 0;
+        int level = zoomIterator.getZoomLevel();
+
+        // time reading selected zoom level data
+        long time = System.currentTimeMillis(), time_prev = time;
+
+        // read out the zoom data records
+        while (zoomIterator.hasNext()) {
+            nextRecord = zoomIterator.next();
+            if (nextRecord == null)
+                break;
+            ++recordReadCount;
+        }
+
+        // get the time mark and record results
+        time = System.currentTimeMillis();
+
+        int zoomLevel = zoomIterator.getZoomLevel();
+        RPChromosomeRegion region = zoomIterator.getSelectionRegion();
+        String name = String.format(methodType
+                + " zoom level %d selected %d items out of %d\nFor region:",
+                zoomLevel, recordReadCount, zoomRecordCount);
+
+        printRegion(name, region);
+        System.out.println("with read time  = " + (time - time_prev) + " ms");
+        printZoomRecord(nextRecord);
+
+        return recordReadCount;
+    }
+
+    public void printZoomRecord(ZoomDataRecord zoomDataRecord) {
+        if (zoomDataRecord == null) {
+            System.out.println("Last zoom record was - null!");
+            return;
+        }
+        // print zoom record
+        String record;
+        record = String.format("zoom data last record %d:\n", zoomDataRecord.getRecordNumber());
+        record += String.format("ChromId = %d, ", zoomDataRecord.getChromId());
+        record += String.format("ChromStart = %d, ", zoomDataRecord.getChromStart());
+        record += String.format("ChromEnd = %d, ", zoomDataRecord.getChromEnd());
+        record += String.format("ValidCount = %d\n", zoomDataRecord.getBasesCovered());
+        record += String.format("MinVal = %f, ", zoomDataRecord.getMinVal());
+        record += String.format("MaxVal = %f, ", zoomDataRecord.getMaxVal());
+        record += String.format("Sum values = %f, ", zoomDataRecord.getSumData());
+        record += String.format("Sum squares = %f\n", zoomDataRecord.getSumSquares());
+        System.out.println(record);
+    }
+
 
 }
