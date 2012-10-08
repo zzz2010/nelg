@@ -18,6 +18,7 @@ public class TrackRecord {
 	public ArrayList<String> ReplicateSuffix;
 	public String peakSuffix;
 	private List<BEDFeature> SignalRegionCache=null;
+	private List<BEDFeature> PeakCache=null;
 	public String getTrackId()
 	{
 		return FilePrefix;
@@ -25,7 +26,11 @@ public class TrackRecord {
 	
 	public List<BEDFeature> getPeakData()
 	{
-		return DBoperator.getPeakData(this);
+		if(PeakCache==null)
+		{
+			PeakCache= DBoperator.getPeakData(this);
+		}
+		return PeakCache;
 	}
 	
 	public List<BEDFeature> getSignalContigRegion()

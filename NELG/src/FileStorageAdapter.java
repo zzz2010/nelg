@@ -24,6 +24,10 @@ import org.broad.tribble.annotation.Strand;
 import org.broad.tribble.bed.BEDCodec;
 import org.broad.tribble.bed.BEDFeature;
 import org.broad.tribble.bed.SimpleBEDFeature;
+import org.broad.tribble.index.Index;
+import org.broad.tribble.index.IndexFactory;
+import org.broad.tribble.index.interval.IntervalIndexCreator;
+import org.broad.tribble.index.interval.IntervalTree;
 
 import com.thoughtworks.qdox.directorywalker.DirectoryScanner;
 import com.thoughtworks.qdox.directorywalker.Filter;
@@ -166,6 +170,10 @@ public class FileStorageAdapter implements StorageAdapter {
 
 		
         }
+		else
+		{
+			peakList=SignalTransform.extractPositveSignal(tr);
+		}
 		
 		return peakList;
 	}
@@ -202,9 +210,12 @@ public class FileStorageAdapter implements StorageAdapter {
 			            nextRecord = zoomIterator.next();
 			            if (nextRecord == null)
 			                break;
+			            if(nextRecord.getMaxVal()>0)
+			            {
 			            SimpleBEDFeature temp=new SimpleBEDFeature(nextRecord.getChromStart(), nextRecord.getChromEnd(), nextRecord.getChromName());
 			           ContigRegions.add(temp);
 			            ++recordReadCount;
+			            }
 			        }
 			        if(SignalRegion.size()==0)
 			        {
@@ -212,7 +223,7 @@ public class FileStorageAdapter implements StorageAdapter {
 			        }
 			        else
 			        {
-			        	SignalRegion=SignalTransform.IntersectSortedRegions(SignalRegion, ContigRegions);
+			        	SignalRegion=SignalTransform.intersectSortedRegions(SignalRegion, ContigRegions);
 			        }
 			       
 				} catch (IOException e) {
@@ -256,16 +267,29 @@ public List<List<Float>> OverlapBinSignal(TrackRecord tr, List<BEDFeature> query
 //					    //arbitary use zoomlevel-1 
 //						 ZoomLevelIterator zoomIterator = bbReader.getZoomLevelIterator(8, chromosomeBounds, false);
 					    int start=query.getStart();
-					    int sumValues=0;
+					    float sumValues=0;
 					    int stepWidth=(query.getEnd()-start)/numbin;
 					    int binId=0;
 					    if(stepWidth<1)
 					    	continue;
 						 while(iter.hasNext())
 					    {
-					    	WigItem nextRecord = iter.next();				    	
+					    	WigItem nextRecord = iter.next();	
+					    	
 					    	if((nextRecord.getStartBase()-stepWidth)>=start)
 					    	{
+					    		//check whether jump several bins
+					    		int jumpNum=(nextRecord.getStartBase()-start)/stepWidth;
+					    		for (int j = 0; j < jumpNum; j++) {
+					    				binId+=1;
+					    				start+=stepWidth;
+									}				    		
+					    	}
+				    		if(binId>=numbin)
+				    			break;
+					    	if((nextRecord.getEndBase()-stepWidth)>=start)
+					    	{
+					    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-nextRecord.getStartBase());
 					    		query.getStrand();
 								if(query.getStrand()== Strand.NEGATIVE)
 					    		{
@@ -277,18 +301,10 @@ public List<List<Float>> OverlapBinSignal(TrackRecord tr, List<BEDFeature> query
 					    		if(binId>=numbin)
 					    			break;
 					    		start=start+stepWidth;
-					    		sumValues=0;
-					    		//check whether jump several bins
-					    		if(start+stepWidth<nextRecord.getStartBase())
-					    		{
-					    			int jumpNum=(nextRecord.getStartBase()-start)/stepWidth;
-					    			for (int j = 0; j < jumpNum; j++) {
-					    				binId+=1;
-					    				start+=stepWidth;
-									}
-					    		}
+					    		sumValues=nextRecord.getWigValue()*(nextRecord.getEndBase()-start);   		
 					    	}
-					    	sumValues+=nextRecord.getWigValue();
+					    	else
+					    		sumValues+=nextRecord.getWigValue()*(nextRecord.getEndBase()-nextRecord.getStartBase());
 					    	
 					    }
 					}
@@ -300,6 +316,31 @@ public List<List<Float>> OverlapBinSignal(TrackRecord tr, List<BEDFeature> query
 				
 			
 		}
+	}
+	else
+	{
+		Index intervalTree = IndexFactory.createIntervalIndex(new File(dataDir+"/"+tr.FilePrefix+tr.peakSuffix), new BEDCodec());
+		int queryid=-1;
+		for(BEDFeature query:query_regions)
+		{
+			queryid+=1;
+			 int stepWidth=(query.getEnd()-query.getStart())/numbin;
+			    int binId=0;
+			    if(stepWidth<1)
+			    	continue;
+			for (int binId1 = 0; binId1 < numbin; binId1++) {
+				float sumValues=intervalTree.getBlocks(query.getChr(), query.getStart()+binId1*stepWidth, query.getStart()+(binId1+1)*stepWidth).size();
+				if(query.getStrand()== Strand.NEGATIVE)
+	    		{
+	    			outputSignal.get(queryid).set(numbin-binId1-1, sumValues+outputSignal.get(queryid).get(numbin-binId1-1));
+	    		}
+	    		else
+	    			outputSignal.get(queryid).set(binId1, sumValues+outputSignal.get(queryid).get(binId1));
+					 
+			}	 
+			
+		}
+		
 	}
 	return outputSignal;
 }

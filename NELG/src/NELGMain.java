@@ -18,7 +18,7 @@ public class NELGMain {
 		options.addOption("threadnum", true, "maximum thread number");
 		ArrayList<String> Assembly=new ArrayList<String>(); 
 		Assembly.add("hg19");
-		StorageAdapter StorageDB = null;
+		StorageAdapter StorageDB =new FileStorageAdapter("./data");
 		//phase1 
 		for (int i = 0; i < Assembly.size(); i++) {
 			
@@ -31,6 +31,7 @@ public class NELGMain {
 			List<TrackRecord> TrackList=StorageDB.getTrackId_inCellLine(Assembly.get(i),cell_lines.get(j));	
 
 			MotherModeler MainModelMachine=new MotherModeler(TrackList);
+			MainModelMachine.Run();
 			
 		}
 		

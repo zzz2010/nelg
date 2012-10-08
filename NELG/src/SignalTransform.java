@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import org.broad.tribble.bed.BEDFeature;
 import org.broad.tribble.bed.SimpleBEDFeature;
@@ -9,14 +10,24 @@ import org.broad.tribble.bed.SimpleBEDFeature;
 
 public class SignalTransform {
 
-public	static ArrayList<BEDFeature> NormalizedSignal(List<BEDFeature> inputSignal)
+public	static ArrayList<BEDFeature> normalizeSignal(List<BEDFeature> inputSignal)
 {
+	//do simple log2 normalized
 	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>(inputSignal.size());
+	ArrayList<Float> scores = BedFeatureToValues(inputSignal);
+	double m=PeakCalling.mean(scores);
+	double pseudocount= 1;
+	for (int i = 0; i < outputSignal.size(); i++) {
+		SimpleBEDFeature temp=new SimpleBEDFeature(inputSignal.get(i).getStart(),inputSignal.get(i).getEnd(), inputSignal.get(i).getChr());
+		temp.setScore((float) Math.log(inputSignal.get(i).getScore()/m+pseudocount));
+		outputSignal.add(temp);
+	}
+	
 	return outputSignal;
 }
 
 
-public	static ArrayList<BEDFeature> ExtracePositveSignal(TrackRecord target_signal)
+public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_signal)
 {
 	int maxExtract=10000;
 	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>();
@@ -28,7 +39,17 @@ public	static ArrayList<BEDFeature> ExtracePositveSignal(TrackRecord target_sign
 	}
 	else //peak calling from signal file
 	{
-		peaklist=target_signal.getSignalContigRegion();
+		List<BEDFeature> SignalRegions=target_signal.getSignalContigRegion();
+		List<BEDFeature> SignalRegions2=new ArrayList<BEDFeature>();
+		//filter short region <400
+		for(BEDFeature region:SignalRegions)
+		{
+			if(region.getEnd()-region.getStart()>400)
+				SignalRegions2.add(region);
+		}
+		List<List<Float>> SignalOverRegions = target_signal.OverlapBinSignal(SignalRegions2, 100);
+		//peak calling
+		peaklist=PeakCalling.simple_peak_detection(SignalOverRegions, SignalRegions2);	
 	}
 	//sort by score, take only top ones
 	Collections.sort(peaklist, new BEDScoreComparator());
@@ -44,10 +65,45 @@ public	static List<List<Float>> OverlapBinSignal(TrackRecord feature_signal, Lis
 }
 
 //compute background set 
-public static ArrayList<BEDFeature> ExtraceNegativeSignal(List<BEDFeature> target_signal)
+public static ArrayList<BEDFeature> extractNegativeSignal(List<BEDFeature> target_signal,int num)
 {
 	//search in gap and probability
 	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>(2*target_signal.size());
+	Collections.sort(target_signal, new BEDPositionComparator());
+	List<BEDFeature> gaplist=new ArrayList<BEDFeature>();
+	double sumCoverage=0;
+	for (int i = 0; i < target_signal.size()-1; i++) {
+		BEDFeature bed1=target_signal.get(i);
+		BEDFeature bed2=target_signal.get(i+1);
+		if(bed1.getChr().equalsIgnoreCase(bed2.getChr()))
+		{
+			if(bed1.getEnd()<bed2.getStart())
+			{
+				SimpleBEDFeature temp=new SimpleBEDFeature(bed1.getEnd(), bed2.getStart(), bed1.getChr());
+				temp.setScore(-1); //negative sample
+				sumCoverage+=temp.getScore();
+				gaplist.add(temp);
+			}
+		}
+	}
+	//cumulative probablity
+	ArrayList<Double> cumprob=new ArrayList<Double>();
+	double sum=0;
+	for (int i = 0; i < gaplist.size(); i++) {
+		cumprob.add(sum);
+		sum+=gaplist.get(i).getScore()/sumCoverage;
+	}
+	Random rand=new Random(12345);
+	for (int i = 0; i < num; i++) {
+		int selregion=rand.nextInt(target_signal.size());
+		int bgregion_size=target_signal.get(selregion).getEnd()-target_signal.get(selregion).getStart();
+		double pointer=rand.nextDouble();
+		int selgap=-Collections.binarySearch(cumprob,pointer )-2 ;
+		String chrom=gaplist.get(selgap).getChr();
+		int regionlen=gaplist.get(selgap).getEnd()-gaplist.get(selgap).getStart();
+		int start=(int) (gaplist.get(selgap).getStart()+regionlen*(pointer-cumprob.get(selgap)));
+		outputSignal.add(new SimpleBEDFeature(start-bgregion_size/2, start+bgregion_size/2, chrom));
+	}
 	return outputSignal;
 }
 
@@ -61,7 +117,8 @@ public static ArrayList<Float> BedFeatureToValues(List<BEDFeature> signal)
 	return outputvec;
 }
 
-public static List<BEDFeature> IntersectSortedRegions(List<BEDFeature> list1,List<BEDFeature> list2)
+
+public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,List<BEDFeature> list2)
 {
 	List<BEDFeature> intersectList=new ArrayList<BEDFeature>();
 	if(list1.size()>0&&list2.size()>0)
