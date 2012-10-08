@@ -91,6 +91,7 @@ FileStorageAdapter db;
 		List<List<Float>> BinArray = db.OverlapBinSignal(temp, regions, 100);
 		assertEquals(regions.size(), BinArray.size());
 		assertEquals(100, BinArray.get(0).size());
-		assertTrue(Collections.max(BinArray.get(0))>0 );
+		Float a=Collections.max(BinArray.get(0));
+		assertTrue(a>0 );
 	}
 }

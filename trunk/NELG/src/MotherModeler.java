@@ -30,11 +30,11 @@ public class MotherModeler {
 		for (TrackRecord target_signal : SignalPool) {
 			
 			//get filtered target signal
-		  	ArrayList<BEDFeature>target_signal_filtered= SignalTransform.ExtracePositveSignal(target_signal);
-		  	ArrayList<BEDFeature>target_signal_bg = SignalTransform.ExtraceNegativeSignal(target_signal_filtered);
+		  	ArrayList<BEDFeature>target_signal_filtered= SignalTransform.extractPositveSignal(target_signal);
+		  	ArrayList<BEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
 		  	ArrayList<Float> targetValue=SignalTransform.BedFeatureToValues(target_signal_filtered);
 		  	targetValue.addAll(SignalTransform.BedFeatureToValues(target_signal_bg));
-		  	ArrayList<Float> targetNormValue=SignalTransform.BedFeatureToValues(SignalTransform.NormalizedSignal(target_signal_filtered));
+		  	ArrayList<Float> targetNormValue=SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_signal_filtered));
 		  	
 			ArrayList<FeatureSignal> IsThereFeatures=new ArrayList<FeatureSignal>(SignalPool.size()-1);
 			ArrayList<FeatureSignal> ValThereFeatures=new ArrayList<FeatureSignal>(SignalPool.size()-1);
