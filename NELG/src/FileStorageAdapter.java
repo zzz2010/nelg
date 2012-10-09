@@ -29,6 +29,8 @@ import org.broad.tribble.index.IndexFactory;
 import org.broad.tribble.index.interval.IntervalIndexCreator;
 import org.broad.tribble.index.interval.IntervalTree;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+
 import com.thoughtworks.qdox.directorywalker.DirectoryScanner;
 import com.thoughtworks.qdox.directorywalker.Filter;
 
@@ -236,17 +238,14 @@ public class FileStorageAdapter implements StorageAdapter {
 	}
 	
 	
-public List<List<Float>> OverlapBinSignal(TrackRecord tr, List<BEDFeature> query_regions,int numbin)
+public List<SparseDoubleMatrix1D> overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDFeature> query_regions,int numbin)
 {
 	///need to consider strand direction
-	List<List<Float>>outputSignal=new ArrayList<List<Float>>(query_regions.size());
+	List<SparseDoubleMatrix1D>outputSignal=new ArrayList<SparseDoubleMatrix1D>(query_regions.size());
 	//initialize
-	 ArrayList<Float> zerosVec=new ArrayList<Float>(numbin);
-	for (int i = 0; i < numbin; i++) {
-		zerosVec.add((float) 0.0);
-	}
+
 	for (int i = 0; i < query_regions.size(); i++) {
-		outputSignal.add((ArrayList<Float>) zerosVec.clone());
+		outputSignal.add( new SparseDoubleMatrix1D(numbin));
 	}
 	if(tr.hasSignal)
 	{

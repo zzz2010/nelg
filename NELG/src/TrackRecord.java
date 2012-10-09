@@ -3,6 +3,8 @@ import java.util.List;
 
 import org.broad.tribble.bed.BEDFeature;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+
 
 public class TrackRecord {
 	
@@ -40,8 +42,8 @@ public class TrackRecord {
 		
 		return SignalRegionCache;
 	}
-	public List<List<Float>> OverlapBinSignal( List<BEDFeature> query_regions,int numbin)
+	public List<SparseDoubleMatrix1D> OverlapBinSignal( List<BEDFeature> query_regions,int numbin)
 	{
-		return DBoperator.OverlapBinSignal(this, query_regions, numbin);
+		return DBoperator.overlapBinSignal_fixBinNum(this, query_regions, numbin);
 	}
 }

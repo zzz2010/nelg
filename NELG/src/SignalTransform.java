@@ -7,6 +7,9 @@ import java.util.Random;
 import org.broad.tribble.bed.BEDFeature;
 import org.broad.tribble.bed.SimpleBEDFeature;
 
+import cern.colt.matrix.DoubleMatrix1D;
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+
 
 public class SignalTransform {
 
@@ -14,8 +17,8 @@ public	static ArrayList<BEDFeature> normalizeSignal(List<BEDFeature> inputSignal
 {
 	//do simple log2 normalized
 	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>(inputSignal.size());
-	ArrayList<Float> scores = BedFeatureToValues(inputSignal);
-	double m=PeakCalling.mean(scores);
+	DoubleMatrix1D scores = BedFeatureToValues(inputSignal);
+	double m=scores.zSum()/scores.size();
 	double pseudocount= 1;
 	for (int i = 0; i < outputSignal.size(); i++) {
 		SimpleBEDFeature temp=new SimpleBEDFeature(inputSignal.get(i).getStart(),inputSignal.get(i).getEnd(), inputSignal.get(i).getChr());
@@ -47,7 +50,7 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 			if(region.getEnd()-region.getStart()>400)
 				SignalRegions2.add(region);
 		}
-		List<List<Float>> SignalOverRegions = target_signal.OverlapBinSignal(SignalRegions2, 100);
+		List<SparseDoubleMatrix1D> SignalOverRegions = target_signal.OverlapBinSignal(SignalRegions2, 100);
 		//peak calling
 		peaklist=PeakCalling.simple_peak_detection(SignalOverRegions, SignalRegions2);	
 	}
@@ -59,7 +62,7 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 	return outputSignal;
 }
 	
-public	static List<List<Float>> OverlapBinSignal(TrackRecord feature_signal, List<BEDFeature> query_regions,int numbin)
+public	static List<SparseDoubleMatrix1D> OverlapBinSignal(TrackRecord feature_signal, List<BEDFeature> query_regions,int numbin)
 {
 	return feature_signal.OverlapBinSignal(query_regions, numbin);
 }
@@ -107,11 +110,12 @@ public static ArrayList<BEDFeature> extractNegativeSignal(List<BEDFeature> targe
 	return outputSignal;
 }
 
-public static ArrayList<Float> BedFeatureToValues(List<BEDFeature> signal)
+public static DoubleMatrix1D BedFeatureToValues(List<BEDFeature> signal)
 {
-	ArrayList<Float> outputvec=new ArrayList<Float>(signal.size());
+	DoubleMatrix1D outputvec=new SparseDoubleMatrix1D(signal.size());
 	for (int i = 0; i < signal.size(); i++) {
-		outputvec.add(signal.get(i).getScore());
+		if(signal.get(i).getScore()>0)
+		outputvec.set(i, signal.get(i).getScore());
 	}
 	
 	return outputvec;

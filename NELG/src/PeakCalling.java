@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 import org.broad.tribble.bed.BEDFeature;
 import org.broad.tribble.bed.FullBEDFeature;
 import org.broad.tribble.bed.SimpleBEDFeature;
+
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 public class PeakCalling {
 	/**
 	 * Detects peaks (calculates local minima and maxima) in the 
@@ -26,7 +28,7 @@ public class PeakCalling {
 	 * @param indices Vector of indices that replace positions in resulting maps
 	 * @return List of maps (maxima and minima pairs) of detected peaks
 	 */
-	public static <U> List<Map<U, Float>> peak_detection(List<Float> values, double delta, List<U> indices)
+	public static <U> List<Map<U, Float>> peak_detection(SparseDoubleMatrix1D values, double delta, List<U> indices)
 	{
 		assert(indices != null);
 		assert(values.size() != indices.size());
@@ -45,28 +47,28 @@ public class PeakCalling {
 		boolean lookForMax = true;
 
 		Integer pos = 0;
-		for (Float value : values) {
+		for (double value : values.toArray()) {
 			if (maximum == null||value > maximum ) {
-				maximum = value;
+				maximum = (float) value;
 				maximumPos = indices.get(pos);
 			}
 
 			if (minimum == null||value < minimum ) {
-				minimum = value;
+				minimum = (float) value;
 				minimumPos = indices.get(pos);
 			}
 
 			if (lookForMax) {
 				if (value < maximum*(1- delta)) {
-					maxima.put(maximumPos, value);
-					minimum = value;
+					maxima.put(maximumPos, (float) value);
+					minimum = (float) value;
 					minimumPos = indices.get(pos);
 					lookForMax = false;
 				}
 			} else {
 				if (value > minimum*(1+delta)) {
-					minima.put(minimumPos, value);
-					maximum = value;
+					minima.put(minimumPos, (float) value);
+					maximum = (float) value;
 					maximumPos = indices.get(pos);
 					lookForMax = true;
 				}
@@ -94,7 +96,7 @@ public class PeakCalling {
 	 * @param delta The precedor of a maximum peak
 	 * @return List of maps (maxima and minima pairs) of detected peaks
 	 */
-	public static List<BEDFeature> simple_peak_detection(List<List<Float>> values,List<BEDFeature> regions)
+	public static List<BEDFeature> simple_peak_detection(List<SparseDoubleMatrix1D> values,List<BEDFeature> regions)
 	{
 		List<BEDFeature> PeakList=new ArrayList<BEDFeature>();
 		
@@ -128,7 +130,7 @@ public class PeakCalling {
 		return PeakList;
 	}
 	
-	public static double mean (List<Float> a){
+	public static double mean (SparseDoubleMatrix1D a){
 		
 		        int sum = sum(a);
 		
@@ -140,13 +142,13 @@ public class PeakCalling {
 		
 		    }
 
-	public static double sd (List<Float> a){
+	public static double sd (SparseDoubleMatrix1D a){
 		
 		        int sum = 0;
 		
 		        double mean = mean(a);
 		
-		        for (Float i : a)
+		        for (double i : a.toArray())
 		
 		            sum += Math.pow((i - mean), 2);
 		
@@ -154,12 +156,12 @@ public class PeakCalling {
 		
 		    }
 	
-	  public static int sum (List<Float> a){
+	  public static int sum (SparseDoubleMatrix1D a){
 		  	   if (a.size() > 0) 
 		  	   {
 		  		int sum = 0;
 		     
-		  		for (Float i : a) 
+		  		for (double i : a.toArray()) 
 		  		{
 		  		    sum += i;
 		  		}

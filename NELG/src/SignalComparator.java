@@ -9,10 +9,13 @@ import java.util.Map.Entry;
 
 import org.broad.tribble.bed.BEDFeature;
 
+import cern.colt.matrix.DoubleMatrix1D;
+import cern.colt.matrix.doublealgo.Sorting;
+import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 
 public class SignalComparator {
 
-	public static float getDiscriminativeCapbaility(List<Float> feature_signal, List<Float> target_class)
+	public static float getDiscriminativeCapbaility(DoubleMatrix1D feature_signal, DoubleMatrix1D target_class)
 	{
 		double costRatio=100;//penalty higher for false positive
 		int postiveNum=0;
@@ -47,19 +50,11 @@ public class SignalComparator {
 
 
 	//spearman correlation
-	public static float getCorrelation(List<Float> feature_signal, List<Float> target_class)
+	public static float getCorrelation(DoubleMatrix1D feature_signal,DoubleMatrix1D target_class)
 	{
-		 double[] ranks = new double[feature_signal.size()];
-		    
-		 double[] ranks_null = new double[feature_signal.size()];
-		 
-		    for (int i=0; i<feature_signal.size(); i++)
-		    {
-		        ranks[i]=((double) Collections.binarySearch(feature_signal, target_class.get(i)));//indexOf(PWMScore.get(i)));
-		        ranks_null[i]=((double)i);
-		    }
-		    float spearman=(float) getPearsonCorrelation(ranks, ranks_null);
-		return spearman;
+		SpearmansCorrelation corr=new SpearmansCorrelation();
+		double spearman=corr.correlation(feature_signal.toArray(), target_class.toArray());
+		return (float) spearman;
 	}
 	
 	
