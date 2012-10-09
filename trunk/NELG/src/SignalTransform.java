@@ -9,6 +9,7 @@ import org.broad.tribble.bed.SimpleBEDFeature;
 
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 
 public class SignalTransform {
@@ -50,7 +51,7 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 			if(region.getEnd()-region.getStart()>400)
 				SignalRegions2.add(region);
 		}
-		List<SparseDoubleMatrix1D> SignalOverRegions = target_signal.OverlapBinSignal(SignalRegions2, 100);
+		List<SparseDoubleMatrix1D> SignalOverRegions = target_signal.overlapBinSignal_fixStepSize(SignalRegions2, 400);
 		//peak calling
 		peaklist=PeakCalling.simple_peak_detection(SignalOverRegions, SignalRegions2);	
 	}
@@ -62,9 +63,9 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 	return outputSignal;
 }
 	
-public	static List<SparseDoubleMatrix1D> OverlapBinSignal(TrackRecord feature_signal, List<BEDFeature> query_regions,int numbin)
+public	static SparseDoubleMatrix2D OverlapBinSignal(TrackRecord feature_signal, List<BEDFeature> query_regions,int numbin)
 {
-	return feature_signal.OverlapBinSignal(query_regions, numbin);
+	return feature_signal.overlapBinSignal_fixBinNum(query_regions, numbin);
 }
 
 //compute background set 

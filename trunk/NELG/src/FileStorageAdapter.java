@@ -30,6 +30,7 @@ import org.broad.tribble.index.interval.IntervalIndexCreator;
 import org.broad.tribble.index.interval.IntervalTree;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 import com.thoughtworks.qdox.directorywalker.DirectoryScanner;
 import com.thoughtworks.qdox.directorywalker.Filter;
@@ -238,15 +239,12 @@ public class FileStorageAdapter implements StorageAdapter {
 	}
 	
 	
-public List<SparseDoubleMatrix1D> overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDFeature> query_regions,int numbin)
+public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDFeature> query_regions,int numbin)
 {
 	///need to consider strand direction
-	List<SparseDoubleMatrix1D>outputSignal=new ArrayList<SparseDoubleMatrix1D>(query_regions.size());
+	SparseDoubleMatrix2D outputSignal=new SparseDoubleMatrix2D(query_regions.size(), numbin);
 	//initialize
 
-	for (int i = 0; i < query_regions.size(); i++) {
-		outputSignal.add( new SparseDoubleMatrix1D(numbin));
-	}
 	if(tr.hasSignal)
 	{
 		for (int i = 0; i < tr.ReplicateSuffix.size(); i++) {
@@ -265,6 +263,116 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixBinNum(TrackRecord tr, Lis
 //						 RPChromosomeRegion chromosomeBounds = new RPChromosomeRegion(chromId, query.getStart(), chromId, query.getEnd());
 //					    //arbitary use zoomlevel-1 
 //						 ZoomLevelIterator zoomIterator = bbReader.getZoomLevelIterator(8, chromosomeBounds, false);
+					    int start=query.getStart();
+					    float sumValues=0;
+					    int stepWidth=(query.getEnd()-start)/numbin;
+					    int binId=0;
+					    if(stepWidth<1)
+					    	continue;
+						 while(iter.hasNext())
+					    {
+					    	WigItem nextRecord = iter.next();	
+					    	
+					    	if((nextRecord.getStartBase()-stepWidth)>=start)
+					    	{
+					    		//check whether jump several bins
+					    		int jumpNum=(nextRecord.getStartBase()-start)/stepWidth;
+					    		for (int j = 0; j < jumpNum; j++) {
+					    				binId+=1;
+					    				start+=stepWidth;
+									}				    		
+					    	}
+				    		if(binId>=numbin)
+				    			break;
+					    	if((nextRecord.getEndBase()-stepWidth)>=start)
+					    	{
+					    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-nextRecord.getStartBase());
+					    		query.getStrand();
+							if(query.getStrand()== Strand.NEGATIVE)
+					    		{
+								outputSignal.set(queryid, numbin-binId-1, sumValues+outputSignal.get(queryid, numbin-binId-1));
+					    			
+					    		}
+					    		else
+					    			outputSignal.set(queryid, binId, sumValues+outputSignal.get(queryid, binId));
+					    			
+					    		binId+=1;
+					    		if(binId>=numbin)
+					    			break;
+					    		start=start+stepWidth;
+					    		sumValues=nextRecord.getWigValue()*(nextRecord.getEndBase()-start);   		
+					    	}
+					    	else
+					    		sumValues+=nextRecord.getWigValue()*(nextRecord.getEndBase()-nextRecord.getStartBase());
+					    	
+					    }
+					}
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			
+		}
+	}
+	else
+	{
+		Index intervalTree = IndexFactory.createIntervalIndex(new File(dataDir+"/"+tr.FilePrefix+tr.peakSuffix), new BEDCodec());
+		int queryid=-1;
+		for(BEDFeature query:query_regions)
+		{
+			queryid+=1;
+			 int stepWidth=(query.getEnd()-query.getStart())/numbin;
+			    int binId=0;
+			    if(stepWidth<1)
+			    	continue;
+			for (int binId1 = 0; binId1 < numbin; binId1++) {
+				float sumValues=intervalTree.getBlocks(query.getChr(), query.getStart()+binId1*stepWidth, query.getStart()+(binId1+1)*stepWidth).size();
+				if(query.getStrand()== Strand.NEGATIVE)
+	    		{
+				outputSignal.set(queryid, numbin-binId-1, sumValues+outputSignal.get(queryid, numbin-binId-1));
+	    			
+	    		}
+	    		else
+	    			outputSignal.set(queryid, binId, sumValues+outputSignal.get(queryid, binId));
+					 
+			}	 
+			
+		}
+		
+	}
+	return outputSignal;
+}
+
+
+public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, List<BEDFeature> query_regions,int StepSize)
+{
+	///need to consider strand direction
+	List<SparseDoubleMatrix1D>outputSignal=new ArrayList<SparseDoubleMatrix1D>(query_regions.size());
+	//initialize
+
+	for (int i = 0; i < query_regions.size(); i++) {
+		int numbin=(int) Math.ceil((query_regions.get(i).getEnd()-query_regions.get(i).getStart())/(double)StepSize);
+		outputSignal.add( new SparseDoubleMatrix1D(numbin));
+	}
+	if(tr.hasSignal)
+	{
+		for (int i = 0; i < tr.ReplicateSuffix.size(); i++) {
+			String filename=dataDir+"/"+tr.FilePrefix+tr.ReplicateSuffix.get(i);		
+				BBFileReader bbReader;
+				try {
+					bbReader = new BBFileReader(filename);
+				      // get zoom level data
+			        int zoomLevels = bbReader.getZoomLevelCount();
+			        int queryid=-1;
+					for(BEDFeature query:query_regions)
+					{
+						queryid+=1;
+						BigWigIterator iter = bbReader.getBigWigIterator(query.getChr(), query.getStart(), query.getChr(), query.getEnd(), false);
+
+						int numbin=(int) Math.ceil((query.getEnd()-query.getStart())/(double)StepSize);
+						
 					    int start=query.getStart();
 					    float sumValues=0;
 					    int stepWidth=(query.getEnd()-start)/numbin;
@@ -323,6 +431,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixBinNum(TrackRecord tr, Lis
 		for(BEDFeature query:query_regions)
 		{
 			queryid+=1;
+			int numbin=(int) Math.ceil((query.getEnd()-query.getStart())/(double)StepSize);
 			 int stepWidth=(query.getEnd()-query.getStart())/numbin;
 			    int binId=0;
 			    if(stepWidth<1)
