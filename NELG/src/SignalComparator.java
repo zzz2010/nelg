@@ -24,11 +24,14 @@ public class SignalComparator {
 				postiveNum+=1;
 		}
 		int negativeNum=target_class.size()-postiveNum;
-		HashMap<Float, Float> scorePairs=new HashMap<Float, Float>();
-		 SortedSet<Entry<Float, Float>> sortedset=entriesSortedByValues(scorePairs);
+		HashMap<Double, Double> scorePairs=new HashMap<Double, Double>();
+		for (int i = 0; i < feature_signal.size(); i++) {
+			scorePairs.put(feature_signal.get(i), target_class.get(i));
+		}
+		 SortedSet<Entry<Double, Double>> sortedset=entriesSortedByValues(scorePairs);
 		 int[] cumPositives=new int[sortedset.size()];
 		 int ii=0;
-		for(Entry<Float, Float> pair:sortedset)
+		for(Entry<Double, Double> pair:sortedset)
 		{
 			if(pair.getValue()>0)
 			{

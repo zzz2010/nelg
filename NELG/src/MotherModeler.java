@@ -10,6 +10,7 @@ import org.broad.tribble.bed.BEDFeature;
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 import EDU.oswego.cs.dl.util.concurrent.LinkedQueue;
 import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
@@ -48,13 +49,13 @@ public class MotherModeler {
 			        if (feature_signal.ExperimentId!=(target_signal.ExperimentId))
 			        {
 			        	
-			        	List<SparseDoubleMatrix1D> feature_BinSignal=SignalTransform.OverlapBinSignal(feature_signal, target_signal_filtered,21);
-			        	List<SparseDoubleMatrix1D> feature_BinSignal_bg=SignalTransform.OverlapBinSignal(feature_signal, target_signal_bg,21);
+			        	SparseDoubleMatrix2D feature_BinSignal=SignalTransform.OverlapBinSignal(feature_signal, target_signal_filtered,21);
+			        	SparseDoubleMatrix2D feature_BinSignal_bg=SignalTransform.OverlapBinSignal(feature_signal, target_signal_bg,21);
 			        	/***************isthere task****************/
 			        float maxScore=Float.MIN_VALUE;
 			        int bestBin=-1;
-			        	for (int i = 0; i < feature_BinSignal.size(); i++) {
-			        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.get(i), feature_BinSignal_bg.get(i)) ;
+			        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
+			        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
 			        		float score=SignalComparator.getDiscriminativeCapbaility(featureValue, targetValue);
 			        		if(score>maxScore)
 			        		{
@@ -63,14 +64,14 @@ public class MotherModeler {
 			        		}
 						}
 			        	//bestBin idea, consider strand
-			        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.get(bestBin), feature_BinSignal_bg.get(bestBin)) ;
+			        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(bestBin), feature_BinSignal_bg.viewColumn(bestBin)) ;
 			        	IsThereFeatures.add(new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin));
 			        	
 			        	/***************valthere task****************/
 			        	maxScore=Float.MIN_VALUE;
 				    bestBin=-1;
-			        	for (int i = 0; i < feature_BinSignal.size(); i++) {
-			        		SparseDoubleMatrix1D featureValue=feature_BinSignal.get(i);
+			        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
+			        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
 			        		float score=SignalComparator.getCorrelation(featureValue, targetValue);
 			        		if(score>maxScore)
 			        		{
@@ -79,7 +80,7 @@ public class MotherModeler {
 			        		}
 						}
 			        	//bestBin idea, consider strand
-			        	featureBestBinValue=feature_BinSignal.get(bestBin);
+			        	featureBestBinValue=(SparseDoubleMatrix1D) feature_BinSignal.viewColumn(bestBin);
 			        ValThereFeatures.add(new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin));
 			        }
 			    }
