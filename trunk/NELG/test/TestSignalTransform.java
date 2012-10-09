@@ -8,6 +8,8 @@ import org.broad.tribble.bed.BEDFeature;
 import org.junit.Before;
 import org.junit.Test;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix2D;
+
 
 public class TestSignalTransform {
 	FileStorageAdapter db;
@@ -52,10 +54,10 @@ public class TestSignalTransform {
 
 		TrackRecord temp=db.getTrackById("wgEncodeRikenCageK562CellPapPlusClusters");
 		List<BEDFeature> regions = db.getSignalContigRegion(temp);
-		List<List<Float>> BinArray =SignalTransform.OverlapBinSignal(temp, regions, 100);
+		SparseDoubleMatrix2D BinArray =SignalTransform.OverlapBinSignal(temp, regions, 100);
 		assertEquals(regions.size(), BinArray.size());
-		assertEquals(100, BinArray.get(0).size());
-		Float a=Collections.max(BinArray.get(0));
+		assertEquals(100, BinArray.viewColumn(0).size());
+		Float a=(float) BinArray.viewColumn(0).zSum();
 		assertTrue(a>0 );
 	}
 
