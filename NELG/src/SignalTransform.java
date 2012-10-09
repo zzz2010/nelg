@@ -21,7 +21,7 @@ public	static ArrayList<BEDFeature> normalizeSignal(List<BEDFeature> inputSignal
 	DoubleMatrix1D scores = BedFeatureToValues(inputSignal);
 	double m=scores.zSum()/scores.size();
 	double pseudocount= 1;
-	for (int i = 0; i < outputSignal.size(); i++) {
+	for (int i = 0; i < inputSignal.size(); i++) {
 		SimpleBEDFeature temp=new SimpleBEDFeature(inputSignal.get(i).getStart(),inputSignal.get(i).getEnd(), inputSignal.get(i).getChr());
 		temp.setScore((float) Math.log(inputSignal.get(i).getScore()/m+pseudocount));
 		outputSignal.add(temp);

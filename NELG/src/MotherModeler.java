@@ -56,7 +56,7 @@ public class MotherModeler {
 			        int bestBin=-1;
 			        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
 			        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
-			        		float score=SignalComparator.getDiscriminativeCapbaility(featureValue, targetValue);
+			        		float score=SignalComparator.getCorrelation(featureValue, targetValue);
 			        		if(score>maxScore)
 			        		{
 			        			bestBin=i;
@@ -72,7 +72,7 @@ public class MotherModeler {
 				    bestBin=-1;
 			        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
 			        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
-			        		float score=SignalComparator.getCorrelation(featureValue, targetValue);
+			        		float score=SignalComparator.getCorrelation(featureValue, targetNormValue);
 			        		if(score>maxScore)
 			        		{
 			        			bestBin=i;
