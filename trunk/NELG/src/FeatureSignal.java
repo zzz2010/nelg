@@ -1,14 +1,16 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+
 
 public class FeatureSignal implements Comparable  {
 
-	public List<Float> featureValue;
+	public SparseDoubleMatrix1D featureValue;
 	public String FeatureId;
 	public float featureSelectScore;
 	public int binId=-1;
-	public FeatureSignal(ArrayList<Float> featureValue, String featureId,
+	public FeatureSignal(SparseDoubleMatrix1D featureValue, String featureId,
 			float featureSelectScore) {
 		super();
 		this.featureValue = featureValue;
@@ -16,7 +18,7 @@ public class FeatureSignal implements Comparable  {
 		this.featureSelectScore = featureSelectScore;
 		
 	}
-	public FeatureSignal(List<Float> featureBestBinValue, String featureId,
+	public FeatureSignal(SparseDoubleMatrix1D featureBestBinValue, String featureId,
 			float featureSelectScore, int binId) {
 		super();
 		this.featureValue = featureBestBinValue;
