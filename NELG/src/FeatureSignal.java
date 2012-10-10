@@ -1,10 +1,11 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 
 
-public class FeatureSignal implements Comparable  {
+public class FeatureSignal implements Comparable,Serializable  {
 
 	public SparseDoubleMatrix1D featureValue;
 	public String FeatureId;
@@ -31,5 +32,12 @@ public class FeatureSignal implements Comparable  {
 		// TODO Auto-generated method stub
 		return (int) -(this.featureSelectScore - ((FeatureSignal) arg0).featureSelectScore); //decrease order
 	}
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return FeatureId+" at bin "+binId+", score:"+featureSelectScore;
+	}
+	
+	
 	
 }

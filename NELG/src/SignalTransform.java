@@ -122,6 +122,22 @@ public static DoubleMatrix1D BedFeatureToValues(List<BEDFeature> signal)
 	return outputvec;
 }
 
+//get the window region around the center of input regions
+public static List<BEDFeature> fixRegionSize(List<BEDFeature> list1, int regionsize)
+{
+	List<BEDFeature> fixlist=new ArrayList<BEDFeature>(list1.size());  
+	for (int i = 0; i < list1.size(); i++) {
+		int midpoint=(list1.get(i).getStart()+list1.get(i).getEnd())/2;
+		SimpleBEDFeature sbed=new SimpleBEDFeature(midpoint-regionsize/2, midpoint+regionsize/2, list1.get(i).getChr());
+		sbed.setDescription(list1.get(i).getDescription());
+		sbed.setStrand(list1.get(i).getStrand());
+		sbed.setScore(list1.get(i).getScore());
+		fixlist.add(sbed);
+	}
+	
+	return fixlist;
+}
+
 
 public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,List<BEDFeature> list2)
 {
@@ -200,5 +216,7 @@ public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,Lis
 	}
 	return intersectList;
 }	
+
+
 
 }

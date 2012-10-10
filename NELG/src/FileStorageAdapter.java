@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
 
 
+import org.apache.log4j.Logger;
 import org.broad.igv.bbfile.BBFileHeader;
 import org.broad.igv.bbfile.BBFileReader;
 import org.broad.igv.bbfile.BigWigIterator;
@@ -37,7 +38,7 @@ import com.thoughtworks.qdox.directorywalker.Filter;
 
 
 public class FileStorageAdapter implements StorageAdapter {
-
+	static Logger log = Logger.getLogger(FileStorageAdapter.class);
 	String dataDir;
 	HashMap<String, TrackRecord> DataBase;
 	HashMap<String, HashSet<String>> Assembly2CellLine;
