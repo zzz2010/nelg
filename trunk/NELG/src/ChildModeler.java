@@ -1,8 +1,13 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import org.apache.commons.math3.util.Pair;
+
+import weka.attributeSelection.CfsSubsetEval;
+import weka.attributeSelection.GreedyStepwise;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LinearRegression;
@@ -11,30 +16,74 @@ import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.Filter;
 
 
 
 
 public class ChildModeler {
 
-	public double doClassification(ClassificationJob job)
+	public ClassificationResult doClassification(ClassificationJob job)
 	{
 		double auc=0;
+		ArrayList<Integer> selecedAttributes=new ArrayList<Integer>();
 		Instances data=getDatasetFromJob(job);
+		Instances data2 = data;//filtered dataset
+		HashMap<String,Integer> FeatureNameMap=new HashMap<String, Integer>();
+		for (int i = 0; i < data.numAttributes(); i++) {
+			FeatureNameMap.put(data.attribute(i).name(),i);
+		}
+		//feature selection
+		weka.filters.supervised.attribute.AttributeSelection filter = new weka.filters.supervised.attribute.AttributeSelection();
+	    CfsSubsetEval eval = new CfsSubsetEval();
+	    GreedyStepwise search = new GreedyStepwise();
+	    search.setSearchBackwards(true);
+	    filter.setEvaluator(eval);
+	    filter.setSearch(search);
+	    try {
+			filter.setInputFormat(data);
+			 data2 = Filter.useFilter(data, filter);
+			for (int i = 0; i < data2.numAttributes(); i++) {
+				selecedAttributes.add(FeatureNameMap.get(data2.attribute(i).name()));
+			} 
+			 
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	  
+		
+		//classifier selection
 		Classifier modeler = new RandomForest();
 		try {
-			Evaluation eval = new Evaluation(data);
-			eval.crossValidateModel(modeler, data, 5, new Random(1));
-			auc=eval.areaUnderROC(1);
+			Evaluation eval1 = new Evaluation(data2);
+			eval1.crossValidateModel(modeler, data2, 5, new Random(1));
+			auc=eval1.areaUnderROC(1);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return auc;
+			
+		//get final classifier
+		try {
+			modeler.buildClassifier(data2);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ClassificationResult result=new ClassificationResult();
+		result.AUC=auc;
+		result.LearnedModel=modeler;
+		result.JobTitle=job.JobTitle;
+		result.FeatureIdBin=new ArrayList<Pair<String,Integer>>();
+		for (int i = 0; i < selecedAttributes.size(); i++) {
+		FeatureSignal temp=	job.FeatureMatrix.get(selecedAttributes.get(i));
+		result.FeatureIdBin.add(new Pair<String, Integer>(temp.FeatureId,temp.binId));
+		}
+		return result;
 	}
 	
-	public double doRegression(ClassificationJob job)
+	public ClassificationResult doRegression(ClassificationJob job)
 	{
 		double corr=0;
 		Instances data=getDatasetFromJob(job);
@@ -47,8 +96,21 @@ public class ChildModeler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+				
+		//get final classifier
+		try {
+			modeler.buildClassifier(data);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ClassificationResult result=new ClassificationResult();
+		result.Corr=corr;
+		result.LearnedModel=modeler;
+		result.isRegression=true;
+		result.JobTitle=job.JobTitle;
+		return result;
 		
-		return corr;
 	}
 	
 	

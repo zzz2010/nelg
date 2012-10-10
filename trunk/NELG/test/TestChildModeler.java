@@ -44,13 +44,13 @@ ChildModeler modeler;
 
 	@Test
 	public void testDoClassification() {
-		double auc=modeler.doClassification(testedJob_C);
+		double auc=modeler.doClassification(testedJob_C).AUC;
 		assertTrue(auc>0.6);
 	}
 
 	@Test
 	public void testDoRegression() {
-		double corr=modeler.doRegression(testedJob_R);
+		double corr=modeler.doRegression(testedJob_R).Corr;
 		assertTrue(corr>0.2);
 	}
 
