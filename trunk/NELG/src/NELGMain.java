@@ -8,7 +8,7 @@ import org.broad.tribble.bed.BEDFeature;
 //automatically do what human do, and never end
 
 public class NELGMain {
-
+	 private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
 	/**
 	 * @param args
 	 */
