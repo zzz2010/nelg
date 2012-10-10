@@ -29,20 +29,33 @@ public class ClassificationJob implements Runnable  , Serializable {
 	
 	 public void run() {
 		
-		         try {
-		        	 FileOutputStream fileOut =
-		    		         new FileOutputStream(JobTitle+".ser");
-		    		         ObjectOutputStream out =
-		    		                            new ObjectOutputStream(fileOut);
-					out.writeObject(this);
-			         out.close();
-			          fileOut.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	
+		 toFile();
+		 ChildModeler modeler=new ChildModeler();
+		 ClassificationResult result=null;
+		 if(Regression)
+			 result=modeler.doRegression(this);
+		 else
+			 result=modeler.doClassification(this);
+		 
+		 if(result!=null)
+			 result.toFile();
 	    }
+	 
+	 public void toFile()
+	 {
+	        try {
+	        	 FileOutputStream fileOut =
+	    		         new FileOutputStream(JobTitle+".ser");
+	    		         ObjectOutputStream out =
+	    		                            new ObjectOutputStream(fileOut);
+				out.writeObject(this);
+		         out.close();
+		          fileOut.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	 }
 	
 	
 }
