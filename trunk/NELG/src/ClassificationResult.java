@@ -4,7 +4,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.commons.math3.util.Pair;
 
 import weka.classifiers.Classifier;
 
