@@ -108,14 +108,14 @@ public class PeakCalling {
 			List<Map<Integer, Float>> tempPeakList=peak_detection(values.get(i), 0.1, indices);
 			Map<Integer, Float> maxPoints = tempPeakList.get(0);
 			Iterator<Entry<Integer, Float>> iter = maxPoints.entrySet().iterator();
-			double std=sd(values.get(i));
+			double std=sd(values.get(i))+1;
 			double m=mean(values.get(i));
 			while(iter.hasNext())
 			{
 				Entry<Integer, Float> tempP = iter.next();
 				float zscore=(float) ((tempP.getValue()-m)/std);
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
-				if(zscore>5)//arbitary cut-off
+				if(zscore>3)//arbitary cut-off
 				{
 					int pos=(int) (regions.get(i).getStart()+tempP.getKey()*stepsize+0.5*stepsize);
 					SimpleBEDFeature peak=new SimpleBEDFeature(pos, pos+1, regions.get(i).getChr());
@@ -152,7 +152,7 @@ public class PeakCalling {
 		
 		            sum += Math.pow((i - mean), 2);
 		
-		        return Math.sqrt( sum / ( a.size() - 1 ) ); // sample
+		        return Math.sqrt( sum / ( a.size()  ) ); // sample
 		
 		    }
 	
