@@ -259,9 +259,13 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 				      // get zoom level data
 			        int zoomLevels = bbReader.getZoomLevelCount();
 			        int queryid=-1;
+			       HashSet<String> chromNames=new HashSet<String>(bbReader.getChromosomeNames()) ;
 					for(BEDFeature query:query_regions)
 					{
 						queryid+=1;
+						//filter the chrM,..,random
+						if(!chromNames.contains(query.getChr()))
+							continue;
 						BigWigIterator iter = bbReader.getBigWigIterator(query.getChr(), query.getStart(), query.getChr(), query.getEnd(), false);
 //						int chromId=bbReader.getChromosomeID(query.getChr());
 //						 RPChromosomeRegion chromosomeBounds = new RPChromosomeRegion(chromId, query.getStart(), chromId, query.getEnd());
@@ -373,9 +377,13 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 				      // get zoom level data
 			        int zoomLevels = bbReader.getZoomLevelCount();
 			        int queryid=-1;
+			        HashSet<String> chromNames=new HashSet<String>(bbReader.getChromosomeNames()) ;
 					for(BEDFeature query:query_regions)
 					{
 						queryid+=1;
+						//filter the chrM,..,random
+						if(!chromNames.contains(query.getChr()))
+							continue;
 						BigWigIterator iter = bbReader.getBigWigIterator(query.getChr(), query.getStart(), query.getChr(), query.getEnd(), false);
 
 						int numbin=(int) Math.ceil((query.getEnd()-query.getStart())/(double)StepSize);
@@ -438,6 +446,9 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 		for(BEDFeature query:query_regions)
 		{
 			queryid+=1;
+			//filter the chrM,..,random
+			if(!intervalTree.getSequenceNames().contains(query.getChr()))
+				continue;
 			int numbin=(int) Math.ceil((query.getEnd()-query.getStart())/(double)StepSize);
 			 int stepWidth=(query.getEnd()-query.getStart())/numbin;
 			    int binId=0;
