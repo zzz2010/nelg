@@ -327,6 +327,9 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 		for(BEDFeature query:query_regions)
 		{
 			queryid+=1;
+			//filter the chrM,..,random
+			if(!intervalTree.getSequenceNames().contains(query.getChr()))
+				continue;
 			 int stepWidth=(query.getEnd()-query.getStart())/numbin;
 			    int binId=0;
 			    if(stepWidth<1)
