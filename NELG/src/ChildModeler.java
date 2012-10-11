@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import libsvm.svm;
+
 
 import org.apache.log4j.Logger;
 
@@ -35,7 +35,7 @@ import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
-import wlsvm.WLSVM;
+
 
 
 

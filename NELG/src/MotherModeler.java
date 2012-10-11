@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -6,8 +7,10 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
+import org.apache.log4j.SimpleLayout;
 import org.broad.tribble.bed.BEDFeature;
 
 import cern.colt.matrix.DoubleFactory1D;
@@ -30,8 +33,16 @@ public class MotherModeler {
 		super();
 		SignalPool = signalPool;
 		  logger.setLevel(Level.DEBUG);
-		  ConsoleAppender appender =new ConsoleAppender(new PatternLayout());
-		  logger.addAppender(appender); 
+//		  ConsoleAppender appender =new ConsoleAppender(new PatternLayout());
+		  FileAppender appender;
+		try {
+			appender = new FileAppender(new SimpleLayout(), "log.txt");
+			 logger.addAppender(appender); 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
 	}
 	
 	public void Run()
@@ -43,7 +54,7 @@ public class MotherModeler {
 		
 		//take out one as class label, the rest as feature data
 		for (TrackRecord target_signal : SignalPool) {
-			
+
 			//get filtered target signal
 		  	List<BEDFeature>target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),4000);
 		  	List<BEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());

@@ -51,7 +51,7 @@ public class FileStorageAdapter implements StorageAdapter {
 		CellLine2TrackId=new HashMap<String, List<String>>();
 		//load the description file
 		try {
-			BufferedReader readbuffer = new BufferedReader(new FileReader(dataDir+"/tracklist.txt"));
+			BufferedReader readbuffer = new BufferedReader(new FileReader(dataDir+"/alltracklist.txt"));
 			String strRead=readbuffer.readLine();//skip first line
 			while ((strRead=readbuffer.readLine())!=null){
 				TrackRecord temp=parseLine(strRead);
@@ -89,10 +89,10 @@ public class FileStorageAdapter implements StorageAdapter {
 		temp.ExperimentId=splitarray[3];
 		temp.ExperimentType=splitarray[4];
 		temp.Producer=splitarray[5];
-		if(splitarray[6].contains("signal"))
-			temp.hasSignal=true;
-		if(splitarray[6].contains("peak"))
-			temp.hasPeak=true;
+		
+			temp.hasSignal=false;
+		
+			temp.hasPeak=false;
 		
 		File fake_file=new File(dataDir+"/"+temp.FilePrefix);
 		File dir = new File(fake_file.getParent());
@@ -108,10 +108,12 @@ public class FileStorageAdapter implements StorageAdapter {
 				if(Suffix.contains("Peak"))
 				{
 					temp.peakSuffix=Suffix;
+					temp.hasPeak=true;
 				}
 				else
 				{
 					temp.ReplicateSuffix.add(Suffix);
+					temp.hasSignal=true;
 				}
 			}
 		}
@@ -217,7 +219,8 @@ public class FileStorageAdapter implements StorageAdapter {
 			            if(nextRecord.getMaxVal()>0)
 			            {
 			            SimpleBEDFeature temp=new SimpleBEDFeature(nextRecord.getChromStart(), nextRecord.getChromEnd(), nextRecord.getChromName());
-			           ContigRegions.add(temp);
+			           temp.setScore(nextRecord.getMeanVal());
+			            ContigRegions.add(temp);
 			            ++recordReadCount;
 			            }
 			        }

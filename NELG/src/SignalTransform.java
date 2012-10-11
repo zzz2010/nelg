@@ -46,10 +46,33 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 		List<BEDFeature> SignalRegions=target_signal.getSignalContigRegion();
 		List<BEDFeature> SignalRegions2=new ArrayList<BEDFeature>();
 		//filter short region <400
+		double sumscore=0;
+		double sumscoreSQ=0;
 		for(BEDFeature region:SignalRegions)
 		{
 			if(region.getEnd()-region.getStart()>400)
+			{
 				SignalRegions2.add(region);
+				sumscore+=region.getScore();
+				sumscoreSQ+=region.getScore()*region.getScore();
+			}
+			//need to consider case they have peak property
+			else
+			{
+				//if score significantly higher than previous one
+				double mscore=sumscore/SignalRegions2.size();
+				double stdscore=Math.sqrt(sumscoreSQ/SignalRegions2.size()-mscore*mscore)+1;
+				double zscore=(region.getScore()-mscore)/stdscore;
+				if(zscore>1)
+				{
+					SimpleBEDFeature region2=new SimpleBEDFeature(region.getStart()-200, region.getEnd()+200, region.getChr());
+					region2.setScore(region.getScore());
+					region2.setStrand(region.getStrand());
+					SignalRegions2.add(region2);
+					sumscore+=region.getScore();
+					sumscoreSQ+=region.getScore()*region.getScore();
+				}
+			}
 		}
 		List<SparseDoubleMatrix1D> SignalOverRegions = target_signal.overlapBinSignal_fixStepSize(SignalRegions2, 400);
 		//peak calling
@@ -163,6 +186,7 @@ public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,Lis
 				if(endpos-el1.getStart()>100)
 				{
 				SimpleBEDFeature temp=new SimpleBEDFeature(el1.getStart(), endpos, el1.getChr());
+				temp.setScore(Math.max(el1.getScore(), el2.getScore()));
 				intersectList.add(temp);
 				}
 			}
@@ -176,6 +200,7 @@ public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,Lis
 				if(endpos-el1.getStart()>100)
 				{
 				SimpleBEDFeature temp=new SimpleBEDFeature(el2.getStart(), endpos, el1.getChr());
+				temp.setScore(Math.max(el1.getScore(), el2.getScore()));
 				intersectList.add(temp);
 				}
 			}
@@ -185,6 +210,7 @@ public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,Lis
 		case 2:
 		{
 			SimpleBEDFeature temp=new SimpleBEDFeature(el1.getStart(), el2.getEnd(), el1.getChr());
+			temp.setScore(Math.max(el1.getScore(), el2.getScore()));
 			intersectList.add(temp);
 		}
 			el2=it2.next();
@@ -192,6 +218,7 @@ public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,Lis
 		case -2:
 		{			
 			SimpleBEDFeature temp=new SimpleBEDFeature(el1.getStart(), el1.getEnd(), el1.getChr());
+			temp.setScore(Math.max(el1.getScore(), el2.getScore()));
 			intersectList.add(temp);
 		}
 			el1=it1.next();
@@ -205,7 +232,7 @@ public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,Lis
 			break;
 		
 		default://complete equal 
-			intersectList.add(new SimpleBEDFeature(el1.getStart(), el1.getEnd(), el1.getChr()));
+			intersectList.add(el1);
 			el2=it2.next();
 			el1=it1.next();
 			break;
