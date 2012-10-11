@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
 import org.junit.Test;
 
 import weka.core.Instances;
@@ -17,7 +20,12 @@ ChildModeler modeler;
 	public TestChildModeler() {
 	super();
 	   FileInputStream fileIn;
+
 	   modeler=new ChildModeler();
+	   ChildModeler. logger.setLevel(Level.DEBUG);
+		  ConsoleAppender appender =new ConsoleAppender(new PatternLayout());
+		  ChildModeler.logger.addAppender(appender); 
+	   
 	try {
 		fileIn = new FileInputStream("HistoneH3k9ac_ValThere.ser");
 		 ObjectInputStream in = new ObjectInputStream(fileIn);
