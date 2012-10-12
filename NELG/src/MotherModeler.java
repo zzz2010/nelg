@@ -28,7 +28,7 @@ public class MotherModeler {
     
     
 	List<TrackRecord> SignalPool;
-	int threadNum=10;
+	int threadNum=4;
 	public MotherModeler(List<TrackRecord> signalPool) {
 		super();
 		SignalPool = signalPool;
