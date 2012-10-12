@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.cli.Options;
+import org.apache.log4j.PropertyConfigurator;
 import org.broad.tribble.bed.BEDFeature;
 
 //automatically do what human do, and never end
@@ -19,6 +20,7 @@ public class NELGMain {
 		ArrayList<String> Assembly=new ArrayList<String>(); 
 		Assembly.add("hg19");
 		StorageAdapter StorageDB =new FileStorageAdapter("./data");
+		PropertyConfigurator.configure( " ./log4j.properties" ); 
 		//phase1 
 		for (int i = 0; i < Assembly.size(); i++) {
 			
