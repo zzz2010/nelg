@@ -20,7 +20,7 @@ public class NELGMain {
 		ArrayList<String> Assembly=new ArrayList<String>(); 
 		Assembly.add("hg19");
 		StorageAdapter StorageDB =new FileStorageAdapter("./data");
-		PropertyConfigurator.configure( " ./log4j.properties" ); 
+		PropertyConfigurator.configure( "./log4j.properties" ); 
 		//phase1 
 		for (int i = 0; i < Assembly.size(); i++) {
 			
