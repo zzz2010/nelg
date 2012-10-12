@@ -19,6 +19,7 @@ public class NELGMain {
 	 */
 	 public static int max_threadNum=4;
 	public static void main(String[] args) {
+		PropertyConfigurator.configure( "./log4j.properties" ); 
 		// TODO Auto-generated method stub
 		Options options = new Options();
 		options.addOption("threadnum", true, "maximum thread number");
@@ -47,7 +48,7 @@ public class NELGMain {
 		ArrayList<String> Assembly=new ArrayList<String>(); 
 		Assembly.add("hg19");
 		StorageAdapter StorageDB =new FileStorageAdapter(dataDir);
-		PropertyConfigurator.configure( "./log4j.properties" ); 
+		
 		//phase1 
 		for (int i = 0; i < Assembly.size(); i++) {
 			
