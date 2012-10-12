@@ -29,6 +29,7 @@ public class FeatureSelectionJob implements Serializable, Runnable {
 	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(FeatureSelectionJob.class);
 	TrackRecord target_signal;
 	List<TrackRecord> SignalPool;
+	List<BEDFeature>target_signal_filtered;
 	PooledExecutor executor ;
 	ArrayList<FeatureSignal> IsThereFeatures;
 	ArrayList<FeatureSignal> ValThereFeatures;
@@ -46,54 +47,40 @@ public class FeatureSelectionJob implements Serializable, Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		if(SignalPool==null)
+		FileInputStream fileIn;
+		 ObjectInputStream in ;
+		if(target_signal_filtered!=null)//
 		{
-			FileInputStream fileIn;
-			 ObjectInputStream in ;
-			try {
-				ClassificationJob IsThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_IsThere");
-				if(IsThereJob2==null)
-				{
-				fileIn = new FileInputStream(target_signal.FilePrefix+"_IsThere.cj");
-				  in = new ObjectInputStream(fileIn);	 
-				 ClassificationJob IsThereJob=(ClassificationJob)in.readObject();
+			if(target_signal_filtered.size()<50)
+				return;
+			List<BEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
+		  	DoubleMatrix1D targetValue=SignalTransform.BedFeatureToValues(target_signal_filtered);
+		  	targetValue=DoubleFactory1D.sparse.append(targetValue, SignalTransform.BedFeatureToValues(target_signal_bg));
+		  
+		  	DoubleMatrix1D targetNormValue=SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_signal_filtered));
+		  	
+		  	int TopN=20;
+			if(IsThereFeatures.size()>0)
+			{
+				Collections.sort(IsThereFeatures);
+				ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
+				//executor.execute(IsThereJob);
 				IsThereJob.run();
-				}
-				else
-				{
-					logger.info("skip cr:"+target_signal.FilePrefix+"_IsThere");
-				}
-				
-				
-				ClassificationJob ValThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_ValThere");
-				if(ValThereJob2==null)
-				{
-				fileIn = new FileInputStream(target_signal.FilePrefix+"_ValThere.cj");
-				  in = new ObjectInputStream(fileIn);
-				ClassificationJob ValThereJob=(ClassificationJob)in.readObject();
-				 ValThereJob.run();
-				}
-				else
-				{
-					logger.info("skip cr:"+target_signal.FilePrefix+"_ValThere");
-				}
-				 
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			}
+			if(ValThereFeatures.size()>0)
+			{
+				Collections.sort(ValThereFeatures);
+				ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.FilePrefix+"_ValThere", targetNormValue) ;
+				ValThereJob.Regression=true;		
+				//executor.execute(ValThereJob);
+				ValThereJob.run();
 			}
 
 		}
 		else	
 		{
 		//get filtered target signal
-	  	List<BEDFeature>target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),4000);
+	  	target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),4000);
 	  	if(target_signal_filtered.size()<50)
 	  	{
 	  		toFile();
@@ -174,7 +161,7 @@ public class FeatureSelectionJob implements Serializable, Runnable {
 		 try {
 			 if(IsThereFeatures.size()>0)
 			 {
-				    ClassificationJob IsThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_IsThere");
+				 ClassificationResult IsThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_IsThere");
 					if(IsThereJob2==null)
 					{
 						Collections.sort(IsThereFeatures);
@@ -190,7 +177,7 @@ public class FeatureSelectionJob implements Serializable, Runnable {
 			 if(ValThereFeatures.size()>0)
 			 {				 
 
-					ClassificationJob ValThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_ValThere");
+					ClassificationResult ValThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_ValThere");
 					if(ValThereJob2==null)
 					{
 						Collections.sort(ValThereFeatures);

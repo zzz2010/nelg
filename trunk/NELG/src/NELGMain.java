@@ -36,6 +36,7 @@ public class NELGMain {
 			if(cmd.hasOption("ram"))
 			{
 				dataDir="./data"+"_ram";
+				logger.info("using RAM data");
 			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
