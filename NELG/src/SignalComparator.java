@@ -86,8 +86,11 @@ public class SignalComparator {
 			return 0;
 		if(target_class.zSum()==0)
 			return 0;
+		
 		SpearmansCorrelation corr=new SpearmansCorrelation();
 		double spearman=corr.correlation(feature_signal.toArray(), target_class.toArray());
+		if(Double.isInfinite(spearman)||Double.isNaN(spearman))
+			return 0;
 		return (float) Math.abs(spearman);
 	}
 	
