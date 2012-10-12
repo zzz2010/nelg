@@ -106,17 +106,19 @@ public class FeatureSelectionJob implements Serializable, Runnable {
 			 if(IsThereFeatures.size()>0)
 			 {
 			 Collections.sort(IsThereFeatures);
-			 ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.ExperimentId+"_IsThere", targetValue) ;
-			executor.execute(IsThereJob);
+			 ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
+			//executor.execute(IsThereJob);
+			 IsThereJob.run();
 			 }
 			 if(ValThereFeatures.size()>0)
 			 {				 
 			 Collections.sort(ValThereFeatures);
-			 ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.ExperimentId+"_ValThere", targetNormValue) ;
+			 ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.FilePrefix+"_ValThere", targetNormValue) ;
 			 ValThereJob.Regression=true;		
-			 executor.execute(ValThereJob);
+			 //executor.execute(ValThereJob);
+			 ValThereJob.run();
 			 }
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

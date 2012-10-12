@@ -56,6 +56,8 @@ public class MotherModeler {
 		//take out one as class label, the rest as feature data
 		for (TrackRecord target_signal : SignalPool) {
 
+			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
+				continue;
 			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,executor);
 			 try {
 				executor.execute(FSJob);
