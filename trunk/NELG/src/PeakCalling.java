@@ -58,16 +58,16 @@ public class PeakCalling {
 				minimumPos = indices.get(pos);
 			}
 
-			if (lookForMax) {
+			if (lookForMax) {//start to drop
 				if (value < maximum*(1- delta)) {
-					maxima.put(maximumPos, (float) value);
+					maxima.put(maximumPos, (float) maximum);
 					minimum = (float) value;
 					minimumPos = indices.get(pos);
 					lookForMax = false;
 				}
 			} else {
 				if (value > minimum*(1+delta)) {
-					minima.put(minimumPos, (float) value);
+					minima.put(minimumPos, (float) minimum);
 					maximum = (float) value;
 					maximumPos = indices.get(pos);
 					lookForMax = true;
@@ -105,7 +105,7 @@ public class PeakCalling {
 			for (int j=0; j<values.get(i).size(); j++) {
 				indices.add(j);
 			}
-			List<Map<Integer, Float>> tempPeakList=peak_detection(values.get(i), 0.1, indices);
+			List<Map<Integer, Float>> tempPeakList=peak_detection(values.get(i), 0.2, indices);
 			Map<Integer, Float> maxPoints = tempPeakList.get(0);
 			Iterator<Entry<Integer, Float>> iter = maxPoints.entrySet().iterator();
 			double std=sd(values.get(i))+1;

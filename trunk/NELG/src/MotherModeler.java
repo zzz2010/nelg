@@ -55,6 +55,8 @@ public class MotherModeler {
 		//take out one as class label, the rest as feature data
 		for (TrackRecord target_signal : SignalPool) {
 
+			if(!target_signal.FilePrefix.contains("RikenCage"))
+				continue;
 			//get filtered target signal
 		  	List<BEDFeature>target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),4000);
 		  	List<BEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
@@ -65,7 +67,7 @@ public class MotherModeler {
 		  	
 			ArrayList<FeatureSignal> IsThereFeatures=new ArrayList<FeatureSignal>(SignalPool.size()-1);
 			ArrayList<FeatureSignal> ValThereFeatures=new ArrayList<FeatureSignal>(SignalPool.size()-1);
-		 
+		 logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 			for (TrackRecord feature_signal : SignalPool) {
 				
 			        if (feature_signal.ExperimentId!=(target_signal.ExperimentId))
