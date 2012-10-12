@@ -32,17 +32,17 @@ public class MotherModeler {
 	public MotherModeler(List<TrackRecord> signalPool) {
 		super();
 		SignalPool = signalPool;
-		  logger.setLevel(Level.DEBUG);
-		  
-//		  ConsoleAppender appender =new ConsoleAppender(new PatternLayout());
-		  FileAppender appender;
-		try {
-			appender = new FileAppender(new SimpleLayout(), "log.txt");
-			 logger.addAppender(appender); 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		  logger.setLevel(Level.DEBUG);
+//		  
+////		  ConsoleAppender appender =new ConsoleAppender(new PatternLayout());
+//		  FileAppender appender;
+//		try {
+//			appender = new FileAppender(new SimpleLayout(), "log.txt");
+//			 logger.addAppender(appender); 
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		 
 	}
 	
