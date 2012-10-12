@@ -24,7 +24,7 @@ import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
 //this class mainly do initial feature selection and job assignment
 public class MotherModeler {
 	   // setup the logging system, used by some codecs
-    private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
+    private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(MotherModeler.class);
     
     
 	List<TrackRecord> SignalPool;
@@ -33,6 +33,7 @@ public class MotherModeler {
 		super();
 		SignalPool = signalPool;
 		  logger.setLevel(Level.DEBUG);
+		  
 //		  ConsoleAppender appender =new ConsoleAppender(new PatternLayout());
 		  FileAppender appender;
 		try {
