@@ -34,7 +34,7 @@ public class SignalComparator {
 		//disable the AUC program output
 		PrintStream original = new PrintStream(System.out);
 		try {
-			System.setOut(new PrintStream(new FileOutputStream("NUL:")));
+			System.setOut(new PrintStream(new FileOutputStream("/dev/null")));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
