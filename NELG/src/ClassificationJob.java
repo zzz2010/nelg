@@ -72,7 +72,7 @@ public class ClassificationJob implements Runnable  , Serializable {
 	 {
 	        try {
 	        	 FileOutputStream fileOut =
-	    		         new FileOutputStream(JobTitle+".ser");
+	    		         new FileOutputStream(JobTitle+".cj");
 	    		         ObjectOutputStream out =
 	    		                            new ObjectOutputStream(fileOut);
 				out.writeObject(this);
