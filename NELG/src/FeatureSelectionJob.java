@@ -1,6 +1,13 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.broad.tribble.bed.BEDFeature;
@@ -25,6 +32,8 @@ public class FeatureSelectionJob implements Serializable, Runnable {
 	PooledExecutor executor ;
 	ArrayList<FeatureSignal> IsThereFeatures;
 	ArrayList<FeatureSignal> ValThereFeatures;
+	HashMap<String, Float> FeatureAUC;
+	HashMap<String, Float> FeatureCorr;
 	
 	public FeatureSelectionJob(TrackRecord target_signal,
 			List<TrackRecord> signalPool,PooledExecutor Executor ) {
@@ -37,17 +46,72 @@ public class FeatureSelectionJob implements Serializable, Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		if(SignalPool==null)
+		{
+			FileInputStream fileIn;
+			 ObjectInputStream in ;
+			try {
+				ClassificationJob IsThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_IsThere");
+				if(IsThereJob2==null)
+				{
+				fileIn = new FileInputStream(target_signal.FilePrefix+"_IsThere.cj");
+				  in = new ObjectInputStream(fileIn);	 
+				 ClassificationJob IsThereJob=(ClassificationJob)in.readObject();
+				IsThereJob.run();
+				}
+				else
+				{
+					logger.info("skip cr:"+target_signal.FilePrefix+"_IsThere");
+				}
+				
+				
+				ClassificationJob ValThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_ValThere");
+				if(ValThereJob2==null)
+				{
+				fileIn = new FileInputStream(target_signal.FilePrefix+"_ValThere.cj");
+				  in = new ObjectInputStream(fileIn);
+				ClassificationJob ValThereJob=(ClassificationJob)in.readObject();
+				 ValThereJob.run();
+				}
+				else
+				{
+					logger.info("skip cr:"+target_signal.FilePrefix+"_ValThere");
+				}
+				 
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		else	
+		{
 		//get filtered target signal
 	  	List<BEDFeature>target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),4000);
+	  	if(target_signal_filtered.size()<50)
+	  	{
+	  		toFile();
+	  		return;
+	  	}
 	  	List<BEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
 	  	DoubleMatrix1D targetValue=SignalTransform.BedFeatureToValues(target_signal_filtered);
 	  	targetValue=DoubleFactory1D.sparse.append(targetValue, SignalTransform.BedFeatureToValues(target_signal_bg));
 	  
 	  	DoubleMatrix1D targetNormValue=SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_signal_filtered));
 	  	
-		ArrayList<FeatureSignal> IsThereFeatures=new ArrayList<FeatureSignal>(SignalPool.size()-1);
-		ArrayList<FeatureSignal> ValThereFeatures=new ArrayList<FeatureSignal>(SignalPool.size()-1);
-	 logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
+		IsThereFeatures=new ArrayList<FeatureSignal>(SignalPool.size()-1);
+		ValThereFeatures=new ArrayList<FeatureSignal>(SignalPool.size()-1);
+		FeatureAUC=new HashMap<String, Float>(SignalPool.size()-1);
+		FeatureCorr=new HashMap<String, Float>(SignalPool.size()-1);
+		
+		
+		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 		for (TrackRecord feature_signal : SignalPool) {
 			
 		        if (feature_signal.ExperimentId!=(target_signal.ExperimentId))
@@ -70,7 +134,8 @@ public class FeatureSelectionJob implements Serializable, Runnable {
 		        	//bestBin idea, consider strand
 		        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(bestBin), feature_BinSignal_bg.viewColumn(bestBin)) ;
 		        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
-		      	if(maxScore>0.6)
+		        FeatureAUC.put(feature_signal.FilePrefix, maxScore);
+		        if(maxScore>0.6)
 		      	{
 		      		IsThereFeatures.add(isF);
 		      	}
@@ -91,7 +156,8 @@ public class FeatureSelectionJob implements Serializable, Runnable {
 		        	featureBestBinValue=(SparseDoubleMatrix1D) feature_BinSignal.viewColumn(bestBin);
 
 		        	 FeatureSignal valF= 	new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
-			        	if(maxScore>0.2)
+			        FeatureCorr.put(feature_signal.FilePrefix, maxScore);	
+		        	 if(maxScore>0.2)
 			        	{
 			        		ValThereFeatures.add(valF);
 			        	}
@@ -99,29 +165,64 @@ public class FeatureSelectionJob implements Serializable, Runnable {
 		       
 		        }
 		    }
+		
+		//save to file
+		toFile();
 		 //wrap up to classification job , and put it into queue
 		int TopN=20; //selected best TopN features
    //put job to the execution queue
 		 try {
 			 if(IsThereFeatures.size()>0)
 			 {
-			 Collections.sort(IsThereFeatures);
-			 ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
-			//executor.execute(IsThereJob);
-			 IsThereJob.run();
+				    ClassificationJob IsThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_IsThere");
+					if(IsThereJob2==null)
+					{
+						Collections.sort(IsThereFeatures);
+						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
+						//executor.execute(IsThereJob);
+						IsThereJob.run();
+					}
+					else
+					{
+						logger.info("skip cr:"+target_signal.FilePrefix+"_IsThere");
+					}
 			 }
 			 if(ValThereFeatures.size()>0)
 			 {				 
-			 Collections.sort(ValThereFeatures);
-			 ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.FilePrefix+"_ValThere", targetNormValue) ;
-			 ValThereJob.Regression=true;		
-			 //executor.execute(ValThereJob);
-			 ValThereJob.run();
+
+					ClassificationJob ValThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_ValThere");
+					if(ValThereJob2==null)
+					{
+						Collections.sort(ValThereFeatures);
+						ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.FilePrefix+"_ValThere", targetNormValue) ;
+						ValThereJob.Regression=true;		
+						//executor.execute(ValThereJob);
+						ValThereJob.run();
+					}
+					else
+					{
+						logger.info("skip cr:"+target_signal.FilePrefix+"_ValThere");
+					}
 			 }
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	}
-
+	}
+	 public void toFile()
+	 {
+		 try {
+        	 FileOutputStream fileOut =
+    		         new FileOutputStream(target_signal.FilePrefix+".fsj");
+    		         ObjectOutputStream out =
+    		                            new ObjectOutputStream(fileOut);
+			out.writeObject(this);
+	         out.close();
+	          fileOut.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	 }
 }

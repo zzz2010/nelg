@@ -26,7 +26,7 @@ public class MotherModeler {
 	   // setup the logging system, used by some codecs
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(MotherModeler.class);
     
-    
+    PooledExecutor executor;
 	List<TrackRecord> SignalPool;
 	int threadNum=4;
 	public MotherModeler(List<TrackRecord> signalPool) {
@@ -48,19 +48,27 @@ public class MotherModeler {
 	
 	public void Run()
 	{	
-		PooledExecutor executor = new PooledExecutor(new LinkedQueue());
+		executor = new PooledExecutor(new LinkedQueue());
 		executor.setMinimumPoolSize(threadNum);
 		executor.setKeepAliveTime(1000 * 60*50 );
-		
-		
+			
 		//take out one as class label, the rest as feature data
 		for (TrackRecord target_signal : SignalPool) {
 
 			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
 				continue;
 			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,executor);
-			 try {
+			FeatureSelectionJob FSJob2=StateRecovery.CheckFeatureSelectionJob(target_signal);
+			try {
+				if(FSJob2==null)
+				{
 				executor.execute(FSJob);
+				}
+				else
+				{
+					logger.info("loading cj: "+target_signal.FilePrefix);
+					executor.execute(FSJob2);
+				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -76,5 +84,6 @@ public class MotherModeler {
 			e.printStackTrace();
 		}
 	}
+	
 
 }

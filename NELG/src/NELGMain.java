@@ -22,8 +22,10 @@ public class NELGMain {
 		// TODO Auto-generated method stub
 		Options options = new Options();
 		options.addOption("threadnum", true, "maximum thread number");
+		options.addOption("ram", false, "use ramdisk data folder");
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd;
+		String dataDir="./data";
 		//parsing paramters
 		try {
 			cmd = parser.parse( options, args);
@@ -31,21 +33,19 @@ public class NELGMain {
 			{
 				max_threadNum=Integer.parseInt(cmd.getOptionValue("threadnum"));
 			}
+			if(cmd.hasOption("ram"))
+			{
+				dataDir="./data"+"_ram";
+			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		
-		
-		
-		
-		
 		
 		
 		ArrayList<String> Assembly=new ArrayList<String>(); 
 		Assembly.add("hg19");
-		StorageAdapter StorageDB =new FileStorageAdapter("./data");
+		StorageAdapter StorageDB =new FileStorageAdapter(dataDir);
 		PropertyConfigurator.configure( "./log4j.properties" ); 
 		//phase1 
 		for (int i = 0; i < Assembly.size(); i++) {
@@ -62,12 +62,7 @@ public class NELGMain {
 			MainModelMachine.threadNum=max_threadNum;
 			MainModelMachine.Run();
 			
-		}
-		
-		
-		
-		
-		
+		}	
 			
 			
 		}
