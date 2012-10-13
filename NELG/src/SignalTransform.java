@@ -164,7 +164,7 @@ public static List<BEDFeature> fixRegionSize(List<BEDFeature> list1, int regions
 public static List<BEDFeature> sortUnique(List<BEDFeature> list1)
 {
 	List<BEDFeature> sortlist=new ArrayList<BEDFeature>(list1.size());
-	BEDScoreComparator comparator = new BEDScoreComparator();
+	BEDPositionComparator comparator = new BEDPositionComparator();
 	Collections.sort(list1, comparator);
 	
 	BEDFeature p1=list1.get(0);
@@ -183,6 +183,7 @@ public static List<BEDFeature> sortUnique(List<BEDFeature> list1)
 		}
 		
 	}
+	Collections.sort(sortlist,new BEDScoreComparator());
 	return sortlist;
 }
 
