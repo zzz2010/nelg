@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
 import org.broad.tribble.bed.BEDFeature;
 import org.broad.tribble.bed.SimpleBEDFeature;
 
@@ -13,7 +14,7 @@ import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 
 public class SignalTransform {
-
+	static Logger logger = Logger.getLogger(SignalTransform.class);
 public	static ArrayList<BEDFeature> normalizeSignal(List<BEDFeature> inputSignal)
 {
 	//do simple log2 normalized
@@ -48,8 +49,10 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 		//filter short region <400
 		double sumscore=0;
 		double sumscoreSQ=0;
+	
 		for(BEDFeature region:SignalRegions)
 		{
+			logger.info(region.getEnd()-region.getStart());
 			if(region.getEnd()-region.getStart()>400)
 			{
 				SignalRegions2.add(region);
