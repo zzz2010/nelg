@@ -7,6 +7,8 @@ import org.broad.tribble.bed.BEDFeature;
 import org.junit.Before;
 import org.junit.Test;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+
 
 public class TestPeakCalling {
 	FileStorageAdapter db;
@@ -21,8 +23,17 @@ public class TestPeakCalling {
 		TrackRecord temp=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
 		List<BEDFeature> peaks = temp.getPeakData();
 		List<BEDFeature> queryregions=SignalTransform.fixRegionSize(peaks, 10000);
-		temp.hasPeak=false;
-		List<BEDFeature> peaks2 =SignalTransform.extractPositveSignal(temp);
+//		
+//		temp.hasPeak=false;
+//		List<BEDFeature> peaks2 =SignalTransform.extractPositveSignal(temp);
+		
+		
+		List<SparseDoubleMatrix1D> SignalOverRegions = temp.overlapBinSignal_fixStepSize(queryregions, 400);
+		//peak calling
+		List<BEDFeature> peaks2=PeakCalling.simple_peak_detection(SignalOverRegions, queryregions);
+		
+		
+		
 		logger.info("peaks2 number£º"+peaks2.size());
 		Collections.sort(peaks,new BEDPositionComparator());
 		Collections.sort(peaks2,new BEDPositionComparator());
