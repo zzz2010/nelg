@@ -132,6 +132,45 @@ public class PeakCalling {
 	}
 	
 	
+	
+	public static List<BEDFeature> simple_peak_detection(List<SparseDoubleMatrix1D> values,List<SparseDoubleMatrix1D> control,List<BEDFeature> regions)
+	{
+		List<BEDFeature> PeakList=new ArrayList<BEDFeature>();
+		
+		for (int i = 0; i < regions.size(); i++) {
+			List<Integer> indices = new ArrayList<Integer>();
+			SparseDoubleMatrix1D controlVal = control.get(i);
+			double sumcontrl=controlVal.zSum();
+			for (int j=0; j<values.get(i).size(); j++) {
+				indices.add(j);
+				controlVal.setQuick(j,values.get(i).getQuick(j)*sumcontrl/controlVal.getQuick(j));
+			}
+			List<Map<Integer, Float>> tempPeakList=peak_detection(controlVal, 0.8, indices);
+			Map<Integer, Float> maxPoints = tempPeakList.get(0);
+			Iterator<Entry<Integer, Float>> iter = maxPoints.entrySet().iterator();
+			double std=sd(values.get(i))+1;
+			double m=mean(values.get(i));
+			while(iter.hasNext())
+			{
+				Entry<Integer, Float> tempP = iter.next();
+				float zscore=(float) ((tempP.getValue()-m)/std);
+				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
+				if(zscore>3)//arbitary cut-off
+				{
+					int pos=(int) (regions.get(i).getStart()+tempP.getKey()*stepsize+0.5*stepsize);
+					SimpleBEDFeature peak=new SimpleBEDFeature(pos, pos+1, regions.get(i).getChr());
+					peak.setScore(zscore);
+					peak.setDescription("binId:"+tempP.getKey()+"\traw:"+values.get(i).get(tempP.getKey())+"\tmean:"+m+"\tstd:"+std);
+					PeakList.add(peak);
+				}
+			}
+			
+		}
+		
+		return PeakList;
+	}
+	
+	
 	public static List<BEDFeature> random_peak_detection(List<SparseDoubleMatrix1D> values,List<BEDFeature> regions)
 	{
 		List<BEDFeature> PeakList=new ArrayList<BEDFeature>();

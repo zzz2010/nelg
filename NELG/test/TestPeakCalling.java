@@ -21,6 +21,7 @@ public class TestPeakCalling {
 	@Test
 	public void testSimple_peak_detection() {
 		TrackRecord temp=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
+		TrackRecord conrol=db.getTrackById("wgEncodeBroadHistoneK562Control");
 		List<BEDFeature> peaks = SignalTransform.extractPositveSignal(temp);
 		List<BEDFeature> queryregions=SignalTransform.fixRegionSize(peaks, 100000);
 //		
@@ -29,8 +30,9 @@ public class TestPeakCalling {
 		
 		
 		List<SparseDoubleMatrix1D> SignalOverRegions = temp.overlapBinSignal_fixStepSize(queryregions, 400);
+		List<SparseDoubleMatrix1D> SignalOverRegions_bg = conrol.overlapBinSignal_fixStepSize(queryregions, 400);
 		//peak calling
-		List<BEDFeature> peaks2=PeakCalling.simple_peak_detection(SignalOverRegions, queryregions);
+		List<BEDFeature> peaks2=PeakCalling.simple_peak_detection(SignalOverRegions,SignalOverRegions_bg, queryregions);
 		
 		Collections.sort(peaks2, new BEDScoreComparator());
 		peaks2=peaks2.subList(0, 10000);
