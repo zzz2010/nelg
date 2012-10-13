@@ -54,7 +54,7 @@ public class ClassificationJob implements Runnable  , Serializable {
 					 logger.info(result.JobTitle+" can be predicted("+result.LearnedModel.getClass().getName()+") by"+featStr);
 				 }
 			 }
-			 if(result.isRegression)
+			 else
 			 {
 				 if(result.AUC>0.8)
 				 {
