@@ -116,7 +116,7 @@ public class PeakCalling {
 				Entry<Integer, Float> tempP = iter.next();
 				float zscore=(float) ((tempP.getValue()-m)/std);
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
-				if(zscore>2)//arbitary cut-off
+				if(zscore>3)//arbitary cut-off
 				{
 					int pos=(int) (regions.get(i).getStart()+tempP.getKey()*stepsize+0.5*stepsize);
 					SimpleBEDFeature peak=new SimpleBEDFeature(pos, pos+1, regions.get(i).getChr());
