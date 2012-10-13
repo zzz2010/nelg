@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.ResourceBundle.Control;
 
 import org.broad.tribble.bed.BEDFeature;
 import org.broad.tribble.bed.FullBEDFeature;
 import org.broad.tribble.bed.SimpleBEDFeature;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+import cern.jet.random.Poisson;
 public class PeakCalling {
 	/**
 	 * Detects peaks (calculates local minima and maxima) in the 
@@ -136,31 +138,44 @@ public class PeakCalling {
 	public static List<BEDFeature> simple_peak_detection(List<SparseDoubleMatrix1D> values,List<SparseDoubleMatrix1D> control,List<BEDFeature> regions)
 	{
 		List<BEDFeature> PeakList=new ArrayList<BEDFeature>();
-		
+		double sumCtrl=1;
+		double sumVals=1;
+		for (int i = 0; i < regions.size(); i++) {
+			sumCtrl+=control.get(i).zSum();
+			sumVals+=values.get(i).zSum();
+		}
+		double ratio=sumVals/sumCtrl;
 		for (int i = 0; i < regions.size(); i++) {
 			List<Integer> indices = new ArrayList<Integer>();
 			SparseDoubleMatrix1D controlVal = control.get(i);
 			double sumcontrl=controlVal.zSum()+controlVal.size();
 			for (int j=0; j<values.get(i).size(); j++) {
 				indices.add(j);
-				controlVal.setQuick(j,values.get(i).getQuick(j)*sumcontrl/(controlVal.getQuick(j)+1));
+				controlVal.setQuick(j,controlVal.getQuick(j)*ratio);
 			}
-			List<Map<Integer, Float>> tempPeakList=peak_detection(controlVal, 0.8, indices);
+			List<Map<Integer, Float>> tempPeakList=peak_detection(values.get(i), 0.8, indices);
 			Map<Integer, Float> maxPoints = tempPeakList.get(0);
 			Iterator<Entry<Integer, Float>> iter = maxPoints.entrySet().iterator();
-			double std=sd(controlVal)+1;
-			double m=mean(controlVal);
+			
+			double lamda_bg=mean(values.get(i));
+			
+			
+			
 			while(iter.hasNext())
 			{
 				Entry<Integer, Float> tempP = iter.next();
-				float zscore=(float) ((tempP.getValue()-m)/std);
+				double lamda=lamda_bg;
+				if(lamda<controlVal.getQuick(tempP.getKey()))
+					lamda=controlVal.getQuick(tempP.getKey());
+				Poisson poisdist=new Poisson(lamda, Poisson.makeDefaultGenerator());
+				float MACSscore=(float)(-10*Math.log10(1-poisdist.cdf(tempP.getValue().intValue())));
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
-				if(zscore>3)//arbitary cut-off
+				if(MACSscore>3)//arbitary cut-off
 				{
 					int pos=(int) (regions.get(i).getStart()+tempP.getKey()*stepsize+0.5*stepsize);
 					SimpleBEDFeature peak=new SimpleBEDFeature(pos, pos+1, regions.get(i).getChr());
-					peak.setScore(zscore);
-					peak.setDescription("binId:"+tempP.getKey()+"\traw:"+values.get(i).get(tempP.getKey())+"\tmean:"+m+"\tstd:"+std);
+					peak.setScore(MACSscore);
+					peak.setDescription("binId:"+tempP.getKey()+"\traw:"+values.get(i).get(tempP.getKey())+"\tmean:"+lamda);
 					PeakList.add(peak);
 				}
 			}
