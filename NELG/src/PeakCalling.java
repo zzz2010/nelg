@@ -122,8 +122,8 @@ public class PeakCalling {
 			while(iter.hasNext())
 			{
 				Entry<Integer, Float> tempP = iter.next();
-				//float MACSscore=(float)(poisdist.cdf(tempP.getValue().intValue())+tempP.getValue()/sumVals);
-				float MACSscore=(float) ((tempP.getValue()-lamda)/std_bg);
+				float MACSscore=(float)(poisdist.cdf(tempP.getValue().intValue())+tempP.getValue()/sumVals);
+				//float MACSscore=(float) ((tempP.getValue()-lamda)/std_bg);
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
 				if(MACSscore>0.99)//arbitary cut-off
 				{
@@ -177,8 +177,8 @@ public class PeakCalling {
 				if(std>std_bg)
 					std_bg=std;
 				Poisson poisdist=new Poisson(lamda, Poisson.makeDefaultGenerator());
-				//float MACSscore=(float)(poisdist.cdf(tempP.getValue().intValue())+(tempP.getValue()-controlVal.getQuick(tempP.getKey()))/sumVals);
-				float MACSscore=(float) ((tempP.getValue()-lamda)/std_bg);
+				float MACSscore=(float)(poisdist.cdf(tempP.getValue().intValue())+(tempP.getValue()-controlVal.getQuick(tempP.getKey()))/sumVals);
+				//float MACSscore=(float) ((tempP.getValue()-lamda)/std_bg);
 				
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
 				if(MACSscore>0.99)//arbitary cut-off
