@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +8,12 @@ import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 
-public class TrackRecord {
+public class TrackRecord implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8359690396320177886L;
 	public String FilePrefix;
 	public String Cell_Line;
 	public String Assembly;
