@@ -254,7 +254,7 @@ public class ChildModeler {
 		int featureNum=job.FeatureMatrix.size();
 		FastVector attrList=new FastVector(featureNum+1);
 		for (int i = 0; i < featureNum; i++) {
-			Attribute temp=new Attribute( job.FeatureMatrix.get(i).FeatureId);
+			Attribute temp=new Attribute( job.FeatureMatrix.get(i).FeatureId+job.FeatureMatrix.get(i).binId);
 			attrList.addElement(temp);
 		}
 		Attribute label;
