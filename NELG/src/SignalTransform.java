@@ -52,7 +52,7 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 	
 		for(BEDFeature region:SignalRegions)
 		{
-			logger.info(region.getEnd()-region.getStart());
+//			logger.info(region.getEnd()-region.getStart());
 			if(region.getEnd()-region.getStart()>400)
 			{
 				SignalRegions2.add(region);

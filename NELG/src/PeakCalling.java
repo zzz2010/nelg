@@ -117,7 +117,7 @@ public class PeakCalling {
 			List<Map<Integer, Float>> tempPeakList=peak_detection(values.get(i), 0.8, indices);
 			Map<Integer, Float> maxPoints = tempPeakList.get(0);
 			Iterator<Entry<Integer, Float>> iter = maxPoints.entrySet().iterator();
-			double std_bg=sd(values.get(i));
+//			double std_bg=sd(values.get(i));
 			double lamda=mean(values.get(i));
 			
 			while(iter.hasNext())
