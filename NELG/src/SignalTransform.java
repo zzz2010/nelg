@@ -178,7 +178,7 @@ public static List<BEDFeature> sortUnique(List<BEDFeature> list1)
 			continue;
 		else
 		{
-			sortlist.add(list1.get(1));
+			sortlist.add(list1.get(i));
 			lastpos=currpos;
 		}
 		
