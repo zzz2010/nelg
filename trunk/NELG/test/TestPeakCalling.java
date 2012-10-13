@@ -40,7 +40,7 @@ public class TestPeakCalling {
 		peaks2=peaks2.subList(0, 10000);
 		
 		for (int i = 0; i < 10; i++) {
-			logger.info(peaks2.get(i).toString());
+			logger.info(peaks2.get(i).getChr()+":"+peaks2.get(i).getStart()+"-"+peaks2.get(i).getEnd());
 		}
 		
 		logger.info("peaks2 number£º"+peaks2.size());
