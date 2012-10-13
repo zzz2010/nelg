@@ -161,6 +161,30 @@ public static List<BEDFeature> fixRegionSize(List<BEDFeature> list1, int regions
 	return fixlist;
 }
 
+public static List<BEDFeature> sortUnique(List<BEDFeature> list1)
+{
+	List<BEDFeature> sortlist=new ArrayList<BEDFeature>(list1.size());
+	BEDScoreComparator comparator = new BEDScoreComparator();
+	Collections.sort(list1, comparator);
+	
+	BEDFeature p1=list1.get(0);
+	sortlist.add(p1);
+	int lastpos=(p1.getEnd()+p1.getStart())/2;
+	for (int i = 1; i < list1.size(); i++) {
+		 p1 = list1.get(i-1);
+		BEDFeature p2 = list1.get(i);
+		int currpos=(p2.getEnd()+p2.getStart())/2;
+		if(p1.getChr().contentEquals(p2.getChr())&&Math.abs(currpos-lastpos)<200)
+			continue;
+		else
+		{
+			sortlist.add(list1.get(1));
+			lastpos=currpos;
+		}
+		
+	}
+	return sortlist;
+}
 
 public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,List<BEDFeature> list2)
 {

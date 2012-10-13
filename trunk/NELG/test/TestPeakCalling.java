@@ -34,7 +34,7 @@ public class TestPeakCalling {
 		//peak calling
 		List<BEDFeature> peaks2=PeakCalling.simple_peak_detection(SignalOverRegions,SignalOverRegions_bg, queryregions);
 //		List<BEDFeature> peaks2=PeakCalling.simple_peak_detection(SignalOverRegions, queryregions);
-		Collections.sort(peaks2, new BEDScoreComparator());
+		peaks2=SignalTransform.sortUnique(peaks2);
 		peaks2=peaks2.subList(0, 10000);
 		
 		logger.info("peaks2 number£º"+peaks2.size());
