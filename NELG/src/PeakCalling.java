@@ -106,7 +106,7 @@ public class PeakCalling {
 			for (int j=0; j<values.get(i).size(); j++) {
 				indices.add(j);
 			}
-			List<Map<Integer, Float>> tempPeakList=peak_detection(values.get(i), 0.2, indices);
+			List<Map<Integer, Float>> tempPeakList=peak_detection(values.get(i), 0.8, indices);
 			Map<Integer, Float> maxPoints = tempPeakList.get(0);
 			Iterator<Entry<Integer, Float>> iter = maxPoints.entrySet().iterator();
 			double std=sd(values.get(i))+1;
