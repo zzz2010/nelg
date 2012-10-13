@@ -140,10 +140,10 @@ public class PeakCalling {
 		for (int i = 0; i < regions.size(); i++) {
 			List<Integer> indices = new ArrayList<Integer>();
 			SparseDoubleMatrix1D controlVal = control.get(i);
-			double sumcontrl=controlVal.zSum();
+			double sumcontrl=controlVal.zSum()+controlVal.size();
 			for (int j=0; j<values.get(i).size(); j++) {
 				indices.add(j);
-				controlVal.setQuick(j,values.get(i).getQuick(j)*sumcontrl/controlVal.getQuick(j));
+				controlVal.setQuick(j,values.get(i).getQuick(j)*sumcontrl/(controlVal.getQuick(j)+1));
 			}
 			List<Map<Integer, Float>> tempPeakList=peak_detection(controlVal, 0.8, indices);
 			Map<Integer, Float> maxPoints = tempPeakList.get(0);
