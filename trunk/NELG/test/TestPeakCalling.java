@@ -30,7 +30,7 @@ public class TestPeakCalling {
 		
 		List<SparseDoubleMatrix1D> SignalOverRegions = temp.overlapBinSignal_fixStepSize(queryregions, 400);
 		//peak calling
-		List<BEDFeature> peaks2=PeakCalling.simple_peak_detection(SignalOverRegions, queryregions);
+		List<BEDFeature> peaks2=PeakCalling.random_peak_detection(SignalOverRegions, queryregions);
 		
 		
 		

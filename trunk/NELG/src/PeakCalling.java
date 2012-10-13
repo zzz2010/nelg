@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.broad.tribble.bed.BEDFeature;
 import org.broad.tribble.bed.FullBEDFeature;
@@ -129,6 +130,26 @@ public class PeakCalling {
 		
 		return PeakList;
 	}
+	
+	
+	public static List<BEDFeature> random_peak_detection(List<SparseDoubleMatrix1D> values,List<BEDFeature> regions)
+	{
+		List<BEDFeature> PeakList=new ArrayList<BEDFeature>();
+		Random rand=new Random(); 
+		for (int i = 0; i < regions.size(); i++) {
+
+			float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
+			int tempP=rand.nextInt(values.get(i).size());
+			int pos=(int) (regions.get(i).getStart()+tempP*stepsize+0.5*stepsize);
+			SimpleBEDFeature peak=new SimpleBEDFeature(pos, pos+1, regions.get(i).getChr());
+			peak.setScore(rand.nextFloat());
+			PeakList.add(peak);
+			
+		}
+		
+		return PeakList;
+	}
+	
 	
 	public static double mean (SparseDoubleMatrix1D a){
 		
