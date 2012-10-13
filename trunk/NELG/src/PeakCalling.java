@@ -116,14 +116,14 @@ public class PeakCalling {
 			List<Map<Integer, Float>> tempPeakList=peak_detection(values.get(i), 0.8, indices);
 			Map<Integer, Float> maxPoints = tempPeakList.get(0);
 			Iterator<Entry<Integer, Float>> iter = maxPoints.entrySet().iterator();
-			
+			double std_bg=sd(values.get(i));
 			double lamda=mean(values.get(i));
 			Poisson poisdist=new Poisson(lamda, Poisson.makeDefaultGenerator());
 			while(iter.hasNext())
 			{
 				Entry<Integer, Float> tempP = iter.next();
-				float MACSscore=(float)(poisdist.cdf(tempP.getValue().intValue())+tempP.getValue()/sumVals);
-
+				//float MACSscore=(float)(poisdist.cdf(tempP.getValue().intValue())+tempP.getValue()/sumVals);
+				float MACSscore=(float) ((tempP.getValue()-lamda)/std_bg);
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
 				if(MACSscore>0.99)//arbitary cut-off
 				{
@@ -164,7 +164,7 @@ public class PeakCalling {
 			Iterator<Entry<Integer, Float>> iter = maxPoints.entrySet().iterator();
 			
 			double lamda_bg=mean(values.get(i));
-			
+			double std_bg=sd(values.get(i));
 			
 			
 			while(iter.hasNext())
@@ -174,7 +174,9 @@ public class PeakCalling {
 				if(lamda<controlVal.getQuick(tempP.getKey()))
 					lamda=controlVal.getQuick(tempP.getKey());
 				Poisson poisdist=new Poisson(lamda, Poisson.makeDefaultGenerator());
-				float MACSscore=(float)(poisdist.cdf(tempP.getValue().intValue())+(tempP.getValue()-controlVal.getQuick(tempP.getKey()))/sumVals);
+				//float MACSscore=(float)(poisdist.cdf(tempP.getValue().intValue())+(tempP.getValue()-controlVal.getQuick(tempP.getKey()))/sumVals);
+				float MACSscore=(float) ((tempP.getValue()-lamda)/std_bg);
+				
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
 				if(MACSscore>0.99)//arbitary cut-off
 				{
