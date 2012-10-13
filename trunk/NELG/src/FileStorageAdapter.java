@@ -201,7 +201,7 @@ public class FileStorageAdapter implements StorageAdapter {
 			        int zoomLevels = bbReader.getZoomLevelCount();
 			        ZoomLevelIterator zoomIterator = null;
 			        boolean contained=true;
-			        int level=2; //Arbitrary select the middle level
+			        int level=3; //Arbitrary select the middle level
 			        contained = true;
 			        // get all zoom level chromosome regions
 			        RPChromosomeRegion chromosomeBounds = bbReader.getZoomLevelBounds(level);
