@@ -22,7 +22,7 @@ public class TestPeakCalling {
 	public void testSimple_peak_detection() {
 		TrackRecord temp=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
 		List<BEDFeature> peaks = SignalTransform.extractPositveSignal(temp);
-		List<BEDFeature> queryregions=SignalTransform.fixRegionSize(peaks, 10000);
+		List<BEDFeature> queryregions=SignalTransform.fixRegionSize(peaks, 100000);
 //		
 //		temp.hasPeak=false;
 //		List<BEDFeature> peaks2 =SignalTransform.extractPositveSignal(temp);
