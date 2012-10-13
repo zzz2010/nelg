@@ -173,6 +173,9 @@ public class PeakCalling {
 				double lamda=lamda_bg;
 				if(lamda<controlVal.getQuick(tempP.getKey()))
 					lamda=controlVal.getQuick(tempP.getKey());
+				double std=sd(controlVal);
+				if(std>std_bg)
+					std_bg=std;
 				Poisson poisdist=new Poisson(lamda, Poisson.makeDefaultGenerator());
 				//float MACSscore=(float)(poisdist.cdf(tempP.getValue().intValue())+(tempP.getValue()-controlVal.getQuick(tempP.getKey()))/sumVals);
 				float MACSscore=(float) ((tempP.getValue()-lamda)/std_bg);
