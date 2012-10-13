@@ -44,8 +44,14 @@ public class StateRecovery {
 			 try {
 				fileIn = new FileInputStream(f1.getAbsolutePath());
 				 ObjectInputStream in = new ObjectInputStream(fileIn);
-				 FeatureSelectionJob temp=(FeatureSelectionJob)in.readObject();
-				 return temp;
+				 FeatureSelectionSObj temp=(FeatureSelectionSObj)in.readObject();
+				 FeatureSelectionJob fsjob=new FeatureSelectionJob(target_signal, null, null);
+				 fsjob.FeatureAUC=temp.FeatureAUC;
+				 fsjob.FeatureCorr=temp.FeatureCorr;
+				 fsjob.IsThereFeatures=temp.IsThereFeatures;
+				 fsjob.target_signal_filtered=temp.target_signal_filtered;
+				 fsjob.ValThereFeatures=temp.ValThereFeatures;
+				 return fsjob;
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -22,7 +22,7 @@ public class TrackRecord implements Serializable{
 	public String Producer;
 	public boolean hasSignal;
 	public boolean hasPeak;
-	public StorageAdapter DBoperator;
+	public StorageAdapter DBoperator=null;
 	public ArrayList<String> ReplicateSuffix;
 	public String peakSuffix;
 	private List<BEDFeature> SignalRegionCache=null;
