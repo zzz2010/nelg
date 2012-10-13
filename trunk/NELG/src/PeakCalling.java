@@ -125,7 +125,7 @@ public class PeakCalling {
 				Entry<Integer, Float> tempP = iter.next();
 				//float MACSscore=(float) logPoissionCDF(lamda,tempP.getValue().intValue());
 				
-				float MACSscore=(float) ((tempP.getValue()-lamda)/std_bg);
+				float MACSscore=tempP.getValue();//(float) ((tempP.getValue()-lamda)/std_bg);
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
 				if(MACSscore>2)//arbitary cut-off
 				{
