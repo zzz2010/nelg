@@ -13,6 +13,7 @@ import org.broad.tribble.bed.SimpleBEDFeature;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import cern.jet.random.Poisson;
+import cern.jet.stat.Gamma;
 public class PeakCalling {
 	/**
 	 * Detects peaks (calculates local minima and maxima) in the 
@@ -118,14 +119,15 @@ public class PeakCalling {
 			Iterator<Entry<Integer, Float>> iter = maxPoints.entrySet().iterator();
 			double std_bg=sd(values.get(i));
 			double lamda=mean(values.get(i));
-			Poisson poisdist=new Poisson(lamda, Poisson.makeDefaultGenerator());
+			
 			while(iter.hasNext())
 			{
 				Entry<Integer, Float> tempP = iter.next();
-				float MACSscore=(float)(poisdist.cdf(tempP.getValue().intValue())+tempP.getValue()/sumVals);
+				float MACSscore=(float) logPoissionCDF(lamda,tempP.getValue().intValue());
+				
 				//float MACSscore=(float) ((tempP.getValue()-lamda)/std_bg);
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
-				if(MACSscore>0.99)//arbitary cut-off
+				if(MACSscore>3)//arbitary cut-off
 				{
 					int pos=(int) (regions.get(i).getStart()+tempP.getKey()*stepsize+0.5*stepsize);
 					SimpleBEDFeature peak=new SimpleBEDFeature(pos, pos+1, regions.get(i).getChr());
@@ -176,12 +178,14 @@ public class PeakCalling {
 				double std=sd(controlVal);
 				if(std>std_bg)
 					std_bg=std;
-				Poisson poisdist=new Poisson(lamda, Poisson.makeDefaultGenerator());
-				float MACSscore=(float)(poisdist.cdf(tempP.getValue().intValue())+(tempP.getValue()-controlVal.getQuick(tempP.getKey()))/sumVals);
+				
+				float MACSscore=(float) logPoissionCDF(lamda,tempP.getValue().intValue());
+					
+				
 				//float MACSscore=(float) ((tempP.getValue()-lamda)/std_bg);
 				
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
-				if(MACSscore>0.99)//arbitary cut-off
+				if(MACSscore>3)//arbitary cut-off
 				{
 					int pos=(int) (regions.get(i).getStart()+tempP.getKey()*stepsize+0.5*stepsize);
 					SimpleBEDFeature peak=new SimpleBEDFeature(pos, pos+1, regions.get(i).getChr());
@@ -258,6 +262,14 @@ public class PeakCalling {
 		          return 0;
 		  
 		      }
+	  public static double logPoissionCDF(double lamda, int k)
+	  {
+		 return  -10*Math.log10(Gamma.incompleteGammaComplement((double)(k+1) ,lamda));
 
+		  
+	  }
+	  
+	  
+	  
 
 }
