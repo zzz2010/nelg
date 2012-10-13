@@ -264,12 +264,82 @@ public class PeakCalling {
 		      }
 	  public static double logPoissionCDF(double lamda, int k)
 	  {
-		 return  -10*Math.log10(Gamma.incompleteGammaComplement((double)(k+1) ,lamda));
-
-		  
+		  double pvalue=0;
+		  if(lamda<700)
+		  {
+		  pvalue=Gamma.incompleteGamma((double)(k+1) ,lamda);
+		
+		  }
+		  else
+		  {
+			  pvalue=__poisson_cdf_Q_large_lambda ( k,lamda);
+		  }
+		  double logpvalue=  -10*Math.log10(pvalue);
+		  return logpvalue;
 	  }
 	  
+	  public static double __poisson_cdf_Q_large_lambda (int k,double a)
+	  {
+		 double LSTEP = 200;
+		 double EXPTHRES = Math.exp(LSTEP);
+		 double EXPSTEP  = Math.exp(-LSTEP);
+
+		    if (k < 0)
+		        return 1 ;                   
+		   int num_parts = (int) (a/LSTEP);
+		   int last_part = (int) (a % LSTEP);
+		   double lastexp = Math.exp(-last_part);
+		   double  next = EXPSTEP;
+		    num_parts -= 1;
+
+		    for(int i=1; i<k+1;i++)
+		    {
+		       double last = next;
+		        next = last * a / i;
+		        if (next > EXPTHRES)
+		        {
+		           if (num_parts>=1)
+		           {
+		               next *= EXPSTEP;
+		               num_parts -= 1;
+		           }
+		           else
+		           {
+		               lastexp = 1;
+		           }
+		        }
+		    }
+		   double cdf = 0;
+		   int i = k+1;
+		    while(next >0)
+		    {
+		       double last = next;
+		        next = last * a / i;
+		        cdf += next;
+		        i+=1;
+		        if (next > EXPTHRES || cdf > EXPTHRES)
+		        {
+		           if (num_parts>=1)
+		           {
+		               cdf *= EXPSTEP;
+		               next *= EXPSTEP;
+		               num_parts -= 1;
+		           }
+		           else
+		           {
+		               cdf *= lastexp;
+		               lastexp = 1;
+		           }
+		        }
+		    }
+		    for( i=0;i<num_parts;i++)
+		    {
+		        cdf *= EXPSTEP;
+		    }
+		    cdf *= lastexp;
+		    return cdf;
 	  
+	  }
 	  
 
 }
