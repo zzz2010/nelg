@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +38,7 @@ import com.thoughtworks.qdox.directorywalker.DirectoryScanner;
 import com.thoughtworks.qdox.directorywalker.Filter;
 
 
-public class FileStorageAdapter implements StorageAdapter {
+public class FileStorageAdapter implements StorageAdapter{
 	static Logger log = Logger.getLogger(FileStorageAdapter.class);
 	String dataDir;
 	HashMap<String, TrackRecord> DataBase;

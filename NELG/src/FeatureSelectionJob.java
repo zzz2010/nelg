@@ -20,12 +20,11 @@ import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 
-public class FeatureSelectionJob implements Serializable, Runnable {
+public class FeatureSelectionJob implements  Runnable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7511557855846548797L;
 	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(FeatureSelectionJob.class);
 	TrackRecord target_signal;
 	List<TrackRecord> SignalPool;
@@ -204,7 +203,7 @@ public class FeatureSelectionJob implements Serializable, Runnable {
     		         new FileOutputStream(target_signal.FilePrefix+".fsj");
     		         ObjectOutputStream out =
     		                            new ObjectOutputStream(fileOut);
-			out.writeObject(this);
+			out.writeObject(new FeatureSelectionSObj(IsThereFeatures, ValThereFeatures, FeatureAUC, FeatureCorr, target_signal_filtered));
 	         out.close();
 	          fileOut.close();
 		} catch (IOException e) {
