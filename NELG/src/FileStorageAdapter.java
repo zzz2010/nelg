@@ -25,7 +25,7 @@ import org.broad.tribble.Feature;
 import org.broad.tribble.annotation.Strand;
 import org.broad.tribble.bed.BEDCodec;
 import org.broad.tribble.bed.BEDFeature;
-import org.broad.tribble.bed.SimpleBEDFeature;
+
 import org.broad.tribble.index.Index;
 import org.broad.tribble.index.IndexFactory;
 import org.broad.tribble.index.interval.IntervalIndexCreator;

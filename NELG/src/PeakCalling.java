@@ -9,7 +9,7 @@ import java.util.ResourceBundle.Control;
 
 import org.broad.tribble.bed.BEDFeature;
 import org.broad.tribble.bed.FullBEDFeature;
-import org.broad.tribble.bed.SimpleBEDFeature;
+
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import cern.jet.random.Poisson;

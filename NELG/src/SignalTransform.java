@@ -6,7 +6,7 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.broad.tribble.bed.BEDFeature;
-import org.broad.tribble.bed.SimpleBEDFeature;
+
 
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
