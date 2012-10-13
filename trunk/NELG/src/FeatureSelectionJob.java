@@ -96,7 +96,7 @@ public class FeatureSelectionJob implements  Runnable {
 		FeatureAUC=new HashMap<String, Float>(SignalPool.size()-1);
 		FeatureCorr=new HashMap<String, Float>(SignalPool.size()-1);
 		
-		
+		boolean onlyBestBin=false;
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 		for (TrackRecord feature_signal : SignalPool) {
 			
@@ -116,16 +116,31 @@ public class FeatureSelectionJob implements  Runnable {
 		        			bestBin=i;
 		        			maxScore=score;
 		        		}
+		        		if(!onlyBestBin)
+		        		{	
+					        if(score>0.6)
+					      	{
+					        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
+						        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, score,i);
+						        FeatureAUC.put(feature_signal.FilePrefix, score);
+					      		IsThereFeatures.add(isF);
+					      		logger.debug("isthere: "+isF);
+					      	}
+					        	
+		        		}
 					}
 		        	//bestBin idea, consider strand
-		        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(bestBin), feature_BinSignal_bg.viewColumn(bestBin)) ;
-		        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
-		        FeatureAUC.put(feature_signal.FilePrefix, maxScore);
-		        if(maxScore>0.6)
-		      	{
-		      		IsThereFeatures.add(isF);
-		      	}
-		        	logger.debug("isthere: "+isF);
+		        	if(onlyBestBin)
+		        	{
+				        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(bestBin), feature_BinSignal_bg.viewColumn(bestBin)) ;
+				        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
+				        FeatureAUC.put(feature_signal.FilePrefix, maxScore);
+				        if(maxScore>0.6)
+				      	{
+				      		IsThereFeatures.add(isF);
+				      	}
+				        	logger.debug("isthere: "+isF);
+		        	}
 		        	/***************valthere task****************/
 		        	maxScore=-1;
 			    bestBin=-1;
@@ -137,17 +152,33 @@ public class FeatureSelectionJob implements  Runnable {
 		        			bestBin=i;
 		        			maxScore=score;
 		        		}
+		        		if(!onlyBestBin)
+		        		{	
+					        if(score>0.2)
+					      	{
+					        	SparseDoubleMatrix1D featureBestBinValue = (SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
+					        	
+					        	 FeatureSignal valF= 	new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, score,i);
+						        FeatureCorr.put(feature_signal.FilePrefix, score);	
+						        ValThereFeatures.add(valF);
+						        logger.debug("valthere: "+valF);
+					      	}
+					        	
+		        		}
 					}
 		        	//bestBin idea, consider strand
-		        	featureBestBinValue=(SparseDoubleMatrix1D) feature_BinSignal.viewColumn(bestBin);
-
-		        	 FeatureSignal valF= 	new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
-			        FeatureCorr.put(feature_signal.FilePrefix, maxScore);	
-		        	 if(maxScore>0.2)
-			        	{
-			        		ValThereFeatures.add(valF);
-			        	}
-		    	logger.debug("valthere: "+valF);
+		        	if(onlyBestBin)
+		        	{
+			        	SparseDoubleMatrix1D featureBestBinValue = (SparseDoubleMatrix1D) feature_BinSignal.viewColumn(bestBin);
+	
+			        	 FeatureSignal valF= 	new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
+				        FeatureCorr.put(feature_signal.FilePrefix, maxScore);	
+			        	 if(maxScore>0.2)
+				        	{
+				        		ValThereFeatures.add(valF);
+				        	}
+			    	logger.debug("valthere: "+valF);
+		        	}
 		       
 		        }
 		    }
