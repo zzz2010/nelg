@@ -32,13 +32,13 @@ public class SignalComparator {
 		int[] labels=new int[target_class.size()];
 		int[] labels2=new int[target_class.size()];
 		//disable the AUC program output
-		PrintStream original = new PrintStream(System.out);
-		try {
-			System.setOut(new PrintStream(new FileOutputStream("/dev/null")));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		PrintStream original = new PrintStream(System.out);
+//		try {
+//			System.setOut(new PrintStream(new FileOutputStream("/dev/null")));
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		Random rand=new Random(12345);
 		
 		TreeMap<Double,Integer> Sorted_labels=new TreeMap<Double,Integer>();
@@ -73,7 +73,7 @@ public class SignalComparator {
 		if(auc2>auc)
 			auc=auc2;
 		
-		System.setOut(original);
+//		System.setOut(original);
 		return (float) auc;
 	}
 	
