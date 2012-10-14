@@ -22,6 +22,28 @@ public class ClassificationResult implements Serializable {
 	String JobTitle="";
 	
 	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		 String featStr="";
+		
+		 if(isRegression)
+		 {
+			 featStr="Regression Corr:"+Corr;	 
+		 }
+		 else
+		 {
+			 featStr="Classification AUC:"+AUC;	 
+		 }
+		 for (int i = 0; i < FeatureIdBin.size(); i++) {
+			 featStr+="\t"+FeatureIdBin.get(i).key+"|"+FeatureIdBin.get(i).value;
+		}
+		 String outstr=(JobTitle+" can be predicted by"+LearnedModel.getClass().getName()+" with "+featStr);
+	
+	return outstr;
+	}
+
+
 	public void toFile()
 	 {
 	        try {
