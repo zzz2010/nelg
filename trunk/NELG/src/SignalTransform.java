@@ -86,6 +86,7 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 	for (int i = 0; i < Math.min(maxExtract, peaklist.size()); i++) {
 		outputSignal.add(peaklist.get(i));
 	}
+	logger.info(target_signal.ExperimentId+": call "+outputSignal.size()+" peaks");
 	return outputSignal;
 }
 	
