@@ -244,6 +244,11 @@ public class ChildModeler {
 		result.LearnedModel=bestModeler;
 		result.isRegression=true;
 		result.JobTitle=job.JobTitle;
+		result.FeatureIdBin=new ArrayList<Pair<String,Integer>>();
+		for (int i = 0; i < selecedAttributes.size(); i++) {
+		FeatureSignal temp=	job.FeatureMatrix.get(selecedAttributes.get(i));
+		result.FeatureIdBin.add(new Pair<String, Integer>(temp.FeatureId,temp.binId));
+		}
 		return result;
 		
 	}
@@ -254,7 +259,7 @@ public class ChildModeler {
 		int featureNum=job.FeatureMatrix.size();
 		FastVector attrList=new FastVector(featureNum+1);
 		for (int i = 0; i < featureNum; i++) {
-			Attribute temp=new Attribute( job.FeatureMatrix.get(i).FeatureId+job.FeatureMatrix.get(i).binId);
+			Attribute temp=new Attribute( job.FeatureMatrix.get(i).FeatureId+"|"+job.FeatureMatrix.get(i).binId);
 			attrList.addElement(temp);
 		}
 		Attribute label;

@@ -47,22 +47,15 @@ public class ClassificationJob implements Runnable  , Serializable {
 			 {
 				 if(result.Corr>0.8)
 				 {
-					 String featStr="";
-					 for (int i = 0; i < result.FeatureIdBin.size(); i++) {
-						 featStr+=result.FeatureIdBin.get(i).key+"\t";
-					}
-					 logger.info(result.JobTitle+" can be predicted("+result.LearnedModel.getClass().getName()+") by"+featStr);
+
+					 logger.info(result.toString());
 				 }
 			 }
 			 else
 			 {
 				 if(result.AUC>0.8)
 				 {
-					 String featStr="";
-					 for (int i = 0; i < result.FeatureIdBin.size(); i++) {
-						 featStr+=result.FeatureIdBin.get(i).key+"\t";
-					}
-					 logger.info(result.JobTitle+" can be predicted("+result.LearnedModel.getClass().getName()+") by"+featStr);
+					 logger.info(result.toString());
 				 }
 			 }
 		 }
