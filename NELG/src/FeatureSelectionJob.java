@@ -61,10 +61,26 @@ public class FeatureSelectionJob implements  Runnable {
 		  	int TopN=20;
 			if(IsThereFeatures.size()>0)
 			{
-				Collections.sort(IsThereFeatures);
-				ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
-				//executor.execute(IsThereJob);
-				IsThereJob.run();
+				 ClassificationResult IsThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_IsThere");
+				 if(IsThereJob2!=null)
+				 {
+					 logger.info("skip cr:"+target_signal.FilePrefix+"_IsThere");
+				 }
+				 else
+				 {
+					 ClassificationResult ValThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_ValThere");
+					 if(ValThereJob2!=null)
+					 {
+						 logger.info("skip cr:"+target_signal.FilePrefix+"_ValThere");
+					 }
+					 else
+					 {
+						Collections.sort(IsThereFeatures);
+						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
+						//executor.execute(IsThereJob);
+						IsThereJob.run();
+					 }
+				 }
 			}
 			if(ValThereFeatures.size()>0)
 			{

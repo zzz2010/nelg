@@ -66,7 +66,7 @@ public class MotherModeler {
 				}
 				else
 				{
-					logger.info("loading cj: "+target_signal.FilePrefix);
+					logger.info("loading fsj: "+target_signal.FilePrefix);
 					executor.execute(FSJob2);
 				}
 			} catch (InterruptedException e) {
