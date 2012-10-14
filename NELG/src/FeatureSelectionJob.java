@@ -64,14 +64,14 @@ public class FeatureSelectionJob implements  Runnable {
 				 ClassificationResult IsThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_IsThere");
 				 if(IsThereJob2!=null)
 				 {
-					 logger.info("skip cr:"+target_signal.FilePrefix+"_IsThere");
+					 logger.info("skip classification:"+target_signal.FilePrefix+"_IsThere");
 				 }
 				 else
 				 {
 					 ClassificationResult ValThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_ValThere");
 					 if(ValThereJob2!=null)
 					 {
-						 logger.info("skip cr:"+target_signal.FilePrefix+"_ValThere");
+						 logger.info("skip regression:"+target_signal.FilePrefix+"_ValThere");
 					 }
 					 else
 					 {
