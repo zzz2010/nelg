@@ -142,7 +142,6 @@ public static DoubleMatrix1D BedFeatureToValues(List<BEDFeature> signal)
 {
 	DoubleMatrix1D outputvec=new SparseDoubleMatrix1D(signal.size());
 	for (int i = 0; i < signal.size(); i++) {
-		if(signal.get(i).getScore()>0)
 		outputvec.set(i, signal.get(i).getScore());
 	}
 	

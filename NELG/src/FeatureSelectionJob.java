@@ -95,12 +95,13 @@ public class FeatureSelectionJob implements  Runnable {
 		else	
 		{
 		//get filtered target signal
-	  	target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),4000);
+	  	target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),10000);
 	  	if(target_signal_filtered.size()<50)
 	  	{
 	  		toFile();
 	  		return;
 	  	}
+	  	
 	  	List<BEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
 	  	DoubleMatrix1D targetValue=SignalTransform.BedFeatureToValues(target_signal_filtered);
 	  	targetValue=DoubleFactory1D.sparse.append(targetValue, SignalTransform.BedFeatureToValues(target_signal_bg));
@@ -115,6 +116,8 @@ public class FeatureSelectionJob implements  Runnable {
 		boolean onlyBestBin=false;
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 		for (TrackRecord feature_signal : SignalPool) {
+//			if(!feature_signal.FilePrefix.contains("H3k36"))
+//				continue;
 			
 		        if (feature_signal.ExperimentId!=(target_signal.ExperimentId))
 		        {
@@ -134,11 +137,11 @@ public class FeatureSelectionJob implements  Runnable {
 		        		}
 		        		if(!onlyBestBin)
 		        		{	
+		        			 FeatureAUC.put(feature_signal.FilePrefix, maxScore);
 					        if(score>0.6)
 					      	{
 					        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
-						        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, score,i);
-						        FeatureAUC.put(feature_signal.FilePrefix, score);
+						        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, score,i);	       
 					      		IsThereFeatures.add(isF);
 					      		logger.debug("isthere: "+isF);
 					      	}
@@ -170,12 +173,13 @@ public class FeatureSelectionJob implements  Runnable {
 		        		}
 		        		if(!onlyBestBin)
 		        		{	
+		        			 FeatureCorr.put(feature_signal.FilePrefix, maxScore);	
 					        if(score>0.2)
 					      	{
 					        	SparseDoubleMatrix1D featureBestBinValue = (SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
 					        	
 					        	 FeatureSignal valF= 	new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, score,i);
-						        FeatureCorr.put(feature_signal.FilePrefix, score);	
+						       
 						        ValThereFeatures.add(valF);
 						        logger.debug("valthere: "+valF);
 					      	}
