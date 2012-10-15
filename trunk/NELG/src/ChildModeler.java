@@ -152,7 +152,7 @@ public class ChildModeler {
 		ArrayList<Integer> selecedAttributes=new ArrayList<Integer>();
 		
 		Instances data2 =null;//filtered dataset
-		if(data.numAttributes()>10)
+		if(data.numAttributes()>30)
 		{
 		
 		HashMap<String,Integer> FeatureNameMap=new HashMap<String, Integer>();

@@ -57,6 +57,9 @@ public class MotherModeler {
 
 			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
 				continue;
+//			if(!target_signal.ExperimentId.contains("CytosolPapPlusSignal"))
+//				continue;
+			
 			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,executor);
 			FeatureSelectionJob FSJob2=StateRecovery.CheckFeatureSelectionJob(target_signal);
 			try {

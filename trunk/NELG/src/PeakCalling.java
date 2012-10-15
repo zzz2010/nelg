@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.ResourceBundle.Control;
 
+import org.broad.tribble.annotation.Strand;
 import org.broad.tribble.bed.BEDFeature;
 import org.broad.tribble.bed.FullBEDFeature;
 
@@ -190,6 +191,11 @@ public class PeakCalling {
 					int pos=(int) (regions.get(i).getStart()+tempP.getKey()*stepsize+0.5*stepsize);
 					SimpleBEDFeature peak=new SimpleBEDFeature(pos, pos+1, regions.get(i).getChr());
 					peak.setScore(MACSscore);
+					peak.setStrand(Strand.POSITIVE);
+					if(tempP.getKey()==(values.get(i).size()-1)||(tempP.getKey()>0&&values.get(i).get(tempP.getKey()+1)<values.get(i).get(tempP.getKey()-1)))
+					{
+						peak.setStrand(Strand.NEGATIVE);
+					}
 					peak.setDescription("binId:"+tempP.getKey()+"\traw:"+values.get(i).get(tempP.getKey())+"\tmean:"+lamda);
 					PeakList.add(peak);
 				}

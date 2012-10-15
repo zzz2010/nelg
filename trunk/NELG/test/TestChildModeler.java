@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Map.Entry;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -28,7 +29,7 @@ ChildModeler modeler;
 		  ChildModeler.logger.addAppender(appender); 
 	   
 	try {
-		fileIn = new FileInputStream("wgEncodeRikenCageK562ChromatinTotalMinusSignal_ValThere.cj");
+		fileIn = new FileInputStream("wgEncodeRikenCageK562CytosolPapPlusSignal_ValThere.cj");
 		 ObjectInputStream in = new ObjectInputStream(fileIn);
 			testedJob_R=(ClassificationJob)in.readObject();
 			
@@ -61,6 +62,27 @@ ChildModeler modeler;
 	public void testDoRegression() {
 //		double corr=modeler.doRegression(testedJob_R).Corr;
 //		assertTrue(corr>0.2);
+		
+		FileInputStream fileIn;
+		try {
+			fileIn = new FileInputStream("wgEncodeRikenCageK562CytosolPapPlusSignal.fsj");
+			 ObjectInputStream in = new ObjectInputStream(fileIn);
+			 FeatureSelectionSObj	featuresObj=(FeatureSelectionSObj)in.readObject();
+			for (Entry<String, Float> iterable_element : featuresObj.FeatureCorr.entrySet()) {
+				if(iterable_element.getKey().contains("K36"))
+				ChildModeler.logger.debug(iterable_element.getKey()+":"+iterable_element.getValue());
+				
+			} 
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		 
+		
 		testedJob_R.run();
 	}
 
