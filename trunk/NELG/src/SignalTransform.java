@@ -108,7 +108,7 @@ public static ArrayList<BEDFeature> extractNegativeSignal(List<BEDFeature> targe
 		BEDFeature bed2=target_signal.get(i+1);
 		if(bed1.getChr().equalsIgnoreCase(bed2.getChr()))
 		{
-			if(bed1.getEnd()<bed2.getStart())
+			if(bed1.getEnd()+10000<bed2.getStart()) //ensure have enough gap
 			{
 				SimpleBEDFeature temp=new SimpleBEDFeature(bed1.getEnd(), bed2.getStart(), bed1.getChr());
 				temp.setScore(-1); //negative sample
@@ -126,13 +126,24 @@ public static ArrayList<BEDFeature> extractNegativeSignal(List<BEDFeature> targe
 	}
 	Random rand=new Random(12345);
 	for (int i = 0; i < num; i++) {
+		
 		int selregion=rand.nextInt(target_signal.size());
+
 		int bgregion_size=target_signal.get(selregion).getEnd()-target_signal.get(selregion).getStart();
 		double pointer=rand.nextDouble();
 		int selgap=-Collections.binarySearch(cumprob,pointer )-2 ;
 		String chrom=gaplist.get(selgap).getChr();
 		int regionlen=gaplist.get(selgap).getEnd()-gaplist.get(selgap).getStart();
-		int start=(int) (gaplist.get(selgap).getStart()+regionlen*(pointer-cumprob.get(selgap)));
+		int start=0;//(int) (gaplist.get(selgap).getStart()+regionlen*(pointer-cumprob.get(selgap)));
+		double deviate=rand.nextGaussian();
+		if(deviate<0)
+		{
+			start=(int) (gaplist.get(selgap).getStart()+regionlen*(-deviate/4));
+		}
+		else
+		{
+			start=(int) (gaplist.get(selgap).getEnd()+regionlen*(-deviate/4));
+		}
 		outputSignal.add(new SimpleBEDFeature(start-bgregion_size/2, start+bgregion_size/2, chrom));
 	}
 	return outputSignal;
