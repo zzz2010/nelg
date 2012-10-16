@@ -95,7 +95,7 @@ public class FeatureSelectionJob implements  Runnable {
 		else	
 		{
 		//get filtered target signal
-	  	target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),10000);
+	  	target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),4000);
 	  	if(target_signal_filtered.size()<50)
 	  	{
 	  		toFile();
