@@ -50,7 +50,7 @@ public class MotherModeler {
 	{	
 		executor = new PooledExecutor(new LinkedQueue());
 		executor.setMinimumPoolSize(threadNum);
-		executor.setKeepAliveTime(1000 * 60*50 );
+		executor.setKeepAliveTime(1000 * 60*500 );
 			
 		//take out one as class label, the rest as feature data
 		for (TrackRecord target_signal : SignalPool) {
