@@ -114,6 +114,7 @@ public class FeatureSelectionJob implements  Runnable {
 		FeatureCorr=new HashMap<String, Float>(SignalPool.size()-1);
 		
 		boolean onlyBestBin=false;
+		FeatureExtractor featureExtractor=new EqualBinFeatureExtractor(40);
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 		for (TrackRecord feature_signal : SignalPool) {
 //			if(!feature_signal.FilePrefix.contains("H3k36"))
@@ -122,8 +123,8 @@ public class FeatureSelectionJob implements  Runnable {
 		        if (feature_signal.ExperimentId!=(target_signal.ExperimentId))
 		        {
 		        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
-		        	SparseDoubleMatrix2D feature_BinSignal=SignalTransform.OverlapBinSignal(feature_signal, target_signal_filtered,40);
-		        	SparseDoubleMatrix2D feature_BinSignal_bg=SignalTransform.OverlapBinSignal(feature_signal, target_signal_bg,40);
+		        	SparseDoubleMatrix2D feature_BinSignal=featureExtractor.extractSignalFeature(feature_signal, target_signal_filtered);
+		        	SparseDoubleMatrix2D feature_BinSignal_bg=featureExtractor.extractSignalFeature(feature_signal, target_signal_bg);
 		        	/***************isthere task****************/
 		        float maxScore=-1;
 		        int bestBin=-1;
