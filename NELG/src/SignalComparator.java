@@ -19,6 +19,8 @@ import auc.AUCCalculator;
 import auc.Confusion;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.doublealgo.Sorting;
+
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 import org.apache.commons.math3.util.Pair;
 
@@ -45,9 +47,9 @@ public class SignalComparator {
 		
 		for (int i = 0; i < labels.length; i++) {
 			if(target_class.get(i)>0)
-			    Sorted_labels.put(feature_signal.get(i)+rand.nextDouble()*0.00001, 1);
+			    Sorted_labels.put(feature_signal.get(i)+(rand.nextDouble()-0.5)*0.00001, 1);
 			else
-				Sorted_labels.put(feature_signal.get(i)+rand.nextDouble()*0.00001, 0);
+				Sorted_labels.put(feature_signal.get(i)+(rand.nextDouble()-0.5)*0.00001, 0);
 		}
 	  	 int ii=0;
        	 int one=0;
@@ -92,6 +94,21 @@ public class SignalComparator {
 		if(Double.isInfinite(spearman)||Double.isNaN(spearman))
 			return 0;
 		return (float) Math.abs(spearman);
+	}
+	
+	//pearson correlation
+	public static float getCorrelation2(DoubleMatrix1D feature_signal,DoubleMatrix1D target_class)
+	{
+		if(feature_signal.zSum()==0)
+			return 0;
+		if(target_class.zSum()==0)
+			return 0;
+		
+		PearsonsCorrelation corr=new PearsonsCorrelation();
+		double pearson=corr.correlation(feature_signal.toArray(), target_class.toArray());
+		if(Double.isInfinite(pearson)||Double.isNaN(pearson))
+			return 0;
+		return (float) Math.abs(pearson);
 	}
 	
 	

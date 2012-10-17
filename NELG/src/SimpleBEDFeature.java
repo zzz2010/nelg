@@ -1,4 +1,7 @@
 import java.awt.Color;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.List;
 
@@ -31,7 +34,32 @@ public class SimpleBEDFeature implements BEDFeature, Serializable {
 	        this.chr = chr;
 	    }
 
-	    public String getChr() {
+	    @Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.chr+":"+ this.start+"-"+ this.end;
+	}
+	    
+	    
+   public static void toFile(List<BEDFeature> bedlist,String filename)
+   {
+	   FileWriter outFile;
+	try {
+		outFile = new FileWriter(filename);
+		 PrintWriter out = new PrintWriter(outFile);
+		 for(BEDFeature bed:bedlist)
+		 {
+			 out.println(bed.getChr()+"\t"+bed.getStart()+"\t"+bed.getEnd()+"\t"+bed.getScore());
+		 }
+		 out.close();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  
+   }
+
+		public String getChr() {
 	        return chr;
 	    }
 

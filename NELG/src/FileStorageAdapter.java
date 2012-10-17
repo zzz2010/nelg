@@ -284,6 +284,16 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 					    	
 					    	if((nextRecord.getStartBase()-stepWidth)>=start)
 					    	{
+					    		
+					    		 //add the previous one
+								if(query.getStrand()== Strand.NEGATIVE)
+					    		{
+								outputSignal.set(queryid, numbin-binId-1, sumValues+outputSignal.get(queryid, numbin-binId-1));
+					    			
+					    		}
+					    		else
+					    			outputSignal.set(queryid, binId, sumValues+outputSignal.get(queryid, binId));
+						sumValues=0;
 					    		//check whether jump several bins
 					    		int jumpNum=(nextRecord.getStartBase()-start)/stepWidth;
 					    		for (int j = 0; j < jumpNum; j++) {
@@ -296,7 +306,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 					    	if((nextRecord.getEndBase()-stepWidth)>=start)
 					    	{
 					    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-nextRecord.getStartBase());
-					    		query.getStrand();
+					    		
 							if(query.getStrand()== Strand.NEGATIVE)
 					    		{
 								outputSignal.set(queryid, numbin-binId-1, sumValues+outputSignal.get(queryid, numbin-binId-1));
@@ -315,6 +325,17 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 					    		sumValues+=nextRecord.getWigValue()*(nextRecord.getEndBase()-nextRecord.getStartBase());
 					    	
 					    }
+						 if(binId<numbin)
+						 {
+						 //add the final one
+								if(query.getStrand()== Strand.NEGATIVE)
+					    		{
+								outputSignal.set(queryid, numbin-binId-1, sumValues+outputSignal.get(queryid, numbin-binId-1));
+					    			
+					    		}
+					    		else
+					    			outputSignal.set(queryid, binId, sumValues+outputSignal.get(queryid, binId));
+						 }
 					}
 					
 				} catch (IOException e) {
@@ -391,7 +412,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 						
 					    int start=query.getStart();
 					    float sumValues=0;
-					    int stepWidth=(query.getEnd()-start)/numbin;
+					    int stepWidth=StepSize;
 					    int binId=0;
 					    if(stepWidth<1)
 					    	continue;
@@ -401,6 +422,14 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 					    	
 					    	if((nextRecord.getStartBase()-stepWidth)>=start)
 					    	{
+								 //add the previous one
+								 if(query.getStrand()== Strand.NEGATIVE)
+						    		{
+						    			outputSignal.get(queryid).set(numbin-binId-1, sumValues+outputSignal.get(queryid).get(numbin-binId-1));
+						    		}
+						    		else
+						    			outputSignal.get(queryid).set(binId, sumValues+outputSignal.get(queryid).get(binId));
+						sumValues=0;
 					    		//check whether jump several bins
 					    		int jumpNum=(nextRecord.getStartBase()-start)/stepWidth;
 					    		for (int j = 0; j < jumpNum; j++) {
@@ -413,7 +442,6 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 					    	if((nextRecord.getEndBase()-stepWidth)>=start)
 					    	{
 					    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-nextRecord.getStartBase());
-					    		query.getStrand();
 								if(query.getStrand()== Strand.NEGATIVE)
 					    		{
 					    			outputSignal.get(queryid).set(numbin-binId-1, sumValues+outputSignal.get(queryid).get(numbin-binId-1));
@@ -424,12 +452,23 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 					    		if(binId>=numbin)
 					    			break;
 					    		start=start+stepWidth;
+					    		//contribute to the next bin
 					    		sumValues=nextRecord.getWigValue()*(nextRecord.getEndBase()-start);   		
 					    	}
 					    	else
 					    		sumValues+=nextRecord.getWigValue()*(nextRecord.getEndBase()-nextRecord.getStartBase());
 					    	
 					    }
+						 if(binId<numbin)
+						 {
+						 //add the final one
+						 if(query.getStrand()== Strand.NEGATIVE)
+				    		{
+				    			outputSignal.get(queryid).set(numbin-binId-1, sumValues+outputSignal.get(queryid).get(numbin-binId-1));
+				    		}
+				    		else
+				    			outputSignal.get(queryid).set(binId, sumValues+outputSignal.get(queryid).get(binId));
+						 }
 					}
 					
 				} catch (IOException e) {
@@ -440,7 +479,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 			
 		}
 	}
-	else
+	else //bed data
 	{
 		Index intervalTree = IndexFactory.createIntervalIndex(new File(dataDir+"/"+tr.FilePrefix+tr.peakSuffix), new BEDCodec());
 		int queryid=-1;

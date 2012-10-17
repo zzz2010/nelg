@@ -6,6 +6,7 @@ import java.util.Random;
 
 
 
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.log4j.Logger;
 
 import weka.attributeSelection.CfsSubsetEval;
@@ -14,6 +15,7 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.GaussianProcesses;
+import weka.classifiers.functions.LeastMedSq;
 import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.functions.MultilayerPerceptron;
@@ -48,7 +50,7 @@ public class ChildModeler {
 		ArrayList<Integer> selecedAttributes=new ArrayList<Integer>();
 		Instances data=getDatasetFromJob(job);
 		Instances data2 =null;//filtered dataset
-		if(data.numAttributes()>10)
+		if(data.numAttributes()>Math.log(job.targetValue.size())/Math.log(2)+1)
 		{
 		
 		HashMap<String,Integer> FeatureNameMap=new HashMap<String, Integer>();
@@ -128,6 +130,9 @@ public class ChildModeler {
 		//get final classifier
 		try {
 			bestModeler.buildClassifier(data2);
+			Evaluation eval = new Evaluation(data2);
+			eval.evaluateModel(bestModeler, data2);
+			System.out.println(eval.toSummaryString("\nResults\n======\n", false));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -152,11 +157,11 @@ public class ChildModeler {
 		ArrayList<Integer> selecedAttributes=new ArrayList<Integer>();
 		
 		Instances data2 =null;//filtered dataset
-		if(data.numAttributes()>30)
+		if(data.numAttributes()>Math.log(job.targetValue.size())/Math.log(2)+1)
 		{
 		
 		HashMap<String,Integer> FeatureNameMap=new HashMap<String, Integer>();
-		for (int i = 0; i < data.numAttributes(); i++) {
+		for (int i = 0; i < data.numAttributes()-1; i++) {
 			FeatureNameMap.put(data.attribute(i).name(),i);
 		}
 		//feature selection
@@ -200,9 +205,9 @@ public class ChildModeler {
 		double bestscore=-1;
 		ArrayList<Classifier> modelerSet=new ArrayList<Classifier>();
 		modelerSet.add(new M5P());
-	if(data2.numAttributes()>2)
-			modelerSet.add(new LWL());
-	if(data2.numAttributes()>3)
+	   if(data2.numAttributes()>2)
+			modelerSet.add(new LeastMedSq());
+	   if(data2.numAttributes()>3)
 			modelerSet.add(new LinearRegression());
 		if(data2.numAttributes()>4)
 			modelerSet.add(new RBFNetwork());//GaussianProcesses
@@ -210,14 +215,15 @@ public class ChildModeler {
 			modelerSet.add(new PaceRegression());
 		if(data2.numAttributes()>6)
 			modelerSet.add(new SMOreg());
+
 			
 		for (int i = 0; i < modelerSet.size(); i++) {
 			
 		
 		Classifier modeler = modelerSet.get(i);
 		try {
-			Evaluation eval = new Evaluation(data);
-			eval.crossValidateModel(modeler, data, 5, new Random(1));
+			Evaluation eval = new Evaluation(data2);
+			eval.crossValidateModel(modeler, data2, 5, new Random(1));
 			corr=eval.correlationCoefficient();
 			logger.debug(modeler.getClass().getName()+" corr:"+corr);
 			if(bestscore<corr)
@@ -229,15 +235,18 @@ public class ChildModeler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-				
+			
+		
+		}
 		//get final classifier
 		try {
-			modeler.buildClassifier(data);
+			bestModeler.buildClassifier(data2);
+			Evaluation eval = new Evaluation(data2);
+			eval.evaluateModel(bestModeler, data2);
+			System.out.println(eval.toSummaryString("\nResults\n======\n", false));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
 		}
 		ClassificationResult result=new ClassificationResult();
 		result.Corr=bestscore;
@@ -277,8 +286,15 @@ public class ChildModeler {
 		attrList.addElement(label);
 		
 		Instances jobdata=new Instances(job.JobTitle, attrList, job.targetValue.size());
-		
 		int instanceNum=job.targetValue.size();
+		 if(job.Regression)
+		 {
+			 job.targetValue=SignalTransform.normalizeSignal(job.targetValue);
+			 for (int j = 0; j < featureNum; j++) {
+				 job.FeatureMatrix.get(j).featureValue=SignalTransform.normalizeSignal(job.FeatureMatrix.get(j).featureValue);
+			 }
+		 }
+		
 		for (int i = 0; i < instanceNum; i++) {
 			 double[] values = new double[featureNum+1] ;
 			 for (int j = 0; j < featureNum; j++) {
@@ -286,6 +302,7 @@ public class ChildModeler {
 			}	 
 			
 			 double labelval=0;
+
 			 if(job.Regression)
 				 labelval=job.targetValue.get(i);
 			 else

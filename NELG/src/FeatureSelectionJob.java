@@ -58,7 +58,7 @@ public class FeatureSelectionJob implements  Runnable {
 		  
 		  	DoubleMatrix1D targetNormValue=SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_signal_filtered));
 		  	
-		  	int TopN=20;
+		  	int TopN=100;
 			if(IsThereFeatures.size()>0)
 			{
 				 ClassificationResult IsThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_IsThere");
@@ -122,8 +122,8 @@ public class FeatureSelectionJob implements  Runnable {
 		        if (feature_signal.ExperimentId!=(target_signal.ExperimentId))
 		        {
 		        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
-		        	SparseDoubleMatrix2D feature_BinSignal=SignalTransform.OverlapBinSignal(feature_signal, target_signal_filtered,20);
-		        	SparseDoubleMatrix2D feature_BinSignal_bg=SignalTransform.OverlapBinSignal(feature_signal, target_signal_bg,20);
+		        	SparseDoubleMatrix2D feature_BinSignal=SignalTransform.OverlapBinSignal(feature_signal, target_signal_filtered,40);
+		        	SparseDoubleMatrix2D feature_BinSignal_bg=SignalTransform.OverlapBinSignal(feature_signal, target_signal_bg,40);
 		        	/***************isthere task****************/
 		        float maxScore=-1;
 		        int bestBin=-1;
@@ -206,7 +206,7 @@ public class FeatureSelectionJob implements  Runnable {
 		//save to file
 		toFile();
 		 //wrap up to classification job , and put it into queue
-		int TopN=20; //selected best TopN features
+		int TopN=100; //selected best TopN features
    //put job to the execution queue
 		 try {
 			 if(IsThereFeatures.size()>0)
