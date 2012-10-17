@@ -130,7 +130,9 @@ public class PeakCalling {
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
 				if(MACSscore>2)//arbitary cut-off
 				{
+					
 					int pos=(int) (regions.get(i).getStart()+tempP.getKey()*stepsize+0.5*stepsize);
+
 					SimpleBEDFeature peak=new SimpleBEDFeature(pos, pos+1, regions.get(i).getChr());
 					peak.setScore(MACSscore);
 					peak.setDescription("binId:"+tempP.getKey()+"\traw:"+values.get(i).get(tempP.getKey())+"\tmean:"+lamda);

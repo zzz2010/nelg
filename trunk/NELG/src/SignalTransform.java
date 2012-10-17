@@ -1,36 +1,72 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.log4j.Logger;
 import org.broad.tribble.bed.BEDFeature;
 
 
 import cern.colt.matrix.DoubleMatrix1D;
+import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 
 public class SignalTransform {
 	static Logger logger = Logger.getLogger(SignalTransform.class);
+	
+//find the best to make the raw value follow the normal distribution
 public	static ArrayList<BEDFeature> normalizeSignal(List<BEDFeature> inputSignal)
 {
 	//do simple log2 normalized
 	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>(inputSignal.size());
 	DoubleMatrix1D scores = BedFeatureToValues(inputSignal);
-	double logm=Math.log(scores.zSum()/scores.size());
-	double pseudocount= 1;
+	scores=normalizeSignal(scores);
 	for (int i = 0; i < inputSignal.size(); i++) {
 		SimpleBEDFeature temp=new SimpleBEDFeature(inputSignal.get(i).getStart(),inputSignal.get(i).getEnd(), inputSignal.get(i).getChr());
-		temp.setScore((float) ( Math.log(inputSignal.get(i).getScore()+pseudocount)-logm));
+		temp.setScore((float)scores.get(i) );//( Math.log(inputSignal.get(i).getScore()+pseudocount)-logm));
 		outputSignal.add(temp);
 	}
 	
 	return outputSignal;
 }
 
+public	static  DoubleMatrix1D normalizeSignal(DoubleMatrix1D inputSignal)
+{
+	double bestPCC=0;
+	double[] sortedValue=inputSignal.toArray();
+	Arrays.sort(sortedValue);
+	PearsonsCorrelation corr=new PearsonsCorrelation();
+	
+	
+	double[] rank=new double[sortedValue.length];
+	for (int i = 0; i < rank.length; i++) {
+		rank[i]=i;
+	}
+	int bestType=0;
+	for (int i = 0; i < 7; i++) {
+		double[] normValues=tryDifferentTransform(sortedValue, i);
+		double pearson=corr.correlation(rank,normValues);
+		if(bestPCC<pearson)
+		{
+			bestPCC=pearson;
+			bestType=i;
+		}
+	}
+	DenseDoubleMatrix1D outputSignal=new DenseDoubleMatrix1D(tryDifferentTransform(inputSignal.toArray(), bestType));
+return outputSignal;	
+}
+
+//static double testNormality(double[] values)
+//{
+//
+//}
 
 public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_signal)
 {
@@ -79,10 +115,11 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 		}
 		List<SparseDoubleMatrix1D> SignalOverRegions = target_signal.overlapBinSignal_fixStepSize(SignalRegions2, 400);
 		//peak calling
-		peaklist=PeakCalling.simple_peak_detection(SignalOverRegions, SignalRegions2);	
+		peaklist=PeakCalling.simple_peak_detection(SignalOverRegions, SignalRegions2);
 	}
 	//sort by score, take only top ones
 	Collections.sort(peaklist, new BEDScoreComparator());
+	SimpleBEDFeature.toFile(peaklist, target_signal.FilePrefix+".bed");
 	for (int i = 0; i < Math.min(maxExtract, peaklist.size()); i++) {
 		outputSignal.add(peaklist.get(i));
 	}
@@ -283,6 +320,52 @@ public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,Lis
 	return intersectList;
 }	
 
+public static double tryDifferentTransform(double raw, int method)
+{
+	double temp=0;
+	switch (method) {
+	case 1:
+		 temp=Math.log(1+raw);
+		if(Double.isInfinite(temp)||Double.isNaN(temp) )
+			temp=raw;
+		return temp;
+	case 2:
+		 temp=Math.exp(raw/1000);
+		if(Double.isInfinite(temp)||Double.isNaN(temp) )
+			temp=raw;
+		return temp;
+	case 3:
+		temp=raw*raw;
+		if(Double.isInfinite(temp)||Double.isNaN(temp) )
+			temp=raw;
+		return temp;
+	case 4:
+		temp=raw*raw*raw;
+		if(Double.isInfinite(temp)||Double.isNaN(temp) )
+			temp=raw;
+		return temp;
+	case 5:
+		temp=1/(raw+1);
+		if(Double.isInfinite(temp)||Double.isNaN(temp) )
+			temp=raw;
+		return temp;
+	case 6:
+		temp=Math.sqrt(raw);
+		if(Double.isInfinite(temp)||Double.isNaN(temp) )
+			temp=raw;
+		return temp;
+	default:
+		return raw;
+	}
+}
 
+public static double[]  tryDifferentTransform(double[] raw, int method)
+{ 
+	double[]  retVal=new double[raw.length];
+	for (int i = 0; i < retVal.length; i++) {
+		retVal[i]=tryDifferentTransform(raw[i],method);
+	}
+   return retVal;
+}
 
 }

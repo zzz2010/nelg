@@ -1,5 +1,6 @@
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -88,9 +89,11 @@ FileStorageAdapter db;
 	@Test
 	public void testOverlapBinSignal()
 	{
-		TrackRecord temp=db.getTrackById("wgEncodeRikenCageK562CellPapPlusClusters");
-		List<BEDFeature> regions = db.getSignalContigRegion(temp);
-		SparseDoubleMatrix2D BinArray = db.overlapBinSignal_fixBinNum(temp, regions, 100);
+		TrackRecord temp=db.getTrackById("wgEncodeRikenCageK562CytosolPapPlusSignal");
+//		List<BEDFeature> regions = db.getSignalContigRegion(temp);
+		List<BEDFeature> regions=new ArrayList<BEDFeature>();
+		regions.add(new SimpleBEDFeature(44084707, 44085107, "chr15"));
+		SparseDoubleMatrix2D BinArray = db.overlapBinSignal_fixBinNum(temp, regions, 1);
 		assertEquals(regions.size(), BinArray.size());
 		assertEquals(100, BinArray.viewColumn(0).size());
 		Float a=(float) BinArray.viewColumn(0).zSum();
