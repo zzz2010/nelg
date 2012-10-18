@@ -100,7 +100,7 @@ ChildModeler modeler;
 	{
 		FileInputStream fileIn;
 		try {
-				fileIn = new FileInputStream("wgEncodeRikenCageK562ChromatinTotalMinusSignal_ValThere_result.cr");
+				fileIn = new FileInputStream("wgEncodeRikenCageK562CytosolPapPlusSignal_ValThere_result.cr");
 				ObjectInputStream  in = new ObjectInputStream(fileIn);
 				  ClassificationResult minusResult=(ClassificationResult)in.readObject();
 				Logger logger = Logger.getLogger("aa");
