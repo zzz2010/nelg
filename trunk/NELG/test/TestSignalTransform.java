@@ -54,7 +54,9 @@ public class TestSignalTransform {
 
 		TrackRecord temp=db.getTrackById("wgEncodeRikenCageK562CellPapPlusClusters");
 		List<BEDFeature> regions = db.getSignalContigRegion(temp);
-		SparseDoubleMatrix2D BinArray =SignalTransform.OverlapBinSignal(temp, regions, 100);
+//		SparseDoubleMatrix2D BinArray =SignalTransform.OverlapBinSignal(temp, regions, 100);
+		MultiScaleFeatureExtractor msfE=new MultiScaleFeatureExtractor(5);
+		SparseDoubleMatrix2D BinArray =msfE.extractSignalFeature(temp, regions);
 		assertEquals(regions.size(), BinArray.size());
 		assertEquals(100, BinArray.viewColumn(0).size());
 		Float a=(float) BinArray.viewColumn(0).zSum();
