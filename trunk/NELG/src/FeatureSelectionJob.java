@@ -95,7 +95,7 @@ public class FeatureSelectionJob implements  Runnable {
 		else	
 		{
 		//get filtered target signal
-	  	target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),4000);
+	  	target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),10000);
 	  	if(target_signal_filtered.size()<50)
 	  	{
 	  		toFile();
@@ -114,7 +114,7 @@ public class FeatureSelectionJob implements  Runnable {
 		FeatureCorr=new HashMap<String, Float>(SignalPool.size()-1);
 		
 		boolean onlyBestBin=false;
-		FeatureExtractor featureExtractor=new EqualBinFeatureExtractor(40);
+		FeatureExtractor featureExtractor=new EqualBinFeatureExtractor(20);
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 		for (TrackRecord feature_signal : SignalPool) {
 //			if(!feature_signal.FilePrefix.contains("H3k36"))
