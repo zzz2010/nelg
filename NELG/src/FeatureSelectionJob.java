@@ -176,7 +176,7 @@ public class FeatureSelectionJob implements  Runnable {
 		        		if(!onlyBestBin)
 		        		{	
 		        			 FeatureCorr.put(feature_signal.FilePrefix, maxScore);	
-					        if(score>0.2)
+					        if(score>0.15)
 					      	{
 					        	SparseDoubleMatrix1D featureBestBinValue = (SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
 					        	
@@ -195,7 +195,7 @@ public class FeatureSelectionJob implements  Runnable {
 	
 			        	 FeatureSignal valF= 	new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
 				        FeatureCorr.put(feature_signal.FilePrefix, maxScore);	
-			        	 if(maxScore>0.2)
+			        	 if(maxScore>0.15)
 				        	{
 				        		ValThereFeatures.add(valF);
 				        	}

@@ -57,7 +57,7 @@ public class MotherModeler {
 
 			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
 				continue;
-//			if(!target_signal.ExperimentId.contains("CytosolPapPlusSignal"))
+//			if(!target_signal.ExperimentId.contains("ChromatinTotalPlusSignal"))
 //				continue;
 			
 			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,executor);
