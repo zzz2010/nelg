@@ -155,7 +155,7 @@ public class ChildModeler {
 		Instances data=getDatasetFromJob(job);
 		
 		ArrayList<Integer> selecedAttributes=new ArrayList<Integer>();
-		
+		ArrayList<String> finalFeatureSel=new ArrayList<String>();
 		Instances data2 =null;//filtered dataset
 		if(data.numAttributes()>Math.log(job.targetValue.size())/Math.log(2)+1)
 		{
@@ -176,11 +176,13 @@ public class ChildModeler {
 			 data2 = Filter.useFilter(data, filter);
 			for (int i = 0; i < data2.numAttributes()-1; i++) {
 				selecedAttributes.add(FeatureNameMap.get(data2.attribute(i).name()));
+				finalFeatureSel.add(data2.attribute(i).name());
 				FeatureNameMap.remove(data2.attribute(i).name());
 			} 
 			
 			//logging
-				logger.debug("filter features:"+FeatureNameMap.keySet());
+			logger.debug("filter features:"+FeatureNameMap.keySet());
+				logger.info("final features:"+finalFeatureSel);
 	
 			 
 		} catch (Exception e1) {
