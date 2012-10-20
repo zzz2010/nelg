@@ -37,6 +37,7 @@ import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Normalize;
 
 
 
@@ -215,8 +216,8 @@ public class ChildModeler {
 			modelerSet.add(new RBFNetwork());//GaussianProcesses
 		if(data2.numAttributes()>5)
 			modelerSet.add(new PaceRegression());
-		if(data2.numAttributes()>6)
-			modelerSet.add(new SMOreg());
+//		if(data2.numAttributes()>6)
+//			modelerSet.add(new SMOreg());
 
 			
 		for (int i = 0; i < modelerSet.size(); i++) {
@@ -323,7 +324,15 @@ public class ChildModeler {
 			 jobdata.add(instance);
 		}
 		jobdata.setClassIndex(featureNum);
-		
+		  Normalize m_normalize = new Normalize();
+		  try {
+			m_normalize.setInputFormat(jobdata);
+			 jobdata = Filter.useFilter(jobdata, m_normalize);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
 		return jobdata;
 		
 	}
