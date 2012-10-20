@@ -243,6 +243,10 @@ public class ChildModeler {
 		//get final classifier
 		try {
 			bestModeler.buildClassifier(data2);
+			for (int i = 0; i < 10; i++) {
+				System.out.println(bestModeler.classifyInstance(data2.instance(i)));
+			}
+			
 			Evaluation eval = new Evaluation(data2);
 			eval.evaluateModel(bestModeler, data2);
 			System.out.println(eval.toSummaryString("\nResults\n======\n", false));
