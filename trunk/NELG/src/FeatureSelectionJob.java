@@ -67,28 +67,29 @@ public class FeatureSelectionJob implements  Runnable {
 					 logger.info("skip classification:"+target_signal.FilePrefix+"_IsThere");
 				 }
 				 else
-				 {
-					 ClassificationResult ValThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_ValThere");
-					 if(ValThereJob2!=null)
-					 {
-						 logger.info("skip regression:"+target_signal.FilePrefix+"_ValThere");
-					 }
-					 else
-					 {
+				 {			
 						Collections.sort(IsThereFeatures);
 						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
 						//executor.execute(IsThereJob);
 						IsThereJob.run();
-					 }
+					 
 				 }
 			}
 			if(ValThereFeatures.size()>0)
 			{
+				 ClassificationResult ValThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_ValThere");
+				 if(ValThereJob2!=null)
+				 {
+					 logger.info("skip regression:"+target_signal.FilePrefix+"_ValThere");
+				 }
+				 else
+				 {
 				Collections.sort(ValThereFeatures);
 				ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.FilePrefix+"_ValThere", targetNormValue) ;
 				ValThereJob.Regression=true;		
 				//executor.execute(ValThereJob);
 				ValThereJob.run();
+				 }
 			}
 
 		}
