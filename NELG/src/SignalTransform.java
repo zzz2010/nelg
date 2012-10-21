@@ -137,12 +137,13 @@ public static ArrayList<BEDFeature> extractNegativeSignal(List<BEDFeature> targe
 {
 	//search in gap and probability
 	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>(2*target_signal.size());
-	Collections.sort(target_signal, new BEDPositionComparator());
+	List<BEDFeature>  target_signal_sorted=new ArrayList<BEDFeature>(target_signal);
+	Collections.sort(target_signal_sorted, new BEDPositionComparator());
 	List<BEDFeature> gaplist=new ArrayList<BEDFeature>();
 	double sumCoverage=0;
-	for (int i = 0; i < target_signal.size()-1; i++) {
-		BEDFeature bed1=target_signal.get(i);
-		BEDFeature bed2=target_signal.get(i+1);
+	for (int i = 0; i < target_signal_sorted.size()-1; i++) {
+		BEDFeature bed1=target_signal_sorted.get(i);
+		BEDFeature bed2=target_signal_sorted.get(i+1);
 		if(bed1.getChr().equalsIgnoreCase(bed2.getChr()))
 		{
 			if(bed1.getEnd()+10000<bed2.getStart()) //ensure have enough gap
@@ -164,9 +165,9 @@ public static ArrayList<BEDFeature> extractNegativeSignal(List<BEDFeature> targe
 	Random rand=new Random(12345);
 	for (int i = 0; i < num; i++) {
 		
-		int selregion=rand.nextInt(target_signal.size());
+		int selregion=rand.nextInt(target_signal_sorted.size());
 
-		int bgregion_size=target_signal.get(selregion).getEnd()-target_signal.get(selregion).getStart();
+		int bgregion_size=target_signal_sorted.get(selregion).getEnd()-target_signal_sorted.get(selregion).getStart();
 		double pointer=rand.nextDouble();
 		int selgap=-Collections.binarySearch(cumprob,pointer )-2 ;
 		String chrom=gaplist.get(selgap).getChr();
@@ -202,6 +203,8 @@ public static List<BEDFeature> fixRegionSize(List<BEDFeature> list1, int regions
 	List<BEDFeature> fixlist=new ArrayList<BEDFeature>(list1.size());  
 	for (int i = 0; i < list1.size(); i++) {
 		int midpoint=(list1.get(i).getStart()+list1.get(i).getEnd())/2;
+		if(midpoint-regionsize/2<0)//ignore negative position
+			continue;
 		SimpleBEDFeature sbed=new SimpleBEDFeature(midpoint-regionsize/2, midpoint+regionsize/2, list1.get(i).getChr());
 		sbed.setDescription(list1.get(i).getDescription());
 		sbed.setStrand(list1.get(i).getStrand());
