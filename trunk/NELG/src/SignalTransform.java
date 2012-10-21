@@ -198,12 +198,12 @@ public static DoubleMatrix1D BedFeatureToValues(List<BEDFeature> signal)
 }
 
 //get the window region around the center of input regions
-public static List<BEDFeature> fixRegionSize(List<BEDFeature> list1, int regionsize)
+public static List<BEDFeature> fixRegionSize(List<BEDFeature> list1, int regionsize, boolean filterNegPos)
 {
 	List<BEDFeature> fixlist=new ArrayList<BEDFeature>(list1.size());  
 	for (int i = 0; i < list1.size(); i++) {
 		int midpoint=(list1.get(i).getStart()+list1.get(i).getEnd())/2;
-		if(midpoint-regionsize/2<0)//ignore negative position
+		if(midpoint-regionsize/2<0&&filterNegPos)//ignore negative position
 			continue;
 		SimpleBEDFeature sbed=new SimpleBEDFeature(midpoint-regionsize/2, midpoint+regionsize/2, list1.get(i).getChr());
 		sbed.setDescription(list1.get(i).getDescription());
