@@ -70,7 +70,14 @@ public class FeatureSelectionJob implements  Runnable {
 				 {			
 						Collections.sort(IsThereFeatures);
 						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
-						//executor.execute(IsThereJob);
+						if(executor!=null)
+							try {
+								executor.execute(IsThereJob);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						else
 						IsThereJob.run();
 					 
 				 }
@@ -219,7 +226,9 @@ public class FeatureSelectionJob implements  Runnable {
 					{
 						Collections.sort(IsThereFeatures);
 						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
-						//executor.execute(IsThereJob);
+						if(executor!=null)
+							executor.execute(IsThereJob);
+						else
 						IsThereJob.run();
 					}
 					else
