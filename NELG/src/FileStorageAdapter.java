@@ -154,15 +154,11 @@ public class FileStorageAdapter implements StorageAdapter{
 		return DataBase.get(trackId);
 	}
 
-	@Override
-	public List<BEDFeature> getPeakData(TrackRecord tr) {
-		// TODO Auto-generated method stub
+	public static List<BEDFeature> getBEDData(String bedfile)
+	{
 		ArrayList<BEDFeature> peakList=new ArrayList<BEDFeature>();
-		if(tr.hasPeak)
-		{
-		String bedFile = dataDir+"/"+tr.FilePrefix+tr.peakSuffix;
 		BEDCodec codec = new BEDCodec();
-		AbstractFeatureReader<BEDFeature> reader = AbstractFeatureReader.getFeatureReader(bedFile, codec, false);
+		AbstractFeatureReader<BEDFeature> reader = AbstractFeatureReader.getFeatureReader(bedfile, codec, false);
 		Iterable<BEDFeature> iter;
 		try {
 			iter = reader.iterator();
@@ -174,6 +170,17 @@ public class FileStorageAdapter implements StorageAdapter{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return peakList;
+
+	}
+	@Override
+	public List<BEDFeature> getPeakData(TrackRecord tr) {
+		// TODO Auto-generated method stub
+		List<BEDFeature>  peakList=new ArrayList<BEDFeature>();
+		if(tr.hasPeak)
+		{
+		String bedFile = dataDir+"/"+tr.FilePrefix+tr.peakSuffix;
+		peakList=getBEDData(bedFile);
 
 		
         }
@@ -424,9 +431,11 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 						 while(iter.hasNext())
 					    {
 					    	WigItem nextRecord = iter.next();	
+
 //					    	float recordlen=nextRecord.getEndBase()-nextRecord.getStartBase()+1;
 					    	if((nextRecord.getStartBase()-stepWidth)>=start)
 					    	{
+
 								 //add the previous one
 								 if(query.getStrand()== Strand.NEGATIVE)
 						    		{
@@ -451,6 +460,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 					    		while(start<=nextRecord.getEndBase()-stepWidth)
 					    		{
 						    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-rstart);
+
 								if(query.getStrand()== Strand.NEGATIVE)
 						    		{
 						    			outputSignal.get(queryid).set(numbin-binId-1, sumValues+outputSignal.get(queryid).get(numbin-binId-1));
