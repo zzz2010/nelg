@@ -129,7 +129,7 @@ public class FeatureSelectionJob implements  Runnable {
 //			if(!feature_signal.FilePrefix.contains("H3k36"))
 //				continue;
 			
-		        if (feature_signal.ExperimentId!=(target_signal.ExperimentId))
+		        if (!SynonymCheck.isSynonym(feature_signal, target_signal) )
 		        {
 		        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
 		        	SparseDoubleMatrix2D feature_BinSignal=featureExtractor.extractSignalFeature(feature_signal, target_signal_filtered);
