@@ -113,7 +113,7 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 				}
 			}
 		}
-		List<SparseDoubleMatrix1D> SignalOverRegions = target_signal.overlapBinSignal_fixStepSize(SignalRegions2, 400);
+		List<SparseDoubleMatrix1D> SignalOverRegions = target_signal.overlapBinSignal_fixStepSize(SignalRegions2, 200);//200bp per bin
 		//peak calling
 		peaklist=PeakCalling.simple_peak_detection(SignalOverRegions, SignalRegions2);
 	}
@@ -262,7 +262,7 @@ public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,Lis
 			{
 				//overlap
 				int endpos=Math.min(el1.getEnd(), el2.getEnd());
-				if(endpos-el1.getStart()>100)
+//				if(endpos-el1.getStart()>1)
 				{
 				SimpleBEDFeature temp=new SimpleBEDFeature(el1.getStart(), endpos, el1.getChr());
 				temp.setScore(Math.max(el1.getScore(), el2.getScore()));
@@ -276,7 +276,7 @@ public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,Lis
 			{
 				//overlap
 				int endpos=Math.min(el1.getEnd(), el2.getEnd());
-				if(endpos-el1.getStart()>100)
+//				if(endpos-el1.getStart()>1)
 				{
 				SimpleBEDFeature temp=new SimpleBEDFeature(el2.getStart(), endpos, el1.getChr());
 				temp.setScore(Math.max(el1.getScore(), el2.getScore()));
