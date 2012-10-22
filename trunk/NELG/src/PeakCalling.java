@@ -48,7 +48,7 @@ public class PeakCalling {
 		Float minimum = null;
 		U maximumPos = null;
 		U minimumPos = null;
-
+		Random rand=new Random(1);
 		boolean lookForMax = true;
 
 		Integer pos = 0;
@@ -56,6 +56,10 @@ public class PeakCalling {
 			if (maximum == null||value > maximum ) {
 				maximum = (float) value;
 				maximumPos = indices.get(pos);
+			}
+			else if(value>0&&value == maximum&&pos<indices.size()-1)
+			{
+				maximumPos =indices.get(pos+ rand.nextInt(2)); //shift to the middle of the plain 
 			}
 
 			if (minimum == null||value < minimum ) {
@@ -119,18 +123,17 @@ public class PeakCalling {
 			Map<Integer, Float> maxPoints = tempPeakList.get(0);
 			Iterator<Entry<Integer, Float>> iter = maxPoints.entrySet().iterator();
 //			double std_bg=sd(values.get(i));
-			double lamda=mean(values.get(i));
+			double lamda=mean(values.get(i))+1;
 			
 			while(iter.hasNext())
 			{
 				Entry<Integer, Float> tempP = iter.next();
 				//float MACSscore=(float) logPoissionCDF(lamda,tempP.getValue().intValue());
 				
-				float MACSscore=tempP.getValue();//(float) ((tempP.getValue()-lamda)/std_bg);
+				float MACSscore=(float) (tempP.getValue()/lamda);//(float) ((tempP.getValue()-lamda)/std_bg);
 				float stepsize=(regions.get(i).getEnd()-regions.get(i).getStart())/values.get(i).size();
 				if(MACSscore>2)//arbitary cut-off
 				{
-					
 					int pos=(int) (regions.get(i).getStart()+tempP.getKey()*stepsize+0.5*stepsize);
 
 					SimpleBEDFeature peak=new SimpleBEDFeature(pos, pos+1, regions.get(i).getChr());

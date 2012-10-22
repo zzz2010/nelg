@@ -281,7 +281,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 						 while(iter.hasNext())
 					    {
 					    	WigItem nextRecord = iter.next();	
-					    	
+//					    	float recordlen=nextRecord.getEndBase()-nextRecord.getStartBase()+1;
 					    	if((nextRecord.getStartBase()-stepWidth)>=start)
 					    	{
 					    		
@@ -305,21 +305,26 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 				    			break;
 					    	if((nextRecord.getEndBase()-stepWidth)>=start)
 					    	{
-					    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-nextRecord.getStartBase());
-					    		
-							if(query.getStrand()== Strand.NEGATIVE)
+					    		int rstart=nextRecord.getStartBase();
+					    		while(start<=nextRecord.getEndBase()-stepWidth)
 					    		{
-								outputSignal.set(queryid, numbin-binId-1, sumValues+outputSignal.get(queryid, numbin-binId-1));
-					    			
+						    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-rstart);
+								if(query.getStrand()== Strand.NEGATIVE)
+						    		{
+						    			outputSignal.set(queryid,numbin-binId-1, sumValues+outputSignal.get(queryid,numbin-binId-1));
+						    		}
+						    		else
+						    			outputSignal.set(queryid,binId, sumValues+outputSignal.get(queryid,binId));
+						    		binId+=1;
+						    		if(binId>=numbin)
+						    			break;
+						    		start=start+stepWidth;
+						    		sumValues=0;
+						    		rstart=start;
+ 
 					    		}
-					    		else
-					    			outputSignal.set(queryid, binId, sumValues+outputSignal.get(queryid, binId));
-					    			
-					    		binId+=1;
-					    		if(binId>=numbin)
-					    			break;
-					    		start=start+stepWidth;
-					    		sumValues=nextRecord.getWigValue()*(nextRecord.getEndBase()-start);   		
+					    		//contribute to the next bin
+					    		sumValues=nextRecord.getWigValue()*(nextRecord.getEndBase()-start); 
 					    	}
 					    	else
 					    		sumValues+=nextRecord.getWigValue()*(nextRecord.getEndBase()-nextRecord.getStartBase());
@@ -419,7 +424,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 						 while(iter.hasNext())
 					    {
 					    	WigItem nextRecord = iter.next();	
-					    	
+//					    	float recordlen=nextRecord.getEndBase()-nextRecord.getStartBase()+1;
 					    	if((nextRecord.getStartBase()-stepWidth)>=start)
 					    	{
 								 //add the previous one
@@ -439,23 +444,31 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 					    	}
 				    		if(binId>=numbin)
 				    			break;
+				    		//must overlap more than one bin
 					    	if((nextRecord.getEndBase()-stepWidth)>=start)
 					    	{
-					    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-nextRecord.getStartBase());
-								if(query.getStrand()== Strand.NEGATIVE)
+					    		int rstart=nextRecord.getStartBase();
+					    		while(start<=nextRecord.getEndBase()-stepWidth)
 					    		{
-					    			outputSignal.get(queryid).set(numbin-binId-1, sumValues+outputSignal.get(queryid).get(numbin-binId-1));
+						    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-rstart);
+								if(query.getStrand()== Strand.NEGATIVE)
+						    		{
+						    			outputSignal.get(queryid).set(numbin-binId-1, sumValues+outputSignal.get(queryid).get(numbin-binId-1));
+						    		}
+						    		else
+						    			outputSignal.get(queryid).set(binId, sumValues+outputSignal.get(queryid).get(binId));
+						    		binId+=1;
+						    		if(binId>=numbin)
+						    			break;
+						    		start=start+stepWidth;
+						    		sumValues=0;
+						    		rstart=start;
+ 
 					    		}
-					    		else
-					    			outputSignal.get(queryid).set(binId, sumValues+outputSignal.get(queryid).get(binId));
-					    		binId+=1;
-					    		if(binId>=numbin)
-					    			break;
-					    		start=start+stepWidth;
 					    		//contribute to the next bin
-					    		sumValues=nextRecord.getWigValue()*(nextRecord.getEndBase()-start);   		
+					    		sumValues=nextRecord.getWigValue()*(nextRecord.getEndBase()-start); 
 					    	}
-					    	else
+					    	else//just overlap  one bin
 					    		sumValues+=nextRecord.getWigValue()*(nextRecord.getEndBase()-nextRecord.getStartBase());
 					    	
 					    }
