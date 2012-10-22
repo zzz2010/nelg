@@ -70,14 +70,14 @@ public class FeatureSelectionJob implements  Runnable {
 				 {			
 						Collections.sort(IsThereFeatures);
 						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
-						if(executor!=null)
-							try {
-								executor.execute(IsThereJob);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						else
+//						if(executor!=null)
+//							try {
+//								executor.execute(IsThereJob);
+//							} catch (InterruptedException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+//						else
 						IsThereJob.run();
 					 
 				 }
@@ -184,7 +184,7 @@ public class FeatureSelectionJob implements  Runnable {
 		        		if(!onlyBestBin)
 		        		{	
 		        			 FeatureCorr.put(feature_signal.FilePrefix, maxScore);	
-					        if(score>0.15)
+					        if(score>0.2)
 					      	{
 					        	SparseDoubleMatrix1D featureBestBinValue = (SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
 					        	
@@ -203,7 +203,7 @@ public class FeatureSelectionJob implements  Runnable {
 	
 			        	 FeatureSignal valF= 	new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
 				        FeatureCorr.put(feature_signal.FilePrefix, maxScore);	
-			        	 if(maxScore>0.15)
+			        	 if(maxScore>0.2)
 				        	{
 				        		ValThereFeatures.add(valF);
 				        	}
@@ -226,9 +226,9 @@ public class FeatureSelectionJob implements  Runnable {
 					{
 						Collections.sort(IsThereFeatures);
 						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
-						if(executor!=null)
-							executor.execute(IsThereJob);
-						else
+//						if(executor!=null)
+//							executor.execute(IsThereJob);
+//						else
 						IsThereJob.run();
 					}
 					else

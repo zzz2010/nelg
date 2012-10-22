@@ -45,7 +45,7 @@ public class ClassificationJob implements Runnable  , Serializable {
 			 result.toFile();
 			 if(result.isRegression)
 			 {
-				 if(result.Corr>0.7)
+				 if(result.Corr>0.5)
 				 {
 
 					 logger.info(result.toString());

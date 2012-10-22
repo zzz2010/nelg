@@ -49,7 +49,7 @@ public class MotherModeler {
 	public void Run()
 	{	
 		executor = new PooledExecutor(new LinkedQueue());
-		executor.setMaximumPoolSize(threadNum);
+		executor.setMinimumPoolSize(threadNum);
 		
 		executor.setKeepAliveTime(1000 * 60*500 );
 			

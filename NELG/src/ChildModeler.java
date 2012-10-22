@@ -11,6 +11,8 @@ import org.apache.log4j.Logger;
 
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.GreedyStepwise;
+import weka.attributeSelection.PrincipalComponents;
+import weka.attributeSelection.Ranker;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
@@ -161,31 +163,33 @@ public class ChildModeler {
 		if(data.numAttributes()>Math.log(job.targetValue.size())/Math.log(2)+1)
 		{
 		
-		HashMap<String,Integer> FeatureNameMap=new HashMap<String, Integer>();
-		for (int i = 0; i < data.numAttributes()-1; i++) {
-			FeatureNameMap.put(data.attribute(i).name(),i);
-		}
-		//feature selection
-		weka.filters.supervised.attribute.AttributeSelection filter = new weka.filters.supervised.attribute.AttributeSelection();
-	    CfsSubsetEval eval = new CfsSubsetEval();
-	    GreedyStepwise search = new GreedyStepwise();
-	    search.setSearchBackwards(true);
-	    filter.setEvaluator(eval);
-	    filter.setSearch(search);
+//		HashMap<String,Integer> FeatureNameMap=new HashMap<String, Integer>();
+//		for (int i = 0; i < data.numAttributes()-1; i++) {
+//			FeatureNameMap.put(data.attribute(i).name(),i);
+//		}
+//		//feature selection
+//		weka.filters.supervised.attribute.AttributeSelection filter = new weka.filters.supervised.attribute.AttributeSelection();
+//	    CfsSubsetEval eval = new CfsSubsetEval();
+//	    GreedyStepwise search = new GreedyStepwise();
+//	    search.setSearchBackwards(true);
+//	    filter.setEvaluator(eval);
+//	    filter.setSearch(search);
 	    try {
-			filter.setInputFormat(data);
-			 data2 = Filter.useFilter(data, filter);
-			for (int i = 0; i < data2.numAttributes()-1; i++) {
-				selecedAttributes.add(FeatureNameMap.get(data2.attribute(i).name()));
-				finalFeatureSel.add(data2.attribute(i).name());
-				FeatureNameMap.remove(data2.attribute(i).name());
-			} 
-			
-			//logging
-			logger.debug("filter features:"+FeatureNameMap.keySet());
-				logger.info("final features:"+finalFeatureSel);
-	
-			 
+//			filter.setInputFormat(data);
+//			 data2 = Filter.useFilter(data, filter);
+//			for (int i = 0; i < data2.numAttributes()-1; i++) {
+//				selecedAttributes.add(FeatureNameMap.get(data2.attribute(i).name()));
+//				finalFeatureSel.add(data2.attribute(i).name());
+//				FeatureNameMap.remove(data2.attribute(i).name());
+//			} 
+//			
+//			//logging
+//			logger.debug("filter features:"+FeatureNameMap.keySet());
+//				logger.info("final features:"+finalFeatureSel);
+				PrincipalComponents pca=new PrincipalComponents();
+				pca.buildEvaluator(data);
+				pca.setMaximumAttributeNames((int) (Math.log(job.targetValue.size())/Math.log(2)+1));
+			 data2=pca.transformedData(data);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
