@@ -49,7 +49,8 @@ public class MotherModeler {
 	public void Run()
 	{	
 		executor = new PooledExecutor(new LinkedQueue());
-		executor.setMinimumPoolSize(threadNum);
+		executor.setMaximumPoolSize(threadNum);
+		
 		executor.setKeepAliveTime(1000 * 60*500 );
 			
 		//take out one as class label, the rest as feature data
