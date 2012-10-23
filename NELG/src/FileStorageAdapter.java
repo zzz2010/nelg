@@ -167,9 +167,9 @@ public class FileStorageAdapter implements StorageAdapter{
 	        	peakList.add(feat);    
 			}
 	        reader.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 			return null;
 		}
 		return peakList;

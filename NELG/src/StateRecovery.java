@@ -27,16 +27,10 @@ public class StateRecovery {
 				 ObjectInputStream in = new ObjectInputStream(fileIn);
 				 ClassificationResult temp=(ClassificationResult)in.readObject();
 				 return temp;
-			} catch (FileNotFoundException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				
+			} 
 		
 		}
 		return null;
@@ -78,16 +72,10 @@ public class StateRecovery {
 				 ObjectInputStream in = new ObjectInputStream(fileIn);
 				 SparseDoubleMatrix2D temp=(SparseDoubleMatrix2D)in.readObject();
 				 return temp;
-			} catch (FileNotFoundException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				
+			} 
 		
 		}
 		return null;
@@ -112,16 +100,10 @@ public class StateRecovery {
 				 fsjob.target_signal_filtered=temp.target_signal_filtered;
 				 fsjob.ValThereFeatures=temp.ValThereFeatures;
 				 return fsjob;
-			} catch (FileNotFoundException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				
+			} 
 	
 		}
 		
