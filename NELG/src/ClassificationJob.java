@@ -6,12 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.jppf.server.protocol.JPPFTask;
 
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 
 
-public class ClassificationJob implements Runnable  , Serializable {
+public class ClassificationJob extends JPPFTask implements  Serializable {
 
 	/**
 	 * 
@@ -31,7 +32,7 @@ public class ClassificationJob implements Runnable  , Serializable {
 	}
 	
 	 public void run() {
-		
+		 System.out.println("this is the node executing task:"+JobTitle);
 		 toFile();
 		 ChildModeler modeler=new ChildModeler();
 		 ClassificationResult result=null;
@@ -58,7 +59,8 @@ public class ClassificationJob implements Runnable  , Serializable {
 					 logger.info(result.toString());
 				 }
 			 }
-		 }
+		 }		 
+		 setResult(result);
 	    }
 	 
 	 public void toFile()
