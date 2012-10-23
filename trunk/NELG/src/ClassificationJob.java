@@ -33,7 +33,7 @@ public class ClassificationJob extends JPPFTask implements  Serializable {
 	
 	 public void run() {
 		 System.out.println("this is the node executing task:"+JobTitle);
-		 toFile();
+//		 toFile();
 		 ChildModeler modeler=new ChildModeler();
 		 ClassificationResult result=null;
 		 if(Regression)
@@ -43,7 +43,7 @@ public class ClassificationJob extends JPPFTask implements  Serializable {
 		 
 		 if(result!=null)
 		 {
-			 result.toFile();
+//			 result.toFile();
 			 if(result.isRegression)
 			 {
 				 if(result.Corr>0.5)
@@ -67,7 +67,7 @@ public class ClassificationJob extends JPPFTask implements  Serializable {
 	 {
 	        try {
 	        	 FileOutputStream fileOut =
-	    		         new FileOutputStream(JobTitle+".cj");
+	    		         new FileOutputStream(common.outputDir+JobTitle+".cj");
 	    		         ObjectOutputStream out =
 	    		                            new ObjectOutputStream(fileOut);
 				out.writeObject(this);

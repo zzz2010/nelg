@@ -64,7 +64,7 @@ public class FileStorageAdapter implements StorageAdapter{
 				Assembly2CellLine.get(temp.Assembly).add(temp.Cell_Line);
 				if(!CellLine2TrackId.containsKey(temp.Cell_Line))
 				{
-					CellLine2TrackId.put(temp.Cell_Line, new ArrayList());
+					CellLine2TrackId.put(temp.Cell_Line, new ArrayList<String>());
 				}
 				CellLine2TrackId.get(temp.Cell_Line).add(temp.getTrackId());
 				}
@@ -169,6 +169,7 @@ public class FileStorageAdapter implements StorageAdapter{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
 		return peakList;
 

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.Thread.State;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,16 +80,9 @@ public class FeatureSelectionJob implements  Runnable {
 				 {			
 						Collections.sort(IsThereFeatures);
 						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
-//						if(executor!=null)
-//							try {
-//								executor.execute(IsThereJob);
-//							} catch (InterruptedException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//						else
-//						IsThereJob.run();
+
 						try {
+							IsThereJob.toFile();
 							job.addTask(IsThereJob);
 						} catch (JPPFException e) {
 							// TODO Auto-generated catch block
@@ -113,6 +107,7 @@ public class FeatureSelectionJob implements  Runnable {
 //				ValThereJob.run();
 				
 				try {
+					ValThereJob.toFile();
 					job.addTask(ValThereJob);
 				} catch (JPPFException e) {
 					// TODO Auto-generated catch block
@@ -125,8 +120,14 @@ public class FeatureSelectionJob implements  Runnable {
 		else	
 		{
 		//get filtered target signal
-	  	target_signal_filtered= SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),10000,true);
-	  	if(target_signal_filtered.size()<50)
+		String storekey=target_signal.FilePrefix+common.SignalRange;
+	  	target_signal_filtered= StateRecovery.loadCache_BEDFeatureList(storekey);
+	  	if(target_signal_filtered==null)
+	  	{
+	  		target_signal_filtered=SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),common.SignalRange,true);
+	  		StateRecovery.saveCache_BEDFeatureList(target_signal_filtered, storekey);
+	  	}
+	  		if(target_signal_filtered.size()<common.MinimumPeakNum)
 	  	{
 	  		toFile();
 	  		return;
@@ -154,8 +155,21 @@ public class FeatureSelectionJob implements  Runnable {
 		        if (!SynonymCheck.isSynonym(feature_signal, target_signal) )
 		        {
 		        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
-		        	SparseDoubleMatrix2D feature_BinSignal=featureExtractor.extractSignalFeature(feature_signal, target_signal_filtered);
-		        	SparseDoubleMatrix2D feature_BinSignal_bg=featureExtractor.extractSignalFeature(feature_signal, target_signal_bg);
+		        	String storekey1=feature_signal.FilePrefix+featureExtractor.getClass().getName();
+		        	String storekey2=storekey1+"_bg";
+		        	SparseDoubleMatrix2D feature_BinSignal=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey1);
+		        	if(feature_BinSignal==null)
+		        	{
+		        		feature_BinSignal=featureExtractor.extractSignalFeature(feature_signal, target_signal_filtered);
+		        		StateRecovery.saveCache_SparseDoubleMatrix2D(feature_BinSignal, storekey1);		     
+		        	}
+		        	
+		        	SparseDoubleMatrix2D feature_BinSignal_bg=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey2);
+		        	if(feature_BinSignal_bg==null)
+		        	{
+		        		feature_BinSignal_bg=featureExtractor.extractSignalFeature(feature_signal, target_signal_bg);
+		        		StateRecovery.saveCache_SparseDoubleMatrix2D(feature_BinSignal_bg, storekey2);
+		        	}
 		        	/***************isthere task****************/
 		        float maxScore=-1;
 		        int bestBin=-1;
@@ -253,6 +267,7 @@ public class FeatureSelectionJob implements  Runnable {
 //						else
 //						IsThereJob.run();
 						try {
+							IsThereJob.toFile();
 							job.addTask(IsThereJob);
 						} catch (JPPFException e) {
 							// TODO Auto-generated catch block
@@ -277,6 +292,7 @@ public class FeatureSelectionJob implements  Runnable {
 						//executor.execute(ValThereJob);
 //						ValThereJob.run();
 						try {
+							ValThereJob.toFile();
 							job.addTask(ValThereJob);
 						} catch (JPPFException e) {
 							// TODO Auto-generated catch block
@@ -323,7 +339,7 @@ public class FeatureSelectionJob implements  Runnable {
 	 {
 		 try {
         	 FileOutputStream fileOut =
-    		         new FileOutputStream(target_signal.FilePrefix+".fsj");
+    		         new FileOutputStream(common.outputDir+target_signal.FilePrefix+".fsj");
     		         ObjectOutputStream out =
     		                            new ObjectOutputStream(fileOut);
 			out.writeObject(new FeatureSelectionSObj(IsThereFeatures, ValThereFeatures, FeatureAUC, FeatureCorr, target_signal_filtered));
