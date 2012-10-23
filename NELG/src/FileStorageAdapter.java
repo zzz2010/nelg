@@ -157,10 +157,11 @@ public class FileStorageAdapter implements StorageAdapter{
 	public static List<BEDFeature> getBEDData(String bedfile)
 	{
 		ArrayList<BEDFeature> peakList=new ArrayList<BEDFeature>();
+		try {
 		BEDCodec codec = new BEDCodec();
 		AbstractFeatureReader<BEDFeature> reader = AbstractFeatureReader.getFeatureReader(bedfile, codec, false);
 		Iterable<BEDFeature> iter;
-		try {
+
 			iter = reader.iterator();
 	        for (BEDFeature feat : iter) {
 	        	peakList.add(feat);    
