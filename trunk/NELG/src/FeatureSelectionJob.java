@@ -11,6 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.broad.tribble.bed.BEDFeature;
+import org.jppf.JPPFException;
+import org.jppf.client.JPPFClient;
+import org.jppf.client.JPPFJob;
+import org.jppf.server.protocol.JPPFTask;
 
 import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
 
@@ -48,6 +52,11 @@ public class FeatureSelectionJob implements  Runnable {
 		// TODO Auto-generated method stub
 		FileInputStream fileIn;
 		 ObjectInputStream in ;
+		 
+		 //initialize JPPF
+		 JPPFJob job = new JPPFJob();
+		 job.setName(target_signal.FilePrefix);
+		 
 		if(target_signal_filtered!=null)//
 		{
 			if(target_signal_filtered.size()<50)
@@ -78,7 +87,13 @@ public class FeatureSelectionJob implements  Runnable {
 //								e.printStackTrace();
 //							}
 //						else
-						IsThereJob.run();
+//						IsThereJob.run();
+						try {
+							job.addTask(IsThereJob);
+						} catch (JPPFException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					 
 				 }
 			}
@@ -95,7 +110,14 @@ public class FeatureSelectionJob implements  Runnable {
 				ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.FilePrefix+"_ValThere", targetNormValue) ;
 				ValThereJob.Regression=true;		
 				//executor.execute(ValThereJob);
-				ValThereJob.run();
+//				ValThereJob.run();
+				
+				try {
+					job.addTask(ValThereJob);
+				} catch (JPPFException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				 }
 			}
 
@@ -229,7 +251,14 @@ public class FeatureSelectionJob implements  Runnable {
 //						if(executor!=null)
 //							executor.execute(IsThereJob);
 //						else
-						IsThereJob.run();
+//						IsThereJob.run();
+						try {
+							job.addTask(IsThereJob);
+						} catch (JPPFException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
 					}
 					else
 					{
@@ -246,7 +275,13 @@ public class FeatureSelectionJob implements  Runnable {
 						ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.FilePrefix+"_ValThere", targetNormValue) ;
 						ValThereJob.Regression=true;		
 						//executor.execute(ValThereJob);
-						ValThereJob.run();
+//						ValThereJob.run();
+						try {
+							job.addTask(ValThereJob);
+						} catch (JPPFException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					else
 					{
@@ -258,6 +293,31 @@ public class FeatureSelectionJob implements  Runnable {
 				e.printStackTrace();
 			}
 	}
+
+		//JPPFTASK
+		JPPFClient jppfClient = new JPPFClient();
+		jppfClient.setLocalExecutionEnabled(true);
+		 job.setBlocking(true);
+		// Submit the job and wait until the results are returned.
+		   // The results are returned as a list of JPPFTask instances,
+		   // in the same order as the one in which the tasks where initially added the job.
+		   try {
+			List<JPPFTask> results = jppfClient.submit(job);
+			   for (JPPFTask task: results) {
+				     if (task.getException() != null) {
+				       // process the exception here ...
+				    	 System.out.println("An exception was raised: " + task.getException().getMessage());
+				     } else {
+				       // process the result here ...
+				    	 	ClassificationResult reslut=(ClassificationResult) task.getResult();
+				    	 	reslut.toFile();
+				     }
+			   }
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	 public void toFile()
 	 {
