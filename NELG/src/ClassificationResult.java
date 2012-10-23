@@ -48,7 +48,7 @@ public class ClassificationResult implements Serializable {
 	 {
 	        try {
 	        	 FileOutputStream fileOut =
-	    		         new FileOutputStream(JobTitle+"_result.cr");
+	    		         new FileOutputStream(common.outputDir+JobTitle+"_result.cr");
 	    		         ObjectOutputStream out =
 	    		                            new ObjectOutputStream(fileOut);
 				out.writeObject(this);

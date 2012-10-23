@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,17 +33,9 @@ public class MotherModeler {
 	public MotherModeler(List<TrackRecord> signalPool) {
 		super();
 		SignalPool = signalPool;
-//		  logger.setLevel(Level.DEBUG);
-//		  
-////		  ConsoleAppender appender =new ConsoleAppender(new PatternLayout());
-//		  FileAppender appender;
-//		try {
-//			appender = new FileAppender(new SimpleLayout(), "log.txt");
-//			 logger.addAppender(appender); 
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		//create directory
+		(new File(common.outputDir)).mkdir();
+		(new File(common.tempDir)).mkdir();
 		 
 	}
 	
