@@ -13,6 +13,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.SimpleLayout;
 import org.broad.tribble.bed.BEDFeature;
+import org.jppf.client.JPPFClient;
 
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleMatrix1D;
@@ -53,8 +54,8 @@ public class MotherModeler {
 				continue;
 //			if(!target_signal.ExperimentId.contains("ChromatinTotalPlusSignal"))
 //				continue;
-			
-			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,executor);
+			 JPPFClient jppfCLient = new JPPFClient();
+			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,jppfCLient);
 			FeatureSelectionJob FSJob2=StateRecovery.CheckFeatureSelectionJob(target_signal);
 			try {
 				if(FSJob2==null)

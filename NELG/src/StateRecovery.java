@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.broad.igv.bbfile.BedFeature;
 import org.broad.tribble.bed.BEDFeature;
+import org.jppf.client.JPPFClient;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
@@ -99,6 +100,7 @@ public class StateRecovery {
 				 fsjob.IsThereFeatures=temp.IsThereFeatures;
 				 fsjob.target_signal_filtered=temp.target_signal_filtered;
 				 fsjob.ValThereFeatures=temp.ValThereFeatures;
+				 fsjob.executor=new JPPFClient();
 				 return fsjob;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
