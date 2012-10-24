@@ -12,7 +12,9 @@ import org.apache.log4j.Logger;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.ClassifierSubsetEval;
 import weka.attributeSelection.GreedyStepwise;
+import weka.attributeSelection.LinearForwardSelection;
 import weka.attributeSelection.PrincipalComponents;
+import weka.attributeSelection.RaceSearch;
 import weka.attributeSelection.Ranker;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -39,6 +41,7 @@ import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.SelectedTag;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Normalize;
 
@@ -174,9 +177,14 @@ public class ChildModeler {
 		weka.filters.supervised.attribute.AttributeSelection filter = new weka.filters.supervised.attribute.AttributeSelection();
 		ClassifierSubsetEval eval = new ClassifierSubsetEval();
 		eval.setClassifier(new LinearRegression());
-	    GreedyStepwise search = new GreedyStepwise();
-	    search.setSearchBackwards(true);
-	    search.setNumToSelect((int) (Math.log(job.targetValue.size())/Math.log(2)+1));
+		LinearForwardSelection search = new LinearForwardSelection();
+//	    search.setSearchBackwards(true);
+	    try {
+			search.setNumUsedAttributes((int) (Math.log(job.targetValue.size())/Math.log(2)+1));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    filter.setEvaluator(eval);
 	    filter.setSearch(search);
 	    
