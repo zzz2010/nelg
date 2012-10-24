@@ -68,9 +68,14 @@ public class ChildModeler {
 		weka.filters.supervised.attribute.AttributeSelection filter = new weka.filters.supervised.attribute.AttributeSelection();
 		ClassifierSubsetEval eval = new ClassifierSubsetEval();
 		eval.setClassifier(new J48());
-	    GreedyStepwise search = new GreedyStepwise();
-	    search.setSearchBackwards(true);
-	    search.setNumToSelect((int) (Math.log(job.targetValue.size())/Math.log(2)+1));
+		LinearForwardSelection search = new LinearForwardSelection();
+//	    search.setSearchBackwards(true);
+	    try {
+			search.setNumUsedAttributes((int) (Math.log(job.targetValue.size())/Math.log(2)+1));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    filter.setEvaluator(eval);
 	    filter.setSearch(search);
 	    try {
