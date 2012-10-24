@@ -155,7 +155,7 @@ public class FeatureSelectionJob implements  Runnable {
 		        if (!SynonymCheck.isSynonym(feature_signal, target_signal) )
 		        {
 		        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
-		        	String storekey1=feature_signal.FilePrefix+featureExtractor.getClass().getName();
+		        	String storekey1=target_signal.FilePrefix+feature_signal.FilePrefix+featureExtractor.getClass().getName();
 		        	String storekey2=storekey1+"_bg";
 		        	SparseDoubleMatrix2D feature_BinSignal=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey1);
 		        	if(feature_BinSignal==null)
