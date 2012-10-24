@@ -15,6 +15,7 @@ import org.broad.tribble.bed.BEDFeature;
 import org.jppf.JPPFException;
 import org.jppf.client.JPPFClient;
 import org.jppf.client.JPPFJob;
+import org.jppf.client.JPPFResultCollector;
 import org.jppf.server.protocol.JPPFTask;
 
 import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
@@ -312,12 +313,15 @@ public class FeatureSelectionJob implements  Runnable {
 
 		//JPPFTASK
 		
-		
-//		 job.setBlocking(true);
+
 		// Submit the job and wait until the results are returned.
 		   // The results are returned as a list of JPPFTask instances,
 		   // in the same order as the one in which the tasks where initially added the job.
 		   try {
+//			   JPPFResultCollector resultsListener=new JPPFResultCollector(job.getTasks().size());
+//			   job.setResultListener(resultsListener);
+			// set the job as non-blocking
+			   job.setBlocking(true);
 			List<JPPFTask> results = executor.submit(job);
 			   for (JPPFTask task: results) {
 				     if (task.getException() != null) {
