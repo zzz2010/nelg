@@ -67,7 +67,7 @@ public class ClassificationJob extends JPPFTask implements  Serializable {
 	 {
 	        try {
 	        	 FileOutputStream fileOut =
-	    		         new FileOutputStream(common.outputDir+JobTitle+".cj");
+	    		         new FileOutputStream(common.tempDir+JobTitle+".cj");
 	    		         ObjectOutputStream out =
 	    		                            new ObjectOutputStream(fileOut);
 				out.writeObject(this);

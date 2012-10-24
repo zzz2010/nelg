@@ -343,7 +343,7 @@ public class FeatureSelectionJob implements  Runnable {
 	 {
 		 try {
         	 FileOutputStream fileOut =
-    		         new FileOutputStream(common.outputDir+target_signal.FilePrefix+".fsj");
+    		         new FileOutputStream(common.tempDir+target_signal.FilePrefix+".fsj");
     		         ObjectOutputStream out =
     		                            new ObjectOutputStream(fileOut);
 			out.writeObject(new FeatureSelectionSObj(IsThereFeatures, ValThereFeatures, FeatureAUC, FeatureCorr, target_signal_filtered));

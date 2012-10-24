@@ -86,7 +86,7 @@ public class StateRecovery {
 	//if not finish return null
 	static FeatureSelectionJob CheckFeatureSelectionJob(TrackRecord target_signal )
 	{
-		File f1=new File(common.outputDir+target_signal.FilePrefix+".fsj");
+		File f1=new File(common.tempDir+target_signal.FilePrefix+".fsj");
 		if(f1.exists())
 		{
 			 FileInputStream fileIn;
