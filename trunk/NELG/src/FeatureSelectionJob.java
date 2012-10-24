@@ -34,14 +34,14 @@ public class FeatureSelectionJob implements  Runnable {
 	TrackRecord target_signal;
 	List<TrackRecord> SignalPool;
 	List<BEDFeature>target_signal_filtered;
-	PooledExecutor executor ;
+	JPPFClient executor ;
 	ArrayList<FeatureSignal> IsThereFeatures;
 	ArrayList<FeatureSignal> ValThereFeatures;
 	HashMap<String, Float> FeatureAUC;
 	HashMap<String, Float> FeatureCorr;
 	
 	public FeatureSelectionJob(TrackRecord target_signal,
-			List<TrackRecord> signalPool,PooledExecutor Executor ) {
+			List<TrackRecord> signalPool,JPPFClient Executor ) {
 		super();
 		executor=Executor;
 		this.target_signal = target_signal;
@@ -311,14 +311,14 @@ public class FeatureSelectionJob implements  Runnable {
 	}
 
 		//JPPFTASK
-		JPPFClient jppfClient = new JPPFClient();
-		jppfClient.setLocalExecutionEnabled(true);
-		 job.setBlocking(true);
+		
+		
+//		 job.setBlocking(true);
 		// Submit the job and wait until the results are returned.
 		   // The results are returned as a list of JPPFTask instances,
 		   // in the same order as the one in which the tasks where initially added the job.
 		   try {
-			List<JPPFTask> results = jppfClient.submit(job);
+			List<JPPFTask> results = executor.submit(job);
 			   for (JPPFTask task: results) {
 				     if (task.getException() != null) {
 				       // process the exception here ...
