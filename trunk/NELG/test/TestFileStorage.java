@@ -42,7 +42,8 @@ FileStorageAdapter db;
 		assertEquals(temp.ReplicateSuffix.size(),2);
 		assertEquals(temp.Assembly,"hg19");
 		assertEquals(temp.Cell_Line,"K562");
-		assertFalse(temp.hasPeak);
+		assertTrue(temp.hasPeak);
+		
 	}
 
 	@Test
