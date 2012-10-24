@@ -16,6 +16,7 @@ import org.jppf.JPPFException;
 import org.jppf.client.JPPFClient;
 import org.jppf.client.JPPFJob;
 import org.jppf.client.JPPFResultCollector;
+import org.jppf.client.event.TaskResultListener;
 import org.jppf.server.protocol.JPPFTask;
 
 import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
@@ -31,6 +32,7 @@ public class FeatureSelectionJob implements  Runnable {
 	/**
 	 * 
 	 */
+	public static TaskResultListener resultsListener ;
 	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(FeatureSelectionJob.class);
 	TrackRecord target_signal;
 	List<TrackRecord> SignalPool;
@@ -318,21 +320,14 @@ public class FeatureSelectionJob implements  Runnable {
 		   // The results are returned as a list of JPPFTask instances,
 		   // in the same order as the one in which the tasks where initially added the job.
 		   try {
-//			   JPPFResultCollector resultsListener=new JPPFResultCollector(job.getTasks().size());
-//			   job.setResultListener(resultsListener);
+			   if(resultsListener==null)
+			    resultsListener=new JPPFResultCollector(job.getTasks().size());
+			   
+			   job.setResultListener(resultsListener);
 			// set the job as non-blocking
-			   job.setBlocking(true);
-			List<JPPFTask> results = executor.submit(job);
-			   for (JPPFTask task: results) {
-				     if (task.getException() != null) {
-				       // process the exception here ...
-				    	 System.out.println("An exception was raised: " + task.getException().getMessage());
-				     } else {
-				       // process the result here ...
-				    	 	ClassificationResult reslut=(ClassificationResult) task.getResult();
-				    	 	reslut.toFile();
-				     }
-			   }
+			   job.setBlocking(false);
+			 executor.submit(job);
+	
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
