@@ -38,7 +38,7 @@ FileStorageAdapter db;
 
 	@Test
 	public void testParseLine() {
-		TrackRecord temp=db.parseLine("wgEncodeRikenCageK562CellPapPlusClusters	hg19	K562	PapPlusClusters	Cage	wgEncodeRiken	signal");
+		TrackRecord temp=db.parseLine("wgEncodeBroadHistoneK562Cbx3sc101004	hg19	K562	Cbx3sc101004	Histone	wgEncodeBroad");
 		assertEquals(temp.ReplicateSuffix.size(),2);
 		assertEquals(temp.Assembly,"hg19");
 		assertEquals(temp.Cell_Line,"K562");
