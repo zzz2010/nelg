@@ -46,7 +46,8 @@ public class MotherModeler {
 		executor.setMinimumPoolSize(threadNum);
 		
 		executor.setKeepAliveTime(1000 * 60*500 );
-			
+		ClassificationResultListener resultListener=new ClassificationResultListener();
+		FeatureSelectionJob.resultsListener=resultListener;
 		//take out one as class label, the rest as feature data
 		for (TrackRecord target_signal : SignalPool) {
 
