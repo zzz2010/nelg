@@ -119,7 +119,7 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 	}
 	//sort by score, take only top ones
 	Collections.sort(peaklist, new BEDScoreComparator());
-	SimpleBEDFeature.toFile(peaklist, target_signal.FilePrefix+".bed");
+//	SimpleBEDFeature.toFile(peaklist, target_signal.FilePrefix+".bed");
 	for (int i = 0; i < Math.min(maxExtract, peaklist.size()); i++) {
 		outputSignal.add(peaklist.get(i));
 	}
