@@ -37,6 +37,26 @@ public class StateRecovery {
 		return null;
 	}
 	
+	static ClassificationJob LoadClassificationJob(String JobId)
+	{
+		File f1=new File(common.tempDir+JobId+".cj");
+		if(f1.exists())
+		{
+			 FileInputStream fileIn;
+			 try {
+				fileIn = new FileInputStream(f1.getAbsolutePath());
+				 ObjectInputStream in = new ObjectInputStream(fileIn);
+				 ClassificationJob temp=(ClassificationJob)in.readObject();
+				 return temp;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				
+			} 
+		
+		}
+		return null;
+	}
+	
 	static void saveCache_BEDFeatureList(List<BEDFeature> obj, String key)
 	{
 		SimpleBEDFeature.toFile(obj, common.tempDir+key);
