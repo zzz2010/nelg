@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Paint;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,9 +19,13 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.DrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
@@ -144,11 +149,14 @@ public class NELGViewResult {
 			if(result.isRegression)
 			{
 				//regression result
-				
+				XYSeries points=new XYSeries(result.JobTitle);
+				for (int i = 0; i < predictValue.length; i++) {
+					points.add(predictValue[i], jobdata.targetValue.get(i));
+				}
 				//scatter plot with line fitting
-				
-				
+				DrawScatterPlot(result.JobTitle+".scatter.png",points);
 				//feature ranking plot
+				
 			}
 			else
 			{
@@ -162,13 +170,76 @@ public class NELGViewResult {
 	}
 	
 	
-	public  void DrawROC(String pngfile, HashMap<String,XYSeries> ROCdata)
+	public static void DrawScatterPlot(String pngfile,XYSeries points)
 	{
-		  XYSeriesCollection dataset = new XYSeriesCollection();
-		 for(String name: ROCdata.keySet())
-		 {
-			 dataset.addSeries(ROCdata.get(name));
-		 }
+		 XYSeriesCollection dataset = new XYSeriesCollection();
+		 dataset.addSeries(points);
+		 JFreeChart chart = ChartFactory.createScatterPlot((String) points.getKey(), "Predicted Value", "True Value", dataset,  PlotOrientation.VERTICAL,false, true, false);
+		// NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
+	        chart.setBackgroundPaint(Color.white);
+	        XYPlot plot = (XYPlot) chart.getPlot();
+			XYItemRenderer scatterRenderer = plot.getRenderer();
+			StandardXYItemRenderer regressionRenderer = new StandardXYItemRenderer();
+			regressionRenderer.setBaseSeriesVisibleInLegend(false);
+			plot.setDataset(1, regress(dataset));
+			plot.setRenderer(1, regressionRenderer);
+			DrawingSupplier ds = plot.getDrawingSupplier();
+			for (int i = 0; i < dataset.getSeriesCount(); i++) {
+				Paint paint = ds.getNextPaint();
+				scatterRenderer.setSeriesPaint(i, paint);
+				regressionRenderer.setSeriesPaint(i, paint);
+			}
+					
+	        try {
+				ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 800, 600);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+	
+	private static XYDataset regress(XYSeriesCollection data) {
+		// Determine bounds
+		double xMin = Double.MAX_VALUE, xMax = 0;
+		for (int i = 0; i < data.getSeriesCount(); i++) {
+			XYSeries ser = data.getSeries(i);
+			for (int j = 0; j < ser.getItemCount(); j++) {
+				double x = ser.getX(j).doubleValue();
+				if (x < xMin) {
+					xMin = x;
+				}
+				if (x > xMax) {
+					xMax = x;
+				}
+			}
+		}
+		// Create 2-point series for each of the original series
+		XYSeriesCollection coll = new XYSeriesCollection();
+		for (int i = 0; i < data.getSeriesCount(); i++) {
+			XYSeries ser = data.getSeries(i);
+			int n = ser.getItemCount();
+			double sx = 0, sy = 0, sxx = 0, sxy = 0, syy = 0;
+			for (int j = 0; j < n; j++) {
+				double x = ser.getX(j).doubleValue();
+				double y = ser.getY(j).doubleValue();
+				sx += x;
+				sy += y;
+				sxx += x * x;
+				sxy += x * y;
+				syy += y * y;
+			}
+			double b = (n * sxy - sx * sy) / (n * sxx - sx * sx);
+			double a = sy / n - b * sx / n;
+			XYSeries regr = new XYSeries(ser.getKey());
+			regr.add(xMin, a + b * xMin);
+			regr.add(xMax, a + b * xMax);
+			coll.addSeries(regr);
+		}
+		return coll;
+	}
+	public  void DrawROC(String pngfile,  XYSeriesCollection dataset)
+	{
+
 		 JFreeChart chart = ChartFactory.createXYLineChart(
 	                "ROC curve", // chart title
 	                "False Positive Rate", // x axis label
