@@ -3,7 +3,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -22,6 +24,12 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
+import org.jfree.util.ArrayUtilities;
+
+import weka.classifiers.Evaluation;
+import weka.core.Instances;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
 
 
 public class NELGViewResult {
@@ -86,23 +94,70 @@ public class NELGViewResult {
 		System.out.println(result.JobTitle);
 		System.out.println(result.toString());
 		
+		ClassificationJob jobdata=StateRecovery.LoadClassificationJob(result.JobTitle);
+		if(jobdata!=null)
+		{
+			Instances data = ChildModeler.getDatasetFromJob(jobdata);
+			//take out the selected attribution
+			//hash map
+			HashSet<String> selAttrName=new HashSet<String>(result.FeatureIdBin.size());
+			for (int i = 0; i < result.FeatureIdBin.size(); i++) {
+				selAttrName.add(result.FeatureIdBin.get(i).key+result.FeatureIdBin.get(i).value);
+			}
+//			ArrayList<Integer> remAttid=new ArrayList<Integer>();
+			String filterStr="";
+			for (int i = 0; i < jobdata.FeatureMatrix.size(); i++) {
+				String attrname=jobdata.FeatureMatrix.get(i).FeatureId+jobdata.FeatureMatrix.get(i).binId;
+				if(!selAttrName.contains(attrname))
+				{
+					if(filterStr.length()>0)
+						filterStr+=",";
+					filterStr+=i+1;
+				}
+			}
+		
+			weka.filters.unsupervised.attribute.Remove filter=new Remove();
+			filter.setAttributeIndices(filterStr);
+			Instances data2=null;
+			try {
+				data2= Filter.useFilter(data, filter);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			//generate predicted value
+			
+			Evaluation eval=null;
+			double[] predictValue=null;
+			try {
+				eval = new Evaluation(data2);
+				predictValue=eval.evaluateModel(result.LearnedModel, data2);
+				System.out.println(eval.toSummaryString("\nFittingResults\n======\n", false));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
 		//figure generation
-		if(result.isRegression)
-		{
-			//regression result
-			
-			//scatter plot with line fitting
-			
-			
-			//feature ranking plot
-		}
-		else
-		{
-			//classification result
-			
-			//heatmap
-			
-			//feature ranking plot
+			if(result.isRegression)
+			{
+				//regression result
+				
+				//scatter plot with line fitting
+				
+				
+				//feature ranking plot
+			}
+			else
+			{
+				//classification result
+				
+				//heatmap
+				
+				//feature ranking plot
+			}
 		}
 	}
 	
