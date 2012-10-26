@@ -125,6 +125,7 @@ public class NELGViewResult {
 			filter.setAttributeIndices(filterStr);
 			Instances data2=null;
 			try {
+				filter.setInputFormat(data);
 				data2= Filter.useFilter(data, filter);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
