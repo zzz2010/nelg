@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 
 
-public interface StorageAdapter {
+public interface StorageAdapter extends Serializable{
 	
 	List<String> getCellLineName(String assemble);
 	List<TrackRecord> getTrackId_inCellLine(String assemble,String CellLineName);
