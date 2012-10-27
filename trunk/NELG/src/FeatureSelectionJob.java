@@ -163,7 +163,7 @@ public class FeatureSelectionJob implements  Runnable {
 			
 		        if (!SynonymCheck.isSynonym(feature_signal, target_signal) )
 		        {
-		        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
+		        	
 		        	FeatureExtractJob FEJob=new FeatureExtractJob(target_signal_filtered, target_signal_bg, feature_signal, target_signal, featureExtractor, targetValue, targetNormValue);
 		        	try {
 						localjob.addTask(FEJob);
