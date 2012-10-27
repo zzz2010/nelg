@@ -134,7 +134,7 @@ public	static SparseDoubleMatrix2D OverlapBinSignal(TrackRecord feature_signal, 
 }
 
 //compute background set 
-public static ArrayList<BEDFeature> extractNegativeSignal(List<BEDFeature> target_signal,int num)
+public static ArrayList<BEDFeature> extractNegativeSignal_Gauss(List<BEDFeature> target_signal,int num)
 {
 	//search in gap and probability
 	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>(2*target_signal.size());
@@ -188,6 +188,60 @@ public static ArrayList<BEDFeature> extractNegativeSignal(List<BEDFeature> targe
 	return outputSignal;
 }
 
+//compute background set 
+public static ArrayList<BEDFeature> extractNegativeSignal_Uniform(List<BEDFeature> target_signal,int num)
+{
+	//search in gap and probability
+	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>(2*target_signal.size());
+	List<BEDFeature>  target_signal_sorted=new ArrayList<BEDFeature>(target_signal);
+	Collections.sort(target_signal_sorted, new BEDPositionComparator());
+	List<BEDFeature> gaplist=new ArrayList<BEDFeature>();
+	double sumCoverage=0;
+	for (int i = 0; i < target_signal_sorted.size()-1; i++) {
+		BEDFeature bed1=target_signal_sorted.get(i);
+		BEDFeature bed2=target_signal_sorted.get(i+1);
+		if(bed1.getChr().equalsIgnoreCase(bed2.getChr()))
+		{
+			if(bed1.getEnd()+10000<bed2.getStart()) //ensure have enough gap
+			{
+				SimpleBEDFeature temp=new SimpleBEDFeature(bed1.getEnd(), bed2.getStart(), bed1.getChr());
+				temp.setScore(-1); //negative sample
+				sumCoverage+=temp.getScore();
+				gaplist.add(temp);
+			}
+		}
+	}
+	//cumulative probablity
+	ArrayList<Double> cumprob=new ArrayList<Double>();
+	double sum=0;
+	for (int i = 0; i < gaplist.size(); i++) {
+		cumprob.add(sum);
+		sum+=gaplist.get(i).getScore()/sumCoverage;
+	}
+	Random rand=new Random(12345);
+	for (int i = 0; i < num; i++) {
+		
+		int selregion=rand.nextInt(target_signal_sorted.size());
+
+		int bgregion_size=target_signal_sorted.get(selregion).getEnd()-target_signal_sorted.get(selregion).getStart();
+		double pointer=rand.nextDouble();
+		int selgap=-Collections.binarySearch(cumprob,pointer )-2 ;
+		String chrom=gaplist.get(selgap).getChr();
+		int regionlen=gaplist.get(selgap).getEnd()-gaplist.get(selgap).getStart();
+		int start=(int) (gaplist.get(selgap).getStart()+regionlen*(pointer-cumprob.get(selgap)));
+		outputSignal.add(new SimpleBEDFeature(start-bgregion_size/2, start+bgregion_size/2, chrom));
+	}
+	return outputSignal;
+}
+
+//compute background set 
+public static ArrayList<BEDFeature> extractNegativeSignal(List<BEDFeature> target_signal,int num)
+{
+	//search in gap and probability
+	ArrayList<BEDFeature> outputSignal=extractNegativeSignal_Uniform(target_signal,num);
+
+	return outputSignal;
+}
 public static DoubleMatrix1D BedFeatureToValues(List<BEDFeature> signal)
 {
 	DoubleMatrix1D outputvec=new SparseDoubleMatrix1D(signal.size());
