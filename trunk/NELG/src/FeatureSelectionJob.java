@@ -180,8 +180,15 @@ public class FeatureSelectionJob implements  Runnable {
 			List<JPPFTask> jobresult = localclient.submit(localjob);
 			for (int i = 0; i < jobresult.size(); i++) {
 				FeatureExtractJob	result1=(FeatureExtractJob)jobresult.get(i);
-				IsThereFeatures.addAll(result1.IsThereFeatures);
-				ValThereFeatures.addAll(result1.ValThereFeatures);
+				 if (result1.getException() != null) {
+				       // process the exception here ...
+					 logger.debug(result1.feature_signal.ExperimentId+" got exception.");
+				     } else {
+				       // process the result here ...
+							IsThereFeatures.addAll(result1.IsThereFeatures);
+							ValThereFeatures.addAll(result1.ValThereFeatures);
+				     }
+
 			}
 			
 			
