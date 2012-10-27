@@ -53,8 +53,8 @@ public class MotherModeler {
 
 			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
 				continue;
-//			if(!target_signal.ExperimentId.contains("ChromatinTotalPlusSignal"))
-//				continue;
+			if(!target_signal.ExperimentId.contains("Rest"))
+				continue;
 			 JPPFClient jppfCLient = new JPPFClient();
 			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,jppfCLient);
 			FeatureSelectionJob FSJob2=StateRecovery.CheckFeatureSelectionJob(target_signal);
