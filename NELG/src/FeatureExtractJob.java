@@ -67,6 +67,7 @@ public class FeatureExtractJob extends JPPFTask {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
 		IsThereFeatures=new ArrayList<FeatureSignal>();
 		ValThereFeatures=new ArrayList<FeatureSignal>();
 	        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
