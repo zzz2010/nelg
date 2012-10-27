@@ -148,8 +148,8 @@ public class FeatureSelectionJob implements  Runnable {
 		FeatureCorr=new HashMap<String, Float>(SignalPool.size()-1);
 		
 		boolean onlyBestBin=false;
-		//FeatureExtractor featureExtractor=new EqualBinFeatureExtractor(20);
-		FeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
+		FeatureExtractor featureExtractor=new EqualBinFeatureExtractor(20);
+//		FeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 		for (TrackRecord feature_signal : SignalPool) {
 //			if(!feature_signal.FilePrefix.contains("H3k36"))
