@@ -40,8 +40,7 @@ public class FeatureSelectionJob implements  Runnable {
 	JPPFClient executor ;
 	ArrayList<FeatureSignal> IsThereFeatures;
 	ArrayList<FeatureSignal> ValThereFeatures;
-	HashMap<String, Float> FeatureAUC;
-	HashMap<String, Float> FeatureCorr;
+
 	
 	public FeatureSelectionJob(TrackRecord target_signal,
 			List<TrackRecord> signalPool,JPPFClient Executor ) {
@@ -144,13 +143,18 @@ public class FeatureSelectionJob implements  Runnable {
 	  	
 		IsThereFeatures=new ArrayList<FeatureSignal>(SignalPool.size()-1);
 		ValThereFeatures=new ArrayList<FeatureSignal>(SignalPool.size()-1);
-		FeatureAUC=new HashMap<String, Float>(SignalPool.size()-1);
-		FeatureCorr=new HashMap<String, Float>(SignalPool.size()-1);
+
 		
 		boolean onlyBestBin=false;
 		FeatureExtractor featureExtractor=new EqualBinFeatureExtractor(20);
 //		FeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
+		 JPPFJob localjob = new JPPFJob();
+		 localjob.setName("local_"+target_signal.FilePrefix);
+		 localjob.setBlocking(true);
+		 JPPFClient localclient=new JPPFClient();
+		 localclient.setLocalExecutionEnabled(true);
+		 
 		for (TrackRecord feature_signal : SignalPool) {
 			if(common.selectFeature_debug!=""&&!feature_signal.FilePrefix.contains(common.selectFeature_debug))
 				continue;
@@ -158,99 +162,28 @@ public class FeatureSelectionJob implements  Runnable {
 		        if (!SynonymCheck.isSynonym(feature_signal, target_signal) )
 		        {
 		        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
-		        	String storekey1=target_signal.FilePrefix+feature_signal.FilePrefix+featureExtractor.getClass().getName();
-		        	String storekey2=storekey1+"_bg";
-		        	SparseDoubleMatrix2D feature_BinSignal=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey1);
-		        	if(feature_BinSignal==null)
-		        	{
-		        		feature_BinSignal=featureExtractor.extractSignalFeature(feature_signal, target_signal_filtered);
-		        		StateRecovery.saveCache_SparseDoubleMatrix2D(feature_BinSignal, storekey1);		     
-		        	}
-		        	
-		        	SparseDoubleMatrix2D feature_BinSignal_bg=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey2);
-		        	if(feature_BinSignal_bg==null)
-		        	{
-		        		feature_BinSignal_bg=featureExtractor.extractSignalFeature(feature_signal, target_signal_bg);
-		        		StateRecovery.saveCache_SparseDoubleMatrix2D(feature_BinSignal_bg, storekey2);
-		        	}
-		        	/***************isthere task****************/
-		        float maxScore=-1;
-		        int bestBin=-1;
-		        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
-		        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
-		        		float score=SignalComparator.getDiscriminativeCapbaility(featureValue, targetValue);
-		        		if(score>maxScore)
-		        		{
-		        			bestBin=i;
-		        			maxScore=score;
-		        		}
-		        		if(!onlyBestBin)
-		        		{	
-		        			 FeatureAUC.put(feature_signal.FilePrefix, maxScore);
-					        if(score>0.6)
-					      	{
-					        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
-						        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, score,i);	       
-					      		IsThereFeatures.add(isF);
-					      		logger.debug("isthere: "+isF);
-					      	}
-					        	
-		        		}
+		        	FeatureExtractJob FEJob=new FeatureExtractJob(target_signal_filtered, target_signal_bg, feature_signal, target_signal, featureExtractor, targetValue, targetNormValue);
+		        	try {
+						localjob.addTask(FEJob);
+					} catch (JPPFException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-		        	//bestBin idea, consider strand
-		        	if(onlyBestBin)
-		        	{
-				        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(bestBin), feature_BinSignal_bg.viewColumn(bestBin)) ;
-				        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
-				        FeatureAUC.put(feature_signal.FilePrefix, maxScore);
-				        if(maxScore>0.6)
-				      	{
-				      		IsThereFeatures.add(isF);
-				      	}
-				        	logger.debug("isthere: "+isF);
-		        	}
-		        	/***************valthere task****************/
-		        	maxScore=-1;
-			    bestBin=-1;
-		        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
-		        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
-		        		float score=SignalComparator.getCorrelation(featureValue, targetNormValue);
-		        		if(score>maxScore)
-		        		{
-		        			bestBin=i;
-		        			maxScore=score;
-		        		}
-		        		if(!onlyBestBin)
-		        		{	
-		        			 FeatureCorr.put(feature_signal.FilePrefix, maxScore);	
-					        if(score>0.2)
-					      	{
-					        	SparseDoubleMatrix1D featureBestBinValue = (SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
-					        	
-					        	 FeatureSignal valF= 	new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, score,i);
-						       
-						        ValThereFeatures.add(valF);
-						        logger.debug("valthere: "+valF);
-					      	}
-					        	
-		        		}
-					}
-		        	//bestBin idea, consider strand
-		        	if(onlyBestBin)
-		        	{
-			        	SparseDoubleMatrix1D featureBestBinValue = (SparseDoubleMatrix1D) feature_BinSignal.viewColumn(bestBin);
-	
-			        	 FeatureSignal valF= 	new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
-				        FeatureCorr.put(feature_signal.FilePrefix, maxScore);	
-			        	 if(maxScore>0.2)
-				        	{
-				        		ValThereFeatures.add(valF);
-				        	}
-			    	logger.debug("valthere: "+valF);
-		        	}
-		       
 		        }
 		    }
+		try {
+			List<JPPFTask> jobresult = localclient.submit(localjob);
+			for (int i = 0; i < jobresult.size(); i++) {
+				FeatureExtractJob	result1=(FeatureExtractJob)jobresult.get(i);
+				IsThereFeatures.addAll(result1.IsThereFeatures);
+				ValThereFeatures.addAll(result1.ValThereFeatures);
+			}
+			
+			
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		//save to file
 		toFile();
@@ -341,7 +274,7 @@ public class FeatureSelectionJob implements  Runnable {
     		         new FileOutputStream(common.tempDir+target_signal.FilePrefix+".fsj");
     		         ObjectOutputStream out =
     		                            new ObjectOutputStream(fileOut);
-			out.writeObject(new FeatureSelectionSObj(IsThereFeatures, ValThereFeatures, FeatureAUC, FeatureCorr, target_signal_filtered));
+			out.writeObject(new FeatureSelectionSObj(IsThereFeatures, ValThereFeatures, target_signal_filtered));
 	         out.close();
 	          fileOut.close();
 		} catch (IOException e) {

@@ -7,4 +7,7 @@ public class common {
 	static int MinimumPeakNum=50;
 	static String predictTarget_debug="";
 	static String selectFeature_debug="";
+	static boolean onlyBestBin=false;
+	static double AUC_cutoff=0.6;
+	static double Corr_cutoff=0.2;
 }
