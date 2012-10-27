@@ -151,7 +151,7 @@ public class FeatureSelectionJob implements  Runnable {
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 		 JPPFJob localjob = new JPPFJob();
 		 localjob.setName("local_"+target_signal.FilePrefix);
-		 localjob.setBlocking(true);
+		
 		 JPPFClient localclient=new JPPFClient();
 		 localclient.setLocalExecutionEnabled(true);
 		 
@@ -173,6 +173,8 @@ public class FeatureSelectionJob implements  Runnable {
 		    }
 		try {
 			logger.debug("Number of Feature Extraction Tasks:"+localjob.getTasks().size());
+			 localjob.setBlocking(true);
+			
 			List<JPPFTask> jobresult = localclient.submit(localjob);
 			for (int i = 0; i < jobresult.size(); i++) {
 				FeatureExtractJob	result1=(FeatureExtractJob)jobresult.get(i);
