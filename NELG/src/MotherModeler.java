@@ -34,9 +34,7 @@ public class MotherModeler {
 	public MotherModeler(List<TrackRecord> signalPool) {
 		super();
 		SignalPool = signalPool;
-		//create directory
-		(new File(common.outputDir)).mkdir();
-		(new File(common.tempDir)).mkdir();
+
 		 
 	}
 	
@@ -53,7 +51,7 @@ public class MotherModeler {
 
 			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
 				continue;
-			if(!target_signal.ExperimentId.contains("Rest"))
+			if(common.predictTarget_debug!=""&&!target_signal.ExperimentId.contains(common.predictTarget_debug))
 				continue;
 			 JPPFClient jppfCLient = new JPPFClient();
 			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,jppfCLient);

@@ -1,5 +1,5 @@
+import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -8,7 +8,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.PropertyConfigurator;
-import org.broad.tribble.bed.BEDFeature;
+import org.jppf.utils.FileUtils;
 
 //automatically do what human do, and never end
 
@@ -24,6 +24,9 @@ public class NELGMain {
 		Options options = new Options();
 		options.addOption("threadnum", true, "maximum thread number");
 		options.addOption("ram", false, "use ramdisk data folder");
+		options.addOption("debug", false, "use debug folder");
+		options.addOption("target", true, "only predict the dataset containing this string");
+		options.addOption("feature", true, "only use the feature dataset containing this string");
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd;
 		String dataDir="./data";
@@ -39,11 +42,29 @@ public class NELGMain {
 				dataDir="./data"+"_ram";
 				logger.info("using RAM data");
 			}
+			if(cmd.hasOption("debug"))
+			{
+				common.outputDir="./result_debug/";
+				common.tempDir="./cache_debug/";
+				FileUtils.deletePath(new File(common.outputDir));
+				FileUtils.deletePath(new File(common.tempDir));
+			}
+			if(cmd.hasOption("target"))
+			{
+				common.predictTarget_debug=cmd.getOptionValue("target");
+			}
+			if(cmd.hasOption("feature"))
+			{
+				common.selectFeature_debug=cmd.getOptionValue("feature");
+			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		//create directory
+		(new File(common.outputDir)).mkdir();
+		(new File(common.tempDir)).mkdir();
 		
 		ArrayList<String> Assembly=new ArrayList<String>(); 
 		Assembly.add("hg19");

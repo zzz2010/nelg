@@ -152,8 +152,8 @@ public class FeatureSelectionJob implements  Runnable {
 //		FeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 		for (TrackRecord feature_signal : SignalPool) {
-//			if(!feature_signal.FilePrefix.contains("H3k36"))
-//				continue;
+			if(common.selectFeature_debug!=""&&!feature_signal.FilePrefix.contains(common.selectFeature_debug))
+				continue;
 			
 		        if (!SynonymCheck.isSynonym(feature_signal, target_signal) )
 		        {
