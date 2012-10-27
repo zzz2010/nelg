@@ -172,6 +172,7 @@ public class FeatureSelectionJob implements  Runnable {
 		        }
 		    }
 		try {
+			logger.debug("Number of Feature Extraction Tasks:"+localjob.getTasks().size());
 			List<JPPFTask> jobresult = localclient.submit(localjob);
 			for (int i = 0; i < jobresult.size(); i++) {
 				FeatureExtractJob	result1=(FeatureExtractJob)jobresult.get(i);
