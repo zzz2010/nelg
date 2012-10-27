@@ -7,6 +7,10 @@ import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 public class EqualBinFeatureExtractor implements FeatureExtractor {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 80062067409246792L;
 	int numBin;
 	
 	public EqualBinFeatureExtractor(int numBin) {
