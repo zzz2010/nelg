@@ -39,6 +39,10 @@ import com.thoughtworks.qdox.directorywalker.Filter;
 
 
 public class FileStorageAdapter implements StorageAdapter{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2409762312221401158L;
 	static Logger log = Logger.getLogger(FileStorageAdapter.class);
 	String dataDir;
 	HashMap<String, TrackRecord> DataBase;
