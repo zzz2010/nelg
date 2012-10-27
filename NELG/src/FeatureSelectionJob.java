@@ -16,6 +16,7 @@ import org.jppf.JPPFException;
 import org.jppf.client.JPPFClient;
 import org.jppf.client.JPPFJob;
 import org.jppf.client.JPPFResultCollector;
+import org.jppf.client.concurrent.JPPFExecutorService;
 import org.jppf.client.event.TaskResultListener;
 import org.jppf.scheduling.JPPFSchedule;
 import org.jppf.server.protocol.JPPFTask;
@@ -153,7 +154,7 @@ public class FeatureSelectionJob implements  Runnable {
 		 JPPFJob localjob = new JPPFJob();
 		 localjob.setName("local_"+target_signal.FilePrefix);
 		
-		 JPPFClient localclient=new JPPFClient();
+		 JPPFClient localclient=new JPPFClient("local executor");
 		 localclient.setLocalExecutionEnabled(true);
 		 
 		for (TrackRecord feature_signal : SignalPool) {
@@ -165,7 +166,7 @@ public class FeatureSelectionJob implements  Runnable {
 		        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
 		        	FeatureExtractJob FEJob=new FeatureExtractJob(target_signal_filtered, target_signal_bg, feature_signal, target_signal, featureExtractor, targetValue, targetNormValue);
 		        	try {
-		        		FEJob.setTimeoutSchedule(new JPPFSchedule(100000000));
+		        	
 						localjob.addTask(FEJob);
 					} catch (JPPFException e) {
 						// TODO Auto-generated catch block
@@ -176,7 +177,7 @@ public class FeatureSelectionJob implements  Runnable {
 		try {
 			logger.debug("Number of Feature Extraction Tasks:"+localjob.getTasks().size());
 			 localjob.setBlocking(true);
-			 
+			 localjob.getSLA().setJobExpirationSchedule(new JPPFSchedule(100000000));
 			List<JPPFTask> jobresult = localclient.submit(localjob);
 			for (int i = 0; i < jobresult.size(); i++) {
 				FeatureExtractJob	result1=(FeatureExtractJob)jobresult.get(i);
