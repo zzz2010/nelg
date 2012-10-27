@@ -180,7 +180,7 @@ public class FeatureSelectionJob implements  Runnable {
 //			 // set the job to expire on September 30, 2010 at 12:08 PM in the CEDT time zone
 //			 JPPFSchedule schedule = new JPPFSchedule("09/30/2014 12:08 PM CEDT", dateFormat);
 //
-//			 localjob.getSLA().setJobExpirationSchedule(schedule);
+			 localjob.getSLA().setJobExpirationSchedule(new JPPFSchedule(Long.MAX_VALUE));
 			List<JPPFTask> jobresult = localclient.submit(localjob);
 			for (int i = 0; i < jobresult.size(); i++) {
 				FeatureExtractJob	result1=(FeatureExtractJob)jobresult.get(i);
