@@ -115,8 +115,6 @@ public class StateRecovery {
 				 ObjectInputStream in = new ObjectInputStream(fileIn);
 				 FeatureSelectionSObj temp=(FeatureSelectionSObj)in.readObject();
 				 FeatureSelectionJob fsjob=new FeatureSelectionJob(target_signal, null, null);
-				 fsjob.FeatureAUC=temp.FeatureAUC;
-				 fsjob.FeatureCorr=temp.FeatureCorr;
 				 fsjob.IsThereFeatures=temp.IsThereFeatures;
 				 fsjob.target_signal_filtered=temp.target_signal_filtered;
 				 fsjob.ValThereFeatures=temp.ValThereFeatures;

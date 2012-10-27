@@ -32,15 +32,15 @@ ChildModeler modeler;
 	   ChildModeler.logger.setLevel(Level.DEBUG);
 		  ConsoleAppender appender =new ConsoleAppender(new PatternLayout());
 		  ChildModeler.logger.addAppender(appender); 
-	   
+		  ObjectInputStream in;
 	try {
-		fileIn = new FileInputStream("wgEncodeRikenCageK562CytosolPapPlusSignal_ValThere.cj");
-		 ObjectInputStream in = new ObjectInputStream(fileIn);
-			testedJob_R=(ClassificationJob)in.readObject();
+//		fileIn = new FileInputStream("wgEncodeRikenCageK562CytosolPapPlusSignal_ValThere.cj");
+//		  in = new ObjectInputStream(fileIn);
+//			testedJob_R=(ClassificationJob)in.readObject();
 			
-//			fileIn = new FileInputStream("wgEncodeRikenCageK562ChromatinTotalMinusSignal_ValThere.cj");
-//			  in = new ObjectInputStream(fileIn);
-//				testedJob_C=(ClassificationJob)in.readObject();
+			fileIn = new FileInputStream("wgEncodeBroadHistoneK562Rest_IsThere.cj");
+			  in = new ObjectInputStream(fileIn);
+				testedJob_C=(ClassificationJob)in.readObject();
 			
 	
 	} catch (FileNotFoundException e) {
@@ -59,8 +59,8 @@ ChildModeler modeler;
 
 	@Test
 	public void testDoClassification() {
-//		double auc=modeler.doClassification(testedJob_C).AUC;
-//		assertTrue(auc>0.6);
+		double auc=modeler.doClassification(testedJob_C).AUC;
+		assertTrue(auc>0.6);
 	}
 
 	@Test
@@ -73,11 +73,7 @@ ChildModeler modeler;
 			fileIn = new FileInputStream("wgEncodeRikenCageK562CytosolPapPlusSignal.fsj");
 			 ObjectInputStream in = new ObjectInputStream(fileIn);
 			 FeatureSelectionSObj	featuresObj=(FeatureSelectionSObj)in.readObject();
-			for (Entry<String, Float> iterable_element : featuresObj.FeatureCorr.entrySet()) {
-				if(iterable_element.getKey().contains("K36"))
-				ChildModeler.logger.debug(iterable_element.getKey()+":"+iterable_element.getValue());
-				
-			} 
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
