@@ -164,6 +164,7 @@ public class FeatureSelectionJob implements  Runnable {
 		        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
 		        	FeatureExtractJob FEJob=new FeatureExtractJob(target_signal_filtered, target_signal_bg, feature_signal, target_signal, featureExtractor, targetValue, targetNormValue);
 		        	try {
+		        		FEJob.setTimeout(1000000000);
 						localjob.addTask(FEJob);
 					} catch (JPPFException e) {
 						// TODO Auto-generated catch block
