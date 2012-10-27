@@ -177,7 +177,11 @@ public class FeatureSelectionJob implements  Runnable {
 		try {
 			logger.debug("Number of Feature Extraction Tasks:"+localjob.getTasks().size());
 			 localjob.setBlocking(true);
-			 localjob.getSLA().setJobExpirationSchedule(new JPPFSchedule(100000000));
+			 String dateFormat = "MM/dd/yyyy hh:mm a z";
+			 // set the job to expire on September 30, 2010 at 12:08 PM in the CEDT time zone
+			 JPPFSchedule schedule = new JPPFSchedule("09/30/2014 12:08 PM CEDT", dateFormat);
+
+			 localjob.getSLA().setJobExpirationSchedule(schedule);
 			List<JPPFTask> jobresult = localclient.submit(localjob);
 			for (int i = 0; i < jobresult.size(); i++) {
 				FeatureExtractJob	result1=(FeatureExtractJob)jobresult.get(i);
