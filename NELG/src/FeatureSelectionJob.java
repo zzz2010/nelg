@@ -166,7 +166,10 @@ public class FeatureSelectionJob implements  Runnable {
 		        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
 		        	FeatureExtractJob FEJob=new FeatureExtractJob(target_signal_filtered, target_signal_bg, feature_signal, target_signal, featureExtractor, targetValue, targetNormValue);
 		        	try {
-		        	
+		        		 String dateFormat = "MM/dd/yyyy hh:mm a z";
+		    			 // set the job to expire on September 30, 2010 at 12:08 PM in the CEDT time zone
+		    			 JPPFSchedule schedule = new JPPFSchedule("09/30/2014 12:08 PM CEDT", dateFormat);
+		    			 FEJob.setTimeoutSchedule(schedule);
 						localjob.addTask(FEJob);
 					} catch (JPPFException e) {
 						// TODO Auto-generated catch block
