@@ -88,9 +88,26 @@ public class NELGViewResult {
 			{
 				ViewClassificationResult((ClassificationResult) Result);
 			}
+			
+			//process the job
+			if(Result.getClass().equals(ClassificationJob.class))
+			{
+				ViewClassificationJob((ClassificationJob) Result);
+			}
 		}
 		
 
+	}
+	
+	public static void ViewClassificationJob(ClassificationJob job)
+	{
+		//text summary
+		System.out.println(job.JobTitle);
+		String outstr="";
+		for (int i = 0; i <job.FeatureMatrix.size(); i++) {
+			outstr+="\t"+job.FeatureMatrix.get(i).FeatureId+"."+job.FeatureMatrix.get(i).binId+"|"+job.FeatureMatrix.get(i).featureSelectScore;
+		}
+		System.out.println(outstr);
 	}
 	
 	public static void ViewClassificationResult(ClassificationResult result)
@@ -177,7 +194,7 @@ public class NELGViewResult {
 		 dataset.addSeries(points);
 		 JFreeChart chart = ChartFactory.createScatterPlot((String) points.getKey(), "Predicted Value", "True Value", dataset,  PlotOrientation.VERTICAL,false, true, false);
 		// NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
-	        chart.setBackgroundPaint(Color.white);
+	        
 	        XYPlot plot = (XYPlot) chart.getPlot();
 			XYItemRenderer scatterRenderer = plot.getRenderer();
 			StandardXYItemRenderer regressionRenderer = new StandardXYItemRenderer();
@@ -190,7 +207,7 @@ public class NELGViewResult {
 				scatterRenderer.setSeriesPaint(i, paint);
 				regressionRenderer.setSeriesPaint(i, paint);
 			}
-					
+			chart.setBackgroundPaint(Color.white);
 	        try {
 				ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 800, 600);
 			} catch (IOException e) {
