@@ -66,16 +66,19 @@ public class ChildModeler {
 		}
 		//feature selection
 		weka.filters.supervised.attribute.AttributeSelection filter = new weka.filters.supervised.attribute.AttributeSelection();
-		ClassifierSubsetEval eval = new ClassifierSubsetEval();
-		eval.setClassifier(new J48());
-		LinearForwardSelection search = new LinearForwardSelection();
-//	    search.setSearchBackwards(true);
-	    try {
-			search.setNumUsedAttributes((int) (Math.log(job.targetValue.size())/Math.log(2)+1));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		ClassifierSubsetEval eval = new ClassifierSubsetEval();
+//		eval.setClassifier(new J48());
+//		LinearForwardSelection search = new LinearForwardSelection();
+	    
+		CfsSubsetEval eval=new CfsSubsetEval();
+		GreedyStepwise search =new GreedyStepwise();
+		search.setSearchBackwards(true);
+//	    try {
+//			search.setNumUsedAttributes((int) (Math.log(job.targetValue.size())/Math.log(2)+1));
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	    filter.setEvaluator(eval);
 	    filter.setSearch(search);
 	    try {
@@ -108,17 +111,17 @@ public class ChildModeler {
 		Classifier bestModeler=null;
 		double bestscore=-1;
 		ArrayList<Classifier> modelerSet=new ArrayList<Classifier>();
-		modelerSet.add(new J48graft());
-		if(data2.numAttributes()>2)
-			modelerSet.add(new KStar());
-		if(data2.numAttributes()>3)
-			modelerSet.add(new Logistic());
-		if(data2.numAttributes()>4)
+//		modelerSet.add(new J48graft());
+//		if(data2.numAttributes()>2)
+//			modelerSet.add(new KStar());
+//		if(data2.numAttributes()>3)
+//			modelerSet.add(new Logistic());
+//		if(data2.numAttributes()>4)
 			modelerSet.add(new RandomForest());
-		if(data2.numAttributes()>5)
-			modelerSet.add(new SMO());
-		if(data2.numAttributes()>6)
-			modelerSet.add(new AdaBoostM1());
+//		if(data2.numAttributes()>5)
+//			modelerSet.add(new SMO());
+//		if(data2.numAttributes()>6)
+//			modelerSet.add(new AdaBoostM1());
 			
 		for (int i = 0; i < modelerSet.size(); i++) {
 			
