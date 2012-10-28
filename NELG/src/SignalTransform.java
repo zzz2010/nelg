@@ -150,7 +150,7 @@ public static ArrayList<BEDFeature> extractNegativeSignal_Gauss(List<BEDFeature>
 			if(bed1.getEnd()+10000<bed2.getStart()) //ensure have enough gap
 			{
 				//make bg peak at least 500bp away to the real peak
-				SimpleBEDFeature temp=new SimpleBEDFeature(bed1.getEnd()+500, bed2.getStart()-500, bed1.getChr());
+				SimpleBEDFeature temp=new SimpleBEDFeature(bed1.getEnd()+5000, bed2.getStart()-5000, bed1.getChr());
 				temp.setScore(-1); //negative sample
 				sumCoverage+=temp.getScore();
 				gaplist.add(temp);
