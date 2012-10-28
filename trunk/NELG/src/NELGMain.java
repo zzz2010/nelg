@@ -36,6 +36,7 @@ public class NELGMain {
 			if(cmd.hasOption("threadnum"))
 			{
 				max_threadNum=Integer.parseInt(cmd.getOptionValue("threadnum"));
+				common.threadNum=max_threadNum;
 			}
 			if(cmd.hasOption("ram"))
 			{

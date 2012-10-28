@@ -239,7 +239,7 @@ public static ArrayList<BEDFeature> extractNegativeSignal_Uniform(List<BEDFeatur
 public static ArrayList<BEDFeature> extractNegativeSignal(List<BEDFeature> target_signal,int num)
 {
 	//search in gap and probability
-	ArrayList<BEDFeature> outputSignal=extractNegativeSignal_Uniform(target_signal,num);
+	ArrayList<BEDFeature> outputSignal=extractNegativeSignal_Gauss(target_signal,num);
 
 	return outputSignal;
 }
