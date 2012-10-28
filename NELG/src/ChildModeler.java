@@ -68,6 +68,7 @@ public class ChildModeler {
 		weka.filters.supervised.attribute.AttributeSelection filter = new weka.filters.supervised.attribute.AttributeSelection();
 //		ClassifierSubsetEval eval = new ClassifierSubsetEval();
 //		eval.setClassifier(new J48());
+//		eval.setUseTraining(true);
 //		LinearForwardSelection search = new LinearForwardSelection();
 	    
 		CfsSubsetEval eval=new CfsSubsetEval();
@@ -111,17 +112,17 @@ public class ChildModeler {
 		Classifier bestModeler=null;
 		double bestscore=-1;
 		ArrayList<Classifier> modelerSet=new ArrayList<Classifier>();
-//		modelerSet.add(new J48graft());
-//		if(data2.numAttributes()>2)
-//			modelerSet.add(new KStar());
-//		if(data2.numAttributes()>3)
-//			modelerSet.add(new Logistic());
-//		if(data2.numAttributes()>4)
+		modelerSet.add(new J48graft());
+		if(data2.numAttributes()>2)
+			modelerSet.add(new KStar());
+		if(data2.numAttributes()>3)
+			modelerSet.add(new Logistic());
+		if(data2.numAttributes()>4)
 			modelerSet.add(new RandomForest());
-//		if(data2.numAttributes()>5)
-//			modelerSet.add(new SMO());
-//		if(data2.numAttributes()>6)
-//			modelerSet.add(new AdaBoostM1());
+		if(data2.numAttributes()>5)
+			modelerSet.add(new SMO());
+		if(data2.numAttributes()>6)
+			modelerSet.add(new AdaBoostM1());
 			
 		for (int i = 0; i < modelerSet.size(); i++) {
 			
