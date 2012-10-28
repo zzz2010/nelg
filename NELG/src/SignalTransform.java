@@ -147,14 +147,18 @@ public static ArrayList<BEDFeature> extractNegativeSignal_Gauss(List<BEDFeature>
 		BEDFeature bed2=target_signal_sorted.get(i+1);
 		if(bed1.getChr().equalsIgnoreCase(bed2.getChr()))
 		{
-			if(bed1.getEnd()+10000<bed2.getStart()) //ensure have enough gap
+			int mid1=(bed1.getEnd()+bed1.getStart())/2;
+			int mid2=(bed2.getEnd()+bed2.getStart())/2;
+			
+			if(mid1+10000<mid2) //ensure have enough gap
 			{
 				//make bg peak at least 500bp away to the real peak
-				SimpleBEDFeature temp=new SimpleBEDFeature(bed1.getEnd()+500, bed2.getStart()-500, bed1.getChr());
+				SimpleBEDFeature temp=new SimpleBEDFeature(mid1+500,mid2-500, bed1.getChr());
 				temp.setScore(-1); //negative sample
 				sumCoverage+=temp.getScore();
 				gaplist.add(temp);
 			}
+
 		}
 	}
 	//cumulative probablity
@@ -203,9 +207,12 @@ public static ArrayList<BEDFeature> extractNegativeSignal_Uniform(List<BEDFeatur
 		BEDFeature bed2=target_signal_sorted.get(i+1);
 		if(bed1.getChr().equalsIgnoreCase(bed2.getChr()))
 		{
-			if(bed1.getEnd()+10000<bed2.getStart()) //ensure have enough gap
+			int mid1=(bed1.getEnd()+bed1.getStart())/2;
+			int mid2=(bed2.getEnd()+bed2.getStart())/2;
+			
+			if(mid1+10000<mid2) //ensure have enough gap
 			{
-				SimpleBEDFeature temp=new SimpleBEDFeature(bed1.getEnd(), bed2.getStart(), bed1.getChr());
+				SimpleBEDFeature temp=new SimpleBEDFeature(mid1, mid2, bed1.getChr());
 				temp.setScore(-1); //negative sample
 				sumCoverage+=temp.getScore();
 				gaplist.add(temp);
