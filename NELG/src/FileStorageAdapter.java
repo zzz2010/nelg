@@ -60,6 +60,8 @@ public class FileStorageAdapter implements StorageAdapter{
 			String strRead=readbuffer.readLine();//skip first line
 			while ((strRead=readbuffer.readLine())!=null){
 				TrackRecord temp=parseLine(strRead);
+				if(temp==null)
+					continue; //no file exist
 				DataBase.put(temp.getTrackId(), temp);
 				if(!Assembly2CellLine.containsKey(temp.Assembly))
 				{
@@ -122,7 +124,8 @@ public class FileStorageAdapter implements StorageAdapter{
 				}
 			}
 		}
-		
+		if(temp.hasSignal==false&&temp.hasPeak==false)
+			return null;
 		return temp;
 	}
 	
