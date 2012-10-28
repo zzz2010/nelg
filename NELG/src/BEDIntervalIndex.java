@@ -39,6 +39,14 @@ public class BEDIntervalIndex {
 		
 	}
 	
+	public int overlapCount(String chr, int start, int end)
+	{
+		BEDCodec coder=new BEDCodec();
+		List<Interval> iv = indexMap.get(chr).findOverlapping(new Interval(start, end));
+		return iv.size();
+		
+	}
+	
 	static SimpleBEDFeature interval2BEDFeature(Interval inv, String Chr)
 	{
 		String[] comps=inv.toString().split(",");

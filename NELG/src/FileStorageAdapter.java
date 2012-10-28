@@ -390,7 +390,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 			    if(stepWidth<1)
 			    	continue;
 			for (int binId1 = 0; binId1 < numbin; binId1++) {
-				float sumValues=intervalTree.getBlocks(query.getChr(), query.getStart()+binId1*stepWidth, query.getStart()+(binId1+1)*stepWidth).size();
+				float sumValues=intervalTree.overlapCount(query.getChr(), query.getStart()+binId1*stepWidth, query.getStart()+(binId1+1)*stepWidth);
 				if(query.getStrand()== Strand.NEGATIVE)
 	    		{
 				outputSignal.set(queryid, numbin-binId-1, sumValues+outputSignal.get(queryid, numbin-binId-1));
@@ -536,7 +536,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 			    if(stepWidth<1)
 			    	continue;
 			for (int binId1 = 0; binId1 < numbin; binId1++) {
-				float sumValues=intervalTree.getBlocks(query.getChr(), query.getStart()+binId1*stepWidth, query.getStart()+(binId1+1)*stepWidth).size();
+				float sumValues=intervalTree.overlapCount(query.getChr(), query.getStart()+binId1*stepWidth, query.getStart()+(binId1+1)*stepWidth);
 				if(query.getStrand()== Strand.NEGATIVE)
 	    		{
 	    			outputSignal.get(queryid).set(numbin-binId1-1, sumValues+outputSignal.get(queryid).get(numbin-binId1-1));
