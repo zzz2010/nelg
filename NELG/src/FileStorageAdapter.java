@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,12 +23,15 @@ import org.broad.igv.bbfile.ZoomDataRecord;
 import org.broad.igv.bbfile.ZoomLevelIterator;
 import org.broad.tribble.AbstractFeatureReader;
 import org.broad.tribble.Feature;
+import org.broad.tribble.TabixFeatureReader;
 import org.broad.tribble.annotation.Strand;
 import org.broad.tribble.bed.BEDCodec;
 import org.broad.tribble.bed.BEDFeature;
 
 import org.broad.tribble.index.Index;
+import org.broad.tribble.index.IndexCreator;
 import org.broad.tribble.index.IndexFactory;
+import org.broad.tribble.index.IndexFactory.IndexType;
 import org.broad.tribble.index.interval.IntervalIndexCreator;
 import org.broad.tribble.index.interval.IntervalTree;
 
@@ -166,7 +170,7 @@ public class FileStorageAdapter implements StorageAdapter{
 		ArrayList<BEDFeature> peakList=new ArrayList<BEDFeature>();
 		try {
 		BEDCodec codec = new BEDCodec();
-		AbstractFeatureReader<BEDFeature> reader = AbstractFeatureReader.getFeatureReader(bedfile, codec, false);
+		AbstractFeatureReader<BEDFeature> reader =AbstractFeatureReader.getFeatureReader(bedfile, codec,false);
 		Iterable<BEDFeature> iter;
 
 			iter = reader.iterator();
@@ -369,15 +373,19 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 	}
 	else
 	{
-		Index intervalTree = IndexFactory.createIntervalIndex(new File(dataDir+"/"+tr.FilePrefix+tr.peakSuffix), new BEDCodec());
+//		Index intervalTree = getIntervalTree(dataDir+"/"+tr.FilePrefix+tr.peakSuffix);
+		
+		BEDIntervalIndex  intervalTree=new BEDIntervalIndex(dataDir+"/"+tr.FilePrefix+tr.peakSuffix);
 		int queryid=-1;
+		 
+		 
 		for(BEDFeature query:query_regions)
 		{
 			queryid+=1;
 			//filter the chrM,..,random
-			if(!intervalTree.getSequenceNames().contains(query.getChr()))
+			if(!intervalTree.indexMap.containsKey(query.getChr()))
 				continue;
-			 int stepWidth=(query.getEnd()-query.getStart())/numbin;
+			 int stepWidth=(int) Math.ceil((query.getEnd()-query.getStart())/numbin);
 			    int binId=0;
 			    if(stepWidth<1)
 			    	continue;
@@ -513,16 +521,17 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 	}
 	else //bed data
 	{
-		Index intervalTree = IndexFactory.createIntervalIndex(new File(dataDir+"/"+tr.FilePrefix+tr.peakSuffix), new BEDCodec());
+//		Index intervalTree = getIntervalTree(dataDir+"/"+tr.FilePrefix+tr.peakSuffix);
+		BEDIntervalIndex  intervalTree=new BEDIntervalIndex(dataDir+"/"+tr.FilePrefix+tr.peakSuffix);
 		int queryid=-1;
 		for(BEDFeature query:query_regions)
 		{
 			queryid+=1;
 			//filter the chrM,..,random
-			if(!intervalTree.getSequenceNames().contains(query.getChr()))
+			if(!intervalTree.indexMap.containsKey(query.getChr()))
 				continue;
 			int numbin=(int) Math.ceil((query.getEnd()-query.getStart())/(double)StepSize);
-			 int stepWidth=(query.getEnd()-query.getStart())/numbin;
+			 int stepWidth=StepSize;
 			    int binId=0;
 			    if(stepWidth<1)
 			    	continue;
@@ -543,6 +552,19 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 	return outputSignal;
 }
 	 //**************************** helper functions *************************
+
+public static Index getIntervalTree(String bedfile)
+{
+	List<BEDFeature> rawbed=getBEDData(bedfile);
+	Collections.sort(rawbed, new BEDPositionComparator());
+	IndexCreator idx=new IntervalIndexCreator();
+	idx.initialize(new File(bedfile), IndexType.INTERVAL_TREE.getDefaultBinSize());
+	for (int i = 0; i < rawbed.size(); i++) {
+		idx.addFeature(rawbed.get(i), i);
+	}
+	
+	return idx.finalizeIndex(rawbed.size()-1);
+}
 
     private void printRegion(String name, RPChromosomeRegion region) {
         String regionValues = String.format(name + " StartChromID =  %d, StartBase = %d,"
