@@ -21,6 +21,7 @@ import org.jppf.client.event.TaskResultListener;
 import org.jppf.scheduling.JPPFSchedule;
 import org.jppf.server.protocol.JPPFTask;
 
+import EDU.oswego.cs.dl.util.concurrent.LinkedQueue;
 import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
 
 import cern.colt.matrix.DoubleFactory1D;
@@ -156,8 +157,10 @@ public class FeatureSelectionJob implements  Runnable {
 		
 //		 JPPFClient localclient=new JPPFClient("local executor");
 //		 localclient.setLocalExecutionEnabled(true);
-		 PooledExecutor localclient=new PooledExecutor(12);
-		 
+		 PooledExecutor localclient=new PooledExecutor(new LinkedQueue());
+		 localclient.setMinimumPoolSize(common.threadNum);		
+		 localclient.setKeepAliveTime(1000 * 60*500 );
+			
 		for (TrackRecord feature_signal : SignalPool) {
 			if(common.selectFeature_debug!=""&&!feature_signal.FilePrefix.contains(common.selectFeature_debug))
 				continue;
