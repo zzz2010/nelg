@@ -28,7 +28,7 @@ public class MotherModeler {
 	   // setup the logging system, used by some codecs
     private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(MotherModeler.class);
     
-//    PooledExecutor executor;
+    PooledExecutor executor;
 	List<TrackRecord> SignalPool;
 	int threadNum=4;
 	public MotherModeler(List<TrackRecord> signalPool) {
@@ -40,10 +40,10 @@ public class MotherModeler {
 	
 	public void Run()
 	{	
-//		executor = new PooledExecutor(new LinkedQueue());
+		executor = new PooledExecutor(2);
 //		executor.setMinimumPoolSize(threadNum);
 //		
-//		executor.setKeepAliveTime(1000 * 60*500 );
+		executor.setKeepAliveTime(1000 * 60*500 );
 		ClassificationResultListener resultListener=new ClassificationResultListener();
 		FeatureSelectionJob.resultsListener=resultListener;
 		//take out one as class label, the rest as feature data
@@ -59,14 +59,14 @@ public class MotherModeler {
 			try {
 				if(FSJob2==null)
 				{
-//				executor.execute(FSJob);
-				FSJob.run();
+				executor.execute(FSJob);
+//				FSJob.run();
 				}
 				else
 				{
 					logger.info("loading fsj: "+target_signal.FilePrefix);
-//					executor.execute(FSJob2);
-					FSJob2.run();
+					executor.execute(FSJob2);
+//					FSJob2.run();
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -75,13 +75,13 @@ public class MotherModeler {
 						 
 		}
 		
-//		try {
-//			executor.shutdownAfterProcessingCurrentlyQueuedTasks();
-//			executor.awaitTerminationAfterShutdown();
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			executor.shutdownAfterProcessingCurrentlyQueuedTasks();
+			executor.awaitTerminationAfterShutdown();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 
