@@ -10,4 +10,5 @@ public class common {
 	static boolean onlyBestBin=false;
 	static double AUC_cutoff=0.6;
 	static double Corr_cutoff=0.2;
+	static int threadNum=12;
 }
