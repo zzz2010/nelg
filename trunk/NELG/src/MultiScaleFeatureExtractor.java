@@ -1,8 +1,12 @@
+import java.util.ArrayList;
 import java.util.List;
 
 
+import cern.colt.list.DoubleArrayList;
+import cern.colt.list.IntArrayList;
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleMatrix1D;
+import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
@@ -19,6 +23,41 @@ int level=8;
 	this.level = level;
 }
 
+	
+	public SparseDoubleMatrix2D extractSignalFeature_slow(TrackRecord signaltrack,
+			List<SimpleBEDFeature> query) {
+		int binNum=(int) (Math.pow(2, level)-1);
+		List<SimpleBEDFeature> query2 =new ArrayList<SimpleBEDFeature>(query.size()*level*2);
+		for (int i = 0; i < query.size(); i++) {
+			int midpoint=(query.get(i).getStart()+query.get(i).getEnd())/2;
+			String chrom=query.get(i).getChr();
+			for (int j = 0; j < level; j++) {
+				int stepsize=(int) (50*Math.pow(2, j));
+				int offset=(int) (50*Math.pow(2, j)-50);
+				query2.add(new SimpleBEDFeature(midpoint-offset-stepsize,midpoint-offset, chrom));
+				query2.add(new SimpleBEDFeature(midpoint+offset,midpoint+offset+stepsize, chrom));
+			}
+		}
+		SparseDoubleMatrix2D feature_BinSignal_raw=SignalTransform.OverlapBinSignal(signaltrack, query2,1);
+		SparseDoubleMatrix2D feature_Signal=new SparseDoubleMatrix2D(query.size(), 3*level);
+		IntArrayList rowList=new IntArrayList();
+		IntArrayList columnList=new IntArrayList();
+		DoubleArrayList valueList=new DoubleArrayList();
+		feature_BinSignal_raw.getNonZeros(rowList, columnList, valueList);
+		for (int i = 0; i < rowList.size(); i++) {
+			int row=rowList.getQuick(i);
+			int levelid=(row%(level*2))/2;
+			int queryId=row/(level*2);
+			double left=feature_BinSignal_raw.get(queryId*level*2+levelid*2, 0);
+			double right=feature_BinSignal_raw.get(queryId*level*2+levelid*2+1, 0);
+			feature_Signal.set(queryId, 3*levelid, left);
+			feature_Signal.set(queryId, 3*levelid+1, right);
+			feature_Signal.set(queryId, 3*levelid+2, left+right);
+		}
+		
+		return feature_Signal;
+	}
+	
 	@Override
 	public SparseDoubleMatrix2D extractSignalFeature(TrackRecord signaltrack,
 			List<SimpleBEDFeature> query) {
