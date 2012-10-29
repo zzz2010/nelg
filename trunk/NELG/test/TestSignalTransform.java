@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.broad.tribble.bed.BEDFeature;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,8 +37,8 @@ public class TestSignalTransform {
 	public void testExtracePositveSignal() {
 		//signal only
 		TrackRecord temp=db.getTrackById("wgEncodeRikenCageK562CellPapPlusClusters");
-		ArrayList<BEDFeature> peak=SignalTransform.extractPositveSignal(temp);
-		for(BEDFeature p:peak)
+		ArrayList<SimpleBEDFeature> peak=SignalTransform.extractPositveSignal(temp);
+		for(SimpleBEDFeature p:peak)
 		{
 			System.out.println(p.getDescription());
 		}
@@ -53,7 +52,7 @@ public class TestSignalTransform {
 	public void testOverlapBinSignal() {
 
 		TrackRecord temp=db.getTrackById("wgEncodeRikenCageK562CellPapPlusClusters");
-		List<BEDFeature> regions = db.getSignalContigRegion(temp);
+		List<SimpleBEDFeature> regions = db.getSignalContigRegion(temp);
 //		SparseDoubleMatrix2D BinArray =SignalTransform.OverlapBinSignal(temp, regions, 100);
 		MultiScaleFeatureExtractor msfE=new MultiScaleFeatureExtractor(5);
 		SparseDoubleMatrix2D BinArray =msfE.extractSignalFeature(temp, regions);
@@ -66,8 +65,8 @@ public class TestSignalTransform {
 	@Test
 	public void testExtraceNegativeSignal() {
 		TrackRecord temp=db.getTrackById("wgEncodeRikenCageK562CellPapPlusClusters");
-		List<BEDFeature> peak=temp.getPeakData();
-		List<BEDFeature> peak_bg=SignalTransform.extractNegativeSignal(peak, peak.size());
+		List<SimpleBEDFeature> peak=temp.getPeakData();
+		List<SimpleBEDFeature> peak_bg=SignalTransform.extractNegativeSignal(peak, peak.size());
 		assertEquals(peak_bg.size(), peak.size());
 	}
 

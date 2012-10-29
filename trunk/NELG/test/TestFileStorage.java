@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.broad.tribble.bed.BEDFeature;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -72,7 +71,7 @@ FileStorageAdapter db;
 	public void testgetPeakData()
 	{
 		TrackRecord temp=db.getTrackById("wgEncodeBroadHistoneK562Ctcf");
-		List<BEDFeature> d=db.getPeakData(temp);
+		List<SimpleBEDFeature> d=db.getPeakData(temp);
 		assertEquals(d.get(0).getChr(),"chr22");
 		assertEquals(d.get(0).getEnd(),16166753);
 		assertEquals(d.get(0).getScore(),649,0.000001);
@@ -83,7 +82,7 @@ FileStorageAdapter db;
 	public void testgetSignalContigRegion()
 	{
 		TrackRecord temp=db.getTrackById("wgEncodeRikenCageK562CellPapPlusClusters");
-		List<BEDFeature> regions = db.getSignalContigRegion(temp);
+		List<SimpleBEDFeature> regions = db.getSignalContigRegion(temp);
 		assertTrue(regions.size()>1000);
 	}
 	
@@ -91,8 +90,8 @@ FileStorageAdapter db;
 	public void testOverlapBinSignal()
 	{
 		TrackRecord temp=db.getTrackById("wgEncodeRikenCageK562CytosolPapPlusSignal");
-//		List<BEDFeature> regions = db.getSignalContigRegion(temp);
-		List<BEDFeature> regions=new ArrayList<BEDFeature>();
+//		List<SimpleBEDFeature> regions = db.getSignalContigRegion(temp);
+		List<SimpleBEDFeature> regions=new ArrayList<SimpleBEDFeature>();
 		regions.add(new SimpleBEDFeature(44084707, 44085107, "chr15"));
 		SparseDoubleMatrix2D BinArray = db.overlapBinSignal_fixBinNum(temp, regions, 1);
 		assertEquals(regions.size(), BinArray.size());

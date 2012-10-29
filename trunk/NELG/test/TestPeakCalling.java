@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.broad.tribble.bed.BEDFeature;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,20 +22,20 @@ public class TestPeakCalling {
 	public void testSimple_peak_detection() {
 		TrackRecord temp=db.getTrackById("wgEncodeRikenCageK562CytosolPapPlusSignal");
 		TrackRecord conrol=db.getTrackById("wgEncodeBroadHistoneK562Control");
-		List<BEDFeature> peaks = FileStorageAdapter.getBEDData("./TSS.bed") ;//SignalTransform.extractPositveSignal(temp);
-//		List<BEDFeature> queryregions=SignalTransform.fixRegionSize(peaks, 100000,true);
+		List<SimpleBEDFeature> peaks = FileStorageAdapter.getBEDData("./TSS.bed") ;//SignalTransform.extractPositveSignal(temp);
+//		List<SimpleBEDFeature> queryregions=SignalTransform.fixRegionSize(peaks, 100000,true);
 //		
 //		temp.hasPeak=false;
-//		List<BEDFeature> peaks2 =SignalTransform.extractPositveSignal(temp);
+//		List<SimpleBEDFeature> peaks2 =SignalTransform.extractPositveSignal(temp);
 		SimpleBEDFeature testquery=new SimpleBEDFeature(24235047, 24235946, "chr22");
-		List<BEDFeature> qr=new ArrayList<BEDFeature>();
+		List<SimpleBEDFeature> qr=new ArrayList<SimpleBEDFeature>();
 		qr.add(testquery);
 		List<SparseDoubleMatrix1D> SignalOverRegions = temp.overlapBinSignal_fixStepSize(qr, 200);
 //		List<SparseDoubleMatrix1D> SignalOverRegions = temp.overlapBinSignal_fixStepSize(queryregions, 200);
 //		List<SparseDoubleMatrix1D> SignalOverRegions_bg = conrol.overlapBinSignal_fixStepSize(queryregions, 400);
 		//peak calling
-//		List<BEDFeature> peaks2=PeakCalling.simple_peak_detection(SignalOverRegions,SignalOverRegions_bg, queryregions);
-		List<BEDFeature> peaks2=temp.getPeakData();//PeakCalling.simple_peak_detection(SignalOverRegions, queryregions);
+//		List<SimpleBEDFeature> peaks2=PeakCalling.simple_peak_detection(SignalOverRegions,SignalOverRegions_bg, queryregions);
+		List<SimpleBEDFeature> peaks2=temp.getPeakData();//PeakCalling.simple_peak_detection(SignalOverRegions, queryregions);
 		peaks2=SignalTransform.sortUnique(peaks2);
 		
 		
@@ -47,10 +46,10 @@ public class TestPeakCalling {
 		}
 		
 		logger.info("peaks2 number£º"+peaks2.size());
-		List<BEDFeature> peaks3 = SignalTransform.fixRegionSize(peaks2, 800,true);
+		List<SimpleBEDFeature> peaks3 = SignalTransform.fixRegionSize(peaks2, 800,true);
 		Collections.sort(peaks,new BEDPositionComparator());
 		Collections.sort(peaks3,new BEDPositionComparator());
-		List<BEDFeature> overlaps = SignalTransform.intersectSortedRegions(peaks, peaks3);
+		List<SimpleBEDFeature> overlaps = SignalTransform.intersectSortedRegions(peaks, peaks3);
 		double precision=(double)overlaps.size()/peaks3.size();
 		SimpleBEDFeature.toFile(peaks2, "cagepeak.bed");
 		logger.info("precision£º"+precision);
