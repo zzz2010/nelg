@@ -158,11 +158,11 @@ public class FeatureSelectionJob implements  Runnable {
 		 JPPFJob localjob = new JPPFJob();
 		 localjob.setName("local_"+target_signal.FilePrefix);
 		
-//		 JPPFClient localclient=new JPPFClient("local executor");
-//		 localclient.setLocalExecutionEnabled(true);
-		 PooledExecutor localclient=new PooledExecutor(new LinkedQueue());
-		 localclient.setMinimumPoolSize(common.threadNum);		
-		 localclient.setKeepAliveTime(1000 * 60*500 );
+		 JPPFClient localclient=new JPPFClient("local executor");
+		 localclient.setLocalExecutionEnabled(true);
+//		 PooledExecutor localclient=new PooledExecutor(new LinkedQueue());
+//		 localclient.setMinimumPoolSize(common.threadNum);		
+//		 localclient.setKeepAliveTime(1000 * 60*500 );
 			
 		for (TrackRecord feature_signal : SignalPool) {
 			if(common.selectFeature_debug!=""&&!feature_signal.FilePrefix.contains(common.selectFeature_debug))
@@ -174,7 +174,7 @@ public class FeatureSelectionJob implements  Runnable {
 		        	FeatureExtractJob FEJob=new FeatureExtractJob(target_signal_filtered, target_signal_bg, feature_signal, target_signal, featureExtractor, targetValue, targetNormValue);
 		        	try {
 						localjob.addTask(FEJob);
-						localclient.execute(FEJob);
+//						localclient.execute(FEJob);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -184,22 +184,23 @@ public class FeatureSelectionJob implements  Runnable {
 		try {
 			logger.debug("Number of Feature Extraction Tasks:"+localjob.getTasks().size());
 			 localjob.setBlocking(true);
+			 
 //			 String dateFormat = "MM/dd/yyyy hh:mm a z";
 //			 // set the job to expire on September 30, 2010 at 12:08 PM in the CEDT time zone
 //			 JPPFSchedule schedule = new JPPFSchedule("09/30/2014 12:08 PM CEDT", dateFormat);
 //
 			 localjob.getSLA().setJobExpirationSchedule(new JPPFSchedule(Long.MAX_VALUE));
 			
-				try {
-					localclient.shutdownAfterProcessingCurrentlyQueuedTasks();
-					localclient.awaitTerminationAfterShutdown();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//				try {
+//					localclient.shutdownAfterProcessingCurrentlyQueuedTasks();
+//					localclient.awaitTerminationAfterShutdown();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			 
 			 
-			 List<JPPFTask> jobresult =localjob.getTasks();// localclient.submit(localjob);
+			 List<JPPFTask> jobresult =localclient.submit(localjob); //localjob.getTasks();// 
 			for (int i = 0; i < jobresult.size(); i++) {
 				FeatureExtractJob	result1=(FeatureExtractJob)jobresult.get(i);
 				 if (result1.getException() != null) {
