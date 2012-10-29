@@ -2,7 +2,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.broad.tribble.bed.BEDFeature;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
@@ -25,14 +24,14 @@ public class TrackRecord implements Serializable{
 	public StorageAdapter DBoperator=null;
 	public ArrayList<String> ReplicateSuffix;
 	public String peakSuffix;
-	private List<BEDFeature> SignalRegionCache=null;
-	private List<BEDFeature> PeakCache=null;
+	private List<SimpleBEDFeature> SignalRegionCache=null;
+	private List<SimpleBEDFeature> PeakCache=null;
 	public String getTrackId()
 	{
 		return FilePrefix;
 	}
 	
-	public List<BEDFeature> getPeakData()
+	public List<SimpleBEDFeature> getPeakData()
 	{
 		if(PeakCache==null)
 		{
@@ -41,18 +40,18 @@ public class TrackRecord implements Serializable{
 		return PeakCache;
 	}
 	
-	public List<BEDFeature> getSignalContigRegion()
+	public List<SimpleBEDFeature> getSignalContigRegion()
 	{
 		if(SignalRegionCache==null)
 			SignalRegionCache=DBoperator.getSignalContigRegion(this);
 		
 		return SignalRegionCache;
 	}
-	public SparseDoubleMatrix2D overlapBinSignal_fixBinNum( List<BEDFeature> query_regions,int numbin)
+	public SparseDoubleMatrix2D overlapBinSignal_fixBinNum( List<SimpleBEDFeature> query_regions,int numbin)
 	{
 		return DBoperator.overlapBinSignal_fixBinNum(this, query_regions, numbin);
 	}
-	public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize( List<BEDFeature> query_regions,int stepsize)
+	public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize( List<SimpleBEDFeature> query_regions,int stepsize)
 	{
 		return DBoperator.overlapBinSignal_fixStepSize(this, query_regions, stepsize);
 	}

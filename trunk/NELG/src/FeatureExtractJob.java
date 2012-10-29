@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.broad.tribble.bed.BEDFeature;
 import org.jppf.server.protocol.JPPFTask;
 
 import cern.colt.matrix.DoubleFactory1D;
@@ -13,8 +12,8 @@ import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 public class FeatureExtractJob extends JPPFTask {
 
-	List<BEDFeature>target_signal_filtered;
-	List<BEDFeature> target_signal_bg;
+	List<SimpleBEDFeature>target_signal_filtered;
+	List<SimpleBEDFeature> target_signal_bg;
 	TrackRecord feature_signal;
 	TrackRecord target_signal;
 	FeatureExtractor featureExtractor;
@@ -25,8 +24,8 @@ public class FeatureExtractJob extends JPPFTask {
 	ArrayList<FeatureSignal> ValThereFeatures;
 
 
-	public FeatureExtractJob(List<BEDFeature> target_signal_filtered,
-			List<BEDFeature> target_signal_bg, TrackRecord feature_signal,
+	public FeatureExtractJob(List<SimpleBEDFeature> target_signal_filtered,
+			List<SimpleBEDFeature> target_signal_bg, TrackRecord feature_signal,
 			TrackRecord target_signal, FeatureExtractor featureExtractor,
 			DoubleMatrix1D targetValue, DoubleMatrix1D targetNormValue) {
 		super();

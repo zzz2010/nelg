@@ -26,7 +26,7 @@ import org.broad.tribble.Feature;
 import org.broad.tribble.TabixFeatureReader;
 import org.broad.tribble.annotation.Strand;
 import org.broad.tribble.bed.BEDCodec;
-import org.broad.tribble.bed.BEDFeature;
+
 
 import org.broad.tribble.index.Index;
 import org.broad.tribble.index.IndexCreator;
@@ -165,16 +165,16 @@ public class FileStorageAdapter implements StorageAdapter{
 		return DataBase.get(trackId);
 	}
 
-	public static List<BEDFeature> getBEDData(String bedfile)
+	public static List<SimpleBEDFeature> getBEDData(String bedfile)
 	{
-		ArrayList<BEDFeature> peakList=new ArrayList<BEDFeature>();
+		ArrayList<SimpleBEDFeature> peakList=new ArrayList<SimpleBEDFeature>();
 		try {
 		BEDCodec codec = new BEDCodec();
-		AbstractFeatureReader<BEDFeature> reader =AbstractFeatureReader.getFeatureReader(bedfile, codec,false);
-		Iterable<BEDFeature> iter;
+		AbstractFeatureReader<SimpleBEDFeature> reader =AbstractFeatureReader.getFeatureReader(bedfile, codec,false);
+		Iterable<SimpleBEDFeature> iter;
 
 			iter = reader.iterator();
-	        for (BEDFeature feat : iter) {
+	        for (SimpleBEDFeature feat : iter) {
 	        	peakList.add(feat);    
 			}
 	        reader.close();
@@ -187,9 +187,9 @@ public class FileStorageAdapter implements StorageAdapter{
 
 	}
 	@Override
-	public List<BEDFeature> getPeakData(TrackRecord tr) {
+	public List<SimpleBEDFeature> getPeakData(TrackRecord tr) {
 		// TODO Auto-generated method stub
-		List<BEDFeature>  peakList=new ArrayList<BEDFeature>();
+		List<SimpleBEDFeature>  peakList=new ArrayList<SimpleBEDFeature>();
 		if(tr.hasPeak)
 		{
 		String bedFile = dataDir+"/"+tr.FilePrefix+tr.peakSuffix;
@@ -206,14 +206,14 @@ public class FileStorageAdapter implements StorageAdapter{
 	}
 
 	@Override
-	public List<BEDFeature> getSignalContigRegion(TrackRecord tr) {
+	public List<SimpleBEDFeature> getSignalContigRegion(TrackRecord tr) {
 		// TODO Auto-generated method stub
-		List<BEDFeature> SignalRegion=new ArrayList<BEDFeature>();
+		List<SimpleBEDFeature> SignalRegion=new ArrayList<SimpleBEDFeature>();
 		if(tr.hasSignal)
 		{	
 			for (int i = 0; i < tr.ReplicateSuffix.size(); i++) {
 				String filename=dataDir+"/"+tr.FilePrefix+tr.ReplicateSuffix.get(i);
-				List<BEDFeature> ContigRegions=new ArrayList<BEDFeature>();
+				List<SimpleBEDFeature> ContigRegions=new ArrayList<SimpleBEDFeature>();
 				try {
 					BBFileReader bbReader = new BBFileReader(filename);
 					BBFileHeader bbFileHdr=bbReader.getBBFileHeader();
@@ -264,7 +264,7 @@ public class FileStorageAdapter implements StorageAdapter{
 	}
 	
 	
-public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDFeature> query_regions,int numbin)
+public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<SimpleBEDFeature> query_regions,int numbin)
 {
 	///need to consider strand direction
 	SparseDoubleMatrix2D outputSignal=new SparseDoubleMatrix2D(query_regions.size(), numbin);
@@ -281,7 +281,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 			        int zoomLevels = bbReader.getZoomLevelCount();
 			        int queryid=-1;
 			       HashSet<String> chromNames=new HashSet<String>(bbReader.getChromosomeNames()) ;
-					for(BEDFeature query:query_regions)
+					for(SimpleBEDFeature query:query_regions)
 					{
 						queryid+=1;
 						//filter the chrM,..,random
@@ -379,7 +379,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 		int queryid=-1;
 		 
 		 
-		for(BEDFeature query:query_regions)
+		for(SimpleBEDFeature query:query_regions)
 		{
 			queryid+=1;
 			//filter the chrM,..,random
@@ -408,7 +408,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<BEDF
 }
 
 
-public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, List<BEDFeature> query_regions,int StepSize)
+public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, List<SimpleBEDFeature> query_regions,int StepSize)
 {
 	///need to consider strand direction
 	List<SparseDoubleMatrix1D>outputSignal=new ArrayList<SparseDoubleMatrix1D>(query_regions.size());
@@ -429,7 +429,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 			        int zoomLevels = bbReader.getZoomLevelCount();
 			        int queryid=-1;
 			        HashSet<String> chromNames=new HashSet<String>(bbReader.getChromosomeNames()) ;
-					for(BEDFeature query:query_regions)
+					for(SimpleBEDFeature query:query_regions)
 					{
 						queryid+=1;
 						//filter the chrM,..,random
@@ -524,7 +524,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 //		Index intervalTree = getIntervalTree(dataDir+"/"+tr.FilePrefix+tr.peakSuffix);
 		BEDIntervalIndex  intervalTree=new BEDIntervalIndex(dataDir+"/"+tr.FilePrefix+tr.peakSuffix);
 		int queryid=-1;
-		for(BEDFeature query:query_regions)
+		for(SimpleBEDFeature query:query_regions)
 		{
 			queryid+=1;
 			//filter the chrM,..,random
@@ -555,7 +555,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 
 public static Index getIntervalTree(String bedfile)
 {
-	List<BEDFeature> rawbed=getBEDData(bedfile);
+	List<SimpleBEDFeature> rawbed=getBEDData(bedfile);
 	Collections.sort(rawbed, new BEDPositionComparator());
 	IndexCreator idx=new IntervalIndexCreator();
 	idx.initialize(new File(bedfile), IndexType.INTERVAL_TREE.getDefaultBinSize());

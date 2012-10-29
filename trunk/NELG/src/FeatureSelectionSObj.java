@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.broad.tribble.bed.BEDFeature;
 
 
 public class FeatureSelectionSObj implements Serializable{
@@ -15,10 +14,10 @@ public class FeatureSelectionSObj implements Serializable{
 	ArrayList<FeatureSignal> IsThereFeatures;
 	ArrayList<FeatureSignal> ValThereFeatures;
 
-	List<BEDFeature>target_signal_filtered;
+	List<SimpleBEDFeature>target_signal_filtered;
 	public FeatureSelectionSObj(ArrayList<FeatureSignal> isThereFeatures,
 			ArrayList<FeatureSignal> valThereFeatures,
-			List<BEDFeature> target_signal_filtered) {
+			List<SimpleBEDFeature> target_signal_filtered) {
 		super();
 		IsThereFeatures = isThereFeatures;
 		ValThereFeatures = valThereFeatures;

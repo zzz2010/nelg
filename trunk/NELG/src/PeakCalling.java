@@ -8,8 +8,7 @@ import java.util.Random;
 import java.util.ResourceBundle.Control;
 
 import org.broad.tribble.annotation.Strand;
-import org.broad.tribble.bed.BEDFeature;
-import org.broad.tribble.bed.FullBEDFeature;
+
 
 
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
@@ -106,9 +105,9 @@ public class PeakCalling {
 	 * @param delta The precedor of a maximum peak
 	 * @return List of maps (maxima and minima pairs) of detected peaks
 	 */
-	public static List<BEDFeature> simple_peak_detection(List<SparseDoubleMatrix1D> values,List<BEDFeature> regions)
+	public static List<SimpleBEDFeature> simple_peak_detection(List<SparseDoubleMatrix1D> values,List<SimpleBEDFeature> regions)
 	{
-		List<BEDFeature> PeakList=new ArrayList<BEDFeature>();
+		List<SimpleBEDFeature> PeakList=new ArrayList<SimpleBEDFeature>();
 
 		double sumVals=1;
 		for (int i = 0; i < regions.size(); i++) {
@@ -152,9 +151,9 @@ public class PeakCalling {
 	
 	
 	
-	public static List<BEDFeature> simple_peak_detection(List<SparseDoubleMatrix1D> values,List<SparseDoubleMatrix1D> control,List<BEDFeature> regions)
+	public static List<SimpleBEDFeature> simple_peak_detection(List<SparseDoubleMatrix1D> values,List<SparseDoubleMatrix1D> control,List<SimpleBEDFeature> regions)
 	{
-		List<BEDFeature> PeakList=new ArrayList<BEDFeature>();
+		List<SimpleBEDFeature> PeakList=new ArrayList<SimpleBEDFeature>();
 		double sumCtrl=1;
 		double sumVals=1;
 		for (int i = 0; i < regions.size(); i++) {
@@ -214,9 +213,9 @@ public class PeakCalling {
 	}
 	
 	
-	public static List<BEDFeature> random_peak_detection(List<SparseDoubleMatrix1D> values,List<BEDFeature> regions)
+	public static List<SimpleBEDFeature> random_peak_detection(List<SparseDoubleMatrix1D> values,List<SimpleBEDFeature> regions)
 	{
-		List<BEDFeature> PeakList=new ArrayList<BEDFeature>();
+		List<SimpleBEDFeature> PeakList=new ArrayList<SimpleBEDFeature>();
 		Random rand=new Random(); 
 		for (int i = 0; i < regions.size(); i++) {
 
