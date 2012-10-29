@@ -7,8 +7,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
-import org.broad.igv.bbfile.BedFeature;
-import org.broad.tribble.bed.BEDFeature;
 import org.jppf.client.JPPFClient;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
@@ -57,11 +55,11 @@ public class StateRecovery {
 		return null;
 	}
 	
-	static void saveCache_BEDFeatureList(List<BEDFeature> obj, String key)
+	static void saveCache_BEDFeatureList(List<SimpleBEDFeature> obj, String key)
 	{
 		SimpleBEDFeature.toFile(obj, common.tempDir+key);
 	}
-	static List<BEDFeature> loadCache_BEDFeatureList(String key)
+	static List<SimpleBEDFeature> loadCache_BEDFeatureList(String key)
 	{
 		return FileStorageAdapter.getBEDData(key);
 	}

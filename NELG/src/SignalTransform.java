@@ -9,7 +9,7 @@ import java.util.Random;
 
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.log4j.Logger;
-import org.broad.tribble.bed.BEDFeature;
+
 
 
 import cern.colt.matrix.DoubleMatrix1D;
@@ -22,10 +22,10 @@ public class SignalTransform {
 	static Logger logger = Logger.getLogger(SignalTransform.class);
 	
 //find the best to make the raw value follow the normal distribution
-public	static ArrayList<BEDFeature> normalizeSignal(List<BEDFeature> inputSignal)
+public	static ArrayList<SimpleBEDFeature> normalizeSignal(List<SimpleBEDFeature> inputSignal)
 {
 	//do simple log2 normalized
-	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>(inputSignal.size());
+	ArrayList<SimpleBEDFeature> outputSignal=new ArrayList<SimpleBEDFeature>(inputSignal.size());
 	DoubleMatrix1D scores = BedFeatureToValues(inputSignal);
 	scores=normalizeSignal(scores);
 	for (int i = 0; i < inputSignal.size(); i++) {
@@ -68,11 +68,11 @@ return outputSignal;
 //
 //}
 
-public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_signal)
+public	static ArrayList<SimpleBEDFeature> extractPositveSignal(TrackRecord target_signal)
 {
 	int maxExtract=10000;
-	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>();
-	List<BEDFeature> peaklist=null;
+	ArrayList<SimpleBEDFeature> outputSignal=new ArrayList<SimpleBEDFeature>();
+	List<SimpleBEDFeature> peaklist=null;
 	//if peak file exist, directly use peak file
 	if(target_signal.hasPeak)
 	{
@@ -80,13 +80,13 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 	}
 	else //peak calling from signal file
 	{
-		List<BEDFeature> SignalRegions=target_signal.getSignalContigRegion();
-		List<BEDFeature> SignalRegions2=new ArrayList<BEDFeature>();
+		List<SimpleBEDFeature> SignalRegions=target_signal.getSignalContigRegion();
+		List<SimpleBEDFeature> SignalRegions2=new ArrayList<SimpleBEDFeature>();
 		//filter short region <400
 		double sumscore=0;
 		double sumscoreSQ=0;
 	
-		for(BEDFeature region:SignalRegions)
+		for(SimpleBEDFeature region:SignalRegions)
 		{
 //			logger.info(region.getEnd()-region.getStart());
 			if(region.getEnd()-region.getStart()>400)
@@ -128,23 +128,23 @@ public	static ArrayList<BEDFeature> extractPositveSignal(TrackRecord target_sign
 	return outputSignal;
 }
 	
-public	static SparseDoubleMatrix2D OverlapBinSignal(TrackRecord feature_signal, List<BEDFeature> query_regions,int numbin)
+public	static SparseDoubleMatrix2D OverlapBinSignal(TrackRecord feature_signal, List<SimpleBEDFeature> query_regions,int numbin)
 {
 	return feature_signal.overlapBinSignal_fixBinNum(query_regions, numbin);
 }
 
 //compute background set 
-public static ArrayList<BEDFeature> extractNegativeSignal_Gauss(List<BEDFeature> target_signal,int num)
+public static ArrayList<SimpleBEDFeature> extractNegativeSignal_Gauss(List<SimpleBEDFeature> target_signal,int num)
 {
 	//search in gap and probability
-	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>(2*target_signal.size());
-	List<BEDFeature>  target_signal_sorted=new ArrayList<BEDFeature>(target_signal);
+	ArrayList<SimpleBEDFeature> outputSignal=new ArrayList<SimpleBEDFeature>(2*target_signal.size());
+	List<SimpleBEDFeature>  target_signal_sorted=new ArrayList<SimpleBEDFeature>(target_signal);
 	Collections.sort(target_signal_sorted, new BEDPositionComparator());
-	List<BEDFeature> gaplist=new ArrayList<BEDFeature>();
+	List<SimpleBEDFeature> gaplist=new ArrayList<SimpleBEDFeature>();
 	double sumCoverage=0;
 	for (int i = 0; i < target_signal_sorted.size()-1; i++) {
-		BEDFeature bed1=target_signal_sorted.get(i);
-		BEDFeature bed2=target_signal_sorted.get(i+1);
+		SimpleBEDFeature bed1=target_signal_sorted.get(i);
+		SimpleBEDFeature bed2=target_signal_sorted.get(i+1);
 		if(bed1.getChr().equalsIgnoreCase(bed2.getChr()))
 		{
 			int mid1=(bed1.getEnd()+bed1.getStart())/2;
@@ -194,17 +194,17 @@ public static ArrayList<BEDFeature> extractNegativeSignal_Gauss(List<BEDFeature>
 }
 
 //compute background set 
-public static ArrayList<BEDFeature> extractNegativeSignal_Uniform(List<BEDFeature> target_signal,int num)
+public static ArrayList<SimpleBEDFeature> extractNegativeSignal_Uniform(List<SimpleBEDFeature> target_signal,int num)
 {
 	//search in gap and probability
-	ArrayList<BEDFeature> outputSignal=new ArrayList<BEDFeature>(2*target_signal.size());
-	List<BEDFeature>  target_signal_sorted=new ArrayList<BEDFeature>(target_signal);
+	ArrayList<SimpleBEDFeature> outputSignal=new ArrayList<SimpleBEDFeature>(2*target_signal.size());
+	List<SimpleBEDFeature>  target_signal_sorted=new ArrayList<SimpleBEDFeature>(target_signal);
 	Collections.sort(target_signal_sorted, new BEDPositionComparator());
-	List<BEDFeature> gaplist=new ArrayList<BEDFeature>();
+	List<SimpleBEDFeature> gaplist=new ArrayList<SimpleBEDFeature>();
 	double sumCoverage=0;
 	for (int i = 0; i < target_signal_sorted.size()-1; i++) {
-		BEDFeature bed1=target_signal_sorted.get(i);
-		BEDFeature bed2=target_signal_sorted.get(i+1);
+		SimpleBEDFeature bed1=target_signal_sorted.get(i);
+		SimpleBEDFeature bed2=target_signal_sorted.get(i+1);
 		if(bed1.getChr().equalsIgnoreCase(bed2.getChr()))
 		{
 			int mid1=(bed1.getEnd()+bed1.getStart())/2;
@@ -243,14 +243,14 @@ public static ArrayList<BEDFeature> extractNegativeSignal_Uniform(List<BEDFeatur
 }
 
 //compute background set 
-public static ArrayList<BEDFeature> extractNegativeSignal(List<BEDFeature> target_signal,int num)
+public static ArrayList<SimpleBEDFeature> extractNegativeSignal(List<SimpleBEDFeature> target_signal,int num)
 {
 	//search in gap and probability
-	ArrayList<BEDFeature> outputSignal=extractNegativeSignal_Gauss(target_signal,num);
+	ArrayList<SimpleBEDFeature> outputSignal=extractNegativeSignal_Gauss(target_signal,num);
 
 	return outputSignal;
 }
-public static DoubleMatrix1D BedFeatureToValues(List<BEDFeature> signal)
+public static DoubleMatrix1D BedFeatureToValues(List<SimpleBEDFeature> signal)
 {
 	DoubleMatrix1D outputvec=new SparseDoubleMatrix1D(signal.size());
 	for (int i = 0; i < signal.size(); i++) {
@@ -261,9 +261,9 @@ public static DoubleMatrix1D BedFeatureToValues(List<BEDFeature> signal)
 }
 
 //get the window region around the center of input regions
-public static List<BEDFeature> fixRegionSize(List<BEDFeature> list1, int regionsize, boolean filterNegPos)
+public static List<SimpleBEDFeature> fixRegionSize(List<SimpleBEDFeature> list1, int regionsize, boolean filterNegPos)
 {
-	List<BEDFeature> fixlist=new ArrayList<BEDFeature>(list1.size());  
+	List<SimpleBEDFeature> fixlist=new ArrayList<SimpleBEDFeature>(list1.size());  
 	for (int i = 0; i < list1.size(); i++) {
 		int midpoint=(list1.get(i).getStart()+list1.get(i).getEnd())/2;
 		if(midpoint-regionsize/2<0&&filterNegPos)//ignore negative position
@@ -278,18 +278,18 @@ public static List<BEDFeature> fixRegionSize(List<BEDFeature> list1, int regions
 	return fixlist;
 }
 
-public static List<BEDFeature> sortUnique(List<BEDFeature> list1)
+public static List<SimpleBEDFeature> sortUnique(List<SimpleBEDFeature> list1)
 {
-	List<BEDFeature> sortlist=new ArrayList<BEDFeature>(list1.size());
+	List<SimpleBEDFeature> sortlist=new ArrayList<SimpleBEDFeature>(list1.size());
 	BEDPositionComparator comparator = new BEDPositionComparator();
 	Collections.sort(list1, comparator);
 	
-	BEDFeature p1=list1.get(0);
+	SimpleBEDFeature p1=list1.get(0);
 	sortlist.add(p1);
 	int lastpos=(p1.getEnd()+p1.getStart())/2;
 	for (int i = 1; i < list1.size(); i++) {
 		 p1 = list1.get(i-1);
-		BEDFeature p2 = list1.get(i);
+		SimpleBEDFeature p2 = list1.get(i);
 		int currpos=(p2.getEnd()+p2.getStart())/2;
 		if(p1.getChr().contentEquals(p2.getChr())&&Math.abs(currpos-lastpos)<200)
 			continue;
@@ -304,15 +304,15 @@ public static List<BEDFeature> sortUnique(List<BEDFeature> list1)
 	return sortlist;
 }
 
-public static List<BEDFeature> intersectSortedRegions(List<BEDFeature> list1,List<BEDFeature> list2)
+public static List<SimpleBEDFeature> intersectSortedRegions(List<SimpleBEDFeature> list1,List<SimpleBEDFeature> list2)
 {
-	List<BEDFeature> intersectList=new ArrayList<BEDFeature>();
+	List<SimpleBEDFeature> intersectList=new ArrayList<SimpleBEDFeature>();
 	if(list1.size()>0&&list2.size()>0)
 	{
-	Iterator<BEDFeature> it1 = list1.iterator();
-	Iterator<BEDFeature> it2 = list2.iterator();
-	BEDFeature el1=it1.next();
-	BEDFeature el2=it2.next();
+	Iterator<SimpleBEDFeature> it1 = list1.iterator();
+	Iterator<SimpleBEDFeature> it2 = list2.iterator();
+	SimpleBEDFeature el1=it1.next();
+	SimpleBEDFeature el2=it2.next();
 	BEDPositionComparator comparator=new BEDPositionComparator();
 	do
 	{

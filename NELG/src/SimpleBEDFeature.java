@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.broad.tribble.annotation.Strand;
+
 import org.broad.tribble.bed.BEDFeature;
 import org.broad.tribble.bed.FullBEDFeature.Exon;
 
@@ -41,13 +42,13 @@ public class SimpleBEDFeature implements BEDFeature, Serializable {
 	}
 	    
 	    
-   public static void toFile(List<BEDFeature> bedlist,String filename)
+   public static void toFile(List<SimpleBEDFeature> bedlist,String filename)
    {
 	   FileWriter outFile;
 	try {
 		outFile = new FileWriter(filename);
 		 PrintWriter out = new PrintWriter(outFile);
-		 for(BEDFeature bed:bedlist)
+		 for(SimpleBEDFeature bed:bedlist)
 		 {
 			 out.println(bed.getChr()+"\t"+bed.getStart()+"\t"+bed.getEnd()+"\t"+bed.getScore());
 		 }

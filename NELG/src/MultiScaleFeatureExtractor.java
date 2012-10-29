@@ -1,6 +1,5 @@
 import java.util.List;
 
-import org.broad.tribble.bed.BEDFeature;
 
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleMatrix1D;
@@ -22,9 +21,9 @@ int level=8;
 
 	@Override
 	public SparseDoubleMatrix2D extractSignalFeature(TrackRecord signaltrack,
-			List<BEDFeature> query) {
+			List<SimpleBEDFeature> query) {
 		int binNum=(int) (Math.pow(2, level)-1);
-		List<BEDFeature> query2 = SignalTransform.fixRegionSize(query,100*binNum,false);
+		List<SimpleBEDFeature> query2 = SignalTransform.fixRegionSize(query,100*binNum,false);
 		SparseDoubleMatrix2D feature_BinSignal_raw=SignalTransform.OverlapBinSignal(signaltrack, query2,binNum*2);
 		//50,100,200,400,800,1600,3200,6400
 		SparseDoubleMatrix2D feature_Signal=new SparseDoubleMatrix2D(feature_BinSignal_raw.rows(), 3*level);

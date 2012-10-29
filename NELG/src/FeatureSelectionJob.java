@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.broad.tribble.bed.BEDFeature;
+
 import org.jppf.JPPFException;
 import org.jppf.client.JPPFClient;
 import org.jppf.client.JPPFJob;
@@ -39,7 +39,7 @@ public class FeatureSelectionJob implements  Runnable {
 	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(FeatureSelectionJob.class);
 	TrackRecord target_signal;
 	List<TrackRecord> SignalPool;
-	List<BEDFeature>target_signal_filtered;
+	List<SimpleBEDFeature>target_signal_filtered;
 	JPPFClient executor ;
 	ArrayList<FeatureSignal> IsThereFeatures;
 	ArrayList<FeatureSignal> ValThereFeatures;
@@ -67,7 +67,7 @@ public class FeatureSelectionJob implements  Runnable {
 		{
 			if(target_signal_filtered.size()<50)
 				return;
-			List<BEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
+			List<SimpleBEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
 		  	DoubleMatrix1D targetValue=SignalTransform.BedFeatureToValues(target_signal_filtered);
 		  	targetValue=DoubleFactory1D.sparse.append(targetValue, SignalTransform.BedFeatureToValues(target_signal_bg));
 		  
@@ -138,7 +138,7 @@ public class FeatureSelectionJob implements  Runnable {
 	  		return;
 	  	}
 	  	
-	  	List<BEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
+	  	List<SimpleBEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
 	  	
 	  	
 	  	StateRecovery.saveCache_BEDFeatureList(target_signal_bg, storekey+"bg.bed");
