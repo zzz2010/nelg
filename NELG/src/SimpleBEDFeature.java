@@ -35,6 +35,18 @@ public class SimpleBEDFeature implements BEDFeature, Serializable {
 	        this.chr = chr;
 	    }
 
+	 public SimpleBEDFeature(BEDFeature feat)
+	 {
+		 start=feat.getStart();
+		 end=feat.getEnd();
+		 chr=feat.getChr();
+		 score=feat.getScore();
+		 strand=feat.getStrand();
+		 name=feat.getName();
+		 type=feat.getType();
+		 link=feat.getLink();
+		 description=feat.getDescription();
+	 }
 	    @Override
 	public String toString() {
 		// TODO Auto-generated method stub

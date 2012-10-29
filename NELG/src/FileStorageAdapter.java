@@ -26,6 +26,7 @@ import org.broad.tribble.Feature;
 import org.broad.tribble.TabixFeatureReader;
 import org.broad.tribble.annotation.Strand;
 import org.broad.tribble.bed.BEDCodec;
+import org.broad.tribble.bed.BEDFeature;
 
 
 import org.broad.tribble.index.Index;
@@ -170,12 +171,12 @@ public class FileStorageAdapter implements StorageAdapter{
 		ArrayList<SimpleBEDFeature> peakList=new ArrayList<SimpleBEDFeature>();
 		try {
 		BEDCodec codec = new BEDCodec();
-		AbstractFeatureReader<SimpleBEDFeature> reader =AbstractFeatureReader.getFeatureReader(bedfile, codec,false);
-		Iterable<SimpleBEDFeature> iter;
+		AbstractFeatureReader<BEDFeature> reader =AbstractFeatureReader.getFeatureReader(bedfile, codec,false);
+		Iterable<BEDFeature> iter;
 
 			iter = reader.iterator();
-	        for (SimpleBEDFeature feat : iter) {
-	        	peakList.add(feat);    
+	        for (BEDFeature feat : iter) {
+	        	peakList.add(new SimpleBEDFeature(feat));    
 			}
 	        reader.close();
 		} catch (Exception e) {
