@@ -3,6 +3,7 @@ import java.awt.Paint;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -17,6 +19,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.math3.stat.clustering.KMeansPlusPlusClusterer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
@@ -39,12 +42,18 @@ import org.jfree.util.ArrayUtilities;
 import org.tc33.jheatchart.HeatChart;
 
 
+import cern.colt.matrix.DoubleFactory2D;
+import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
+import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LinearRegression;
+import weka.clusterers.SimpleKMeans;
+import weka.core.FastVector;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
@@ -226,21 +235,85 @@ public class NELGViewResult {
 				//feature ranking plot
 				
 				//heatmap
-				
-				
+				Set<String> selFeatNames=SingleTrackFeatures.keySet();
+				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_")[0]);
+				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
+				DenseDoubleMatrix2D targetvalue2=new DenseDoubleMatrix2D(targetvalue.size(), 1);
+				for (int i = 0; i < targetvalue.size(); i++) {
+					targetvalue2.set(i, 0, targetvalue.getQuick(i));
+				}
+				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
+				DoubleMatrix2D combinedP_order=clusterReorder(combined);
+				drawHeatMap( combinedP_order, result.JobTitle);
 			}
 		}
 	}
 	
 	public static DoubleMatrix2D LoadFeatureData(Collection<String> featNames,String targetName)
 	{
-
-			return null;
+		File dir=new File(common.tempDir);
+		File[] files=dir.listFiles();
+		HashMap<String, String> featKey=new HashMap<String, String>(featNames.size());
+		for (int i = 0; i < files.length; i++) {
+			String flname=files[i].getName();
+			if(flname.contains("_bg"))
+				continue;
+			if(flname.contains(targetName))
+			{
+				for (String feat:featNames) {
+					if(flname.contains(feat))
+					{
+						featKey.put(feat, flname);
+						break;
+					}
+					
+				}
+			}
+		}
+		
+		featNames.retainAll(featKey.keySet());
+		DoubleMatrix2D combined=null;
+		for (String feat : featNames) {
+			String storekey=featKey.get(feat);
+			DoubleMatrix2D temp=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey);
+			if(temp==null)
+				continue;
+			if(combined==null)
+				combined=temp;
+			else
+				combined=DoubleFactory2D.sparse.appendColumns(combined, temp);
+		}
+			return combined;
 	}
 	
 	public static DoubleMatrix2D clusterReorder(DoubleMatrix2D matrix)
 	{
-		return null;
+		SimpleKMeans kmean=new SimpleKMeans();
+		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
+		try {
+			kmean.setNumClusters(10);
+			Instances data=matrix2instances( matrix);
+			kmean.buildClusterer(data);
+			for (int i = 0; i < matrix.rows(); i++) {
+				clusterlabel.set(i, 0, kmean.clusterInstance(data.instance(i)));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		DoubleMatrix2D combined=DoubleFactory2D.dense.appendColumns(matrix, clusterlabel);
+		return combined.viewSorted(combined.columns()-1);
+	}
+	
+	public static Instances matrix2instances(DoubleMatrix2D matrix)
+	{
+		FastVector attrList=new FastVector(matrix.columns());
+		Instances insts=new Instances("", attrList, matrix.rows());
+		for (int i = 0; i < matrix.rows(); i++) {
+			insts.add(new Instance(1, matrix.viewRow(i).toArray()));
+		}
+		return insts;
+		
 	}
 	public static void drawHeatMap(DoubleMatrix2D matrix, String title)
 	{
