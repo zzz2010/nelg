@@ -307,6 +307,16 @@ public class NELGViewResult {
 				regressionRenderer.setSeriesPaint(i, paint);
 			}
 			chart.setBackgroundPaint(Color.white);
+			 plot.setBackgroundPaint(Color.white);
+		        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+		        plot.setDomainGridlinePaint(Color.white);
+		        plot.setRangeGridlinePaint(Color.white);
+		        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
+		        renderer.setShapesVisible(true);
+		        renderer.setShapesFilled(true);
+		// change the auto tick unit selection to integer units only...
+		        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+		        rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 	        try {
 				ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 800, 600);
 			} catch (IOException e) {
