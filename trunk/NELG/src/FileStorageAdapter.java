@@ -449,7 +449,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 						 while(iter.hasNext())
 					    {
 					    	WigItem nextRecord = iter.next();	
-
+					    	
 //					    	float recordlen=nextRecord.getEndBase()-nextRecord.getStartBase()+1;
 					    	if((nextRecord.getStartBase()-stepWidth)>=start)
 					    	{
@@ -517,7 +517,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 					e.printStackTrace();
 				}
 				
-			
+				
 		}
 	}
 	else //bed data
