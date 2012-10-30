@@ -1,10 +1,12 @@
 import java.awt.Color;
 import java.awt.Paint;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -34,7 +36,10 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.util.ArrayUtilities;
+import org.tc33.jheatchart.HeatChart;
 
+
+import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 import weka.classifiers.Classifier;
@@ -218,15 +223,45 @@ public class NELGViewResult {
 			else
 			{
 				//classification result
-				
+				//feature ranking plot
 				
 				//heatmap
 				
-				//feature ranking plot
+				
 			}
 		}
 	}
 	
+	public static DoubleMatrix2D LoadFeatureData(Collection<String> featNames,String targetName)
+	{
+
+			return null;
+	}
+	
+	public static DoubleMatrix2D clusterReorder(DoubleMatrix2D matrix)
+	{
+		return null;
+	}
+	public static void drawHeatMap(DoubleMatrix2D matrix, String title)
+	{
+		 String pngfile=title+".heatmap.png";
+
+			//Create our heat map chart using our data.
+			HeatChart map = new HeatChart(matrix.toArray());
+			
+			//Customise the chart.
+			map.setTitle(title);
+//			map.setXAxisLabel("X Axis");
+//			map.setYAxisLabel("Y Axis");
+			
+			//Output the chart to a file.
+			try {
+				map.saveToFile(new File(pngfile));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
 	public static double linearRegression(Instances data)
 	{
 		double corr=0;
@@ -271,10 +306,10 @@ public class NELGViewResult {
 		  JFreeChart chart = ChartFactory.createBarChart
 		  (Title,"Feature", Ylabel, dataset, 
 		   PlotOrientation.VERTICAL, false,true, false);
-		  chart.setBackgroundPaint(Color.yellow);
+		  chart.setBackgroundPaint(Color.white);
 		  chart.getTitle().setPaint(Color.blue); 
 		  CategoryPlot p = chart.getCategoryPlot(); 
-		  p.setRangeGridlinePaint(Color.red); 
+		  p.setRangeGridlinePaint(Color.black); 
 
 	        ChartPanel chartPanel = new ChartPanel(chart);
 	        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
