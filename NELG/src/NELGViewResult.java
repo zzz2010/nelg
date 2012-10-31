@@ -298,8 +298,8 @@ public class NELGViewResult {
 		for (String feat : featNames) {
 			String storekey=featKey.get(feat);
 			DoubleMatrix2D temp=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey);
-			int[] rowIndexes=new int[temp.size()];
-			for (int i = 0; i < rowIndexes.length; i++) {
+			int[] rowIndexes=new int[temp.rows()];
+			for (int i = 0; i < temp.rows(); i++) {
 				rowIndexes[i]=i;
 			}
 			temp=temp.viewSelection(rowIndexes, columnIndexes);
