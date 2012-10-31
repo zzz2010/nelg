@@ -261,7 +261,6 @@ public class NELGViewResult {
 					for (int j = 0; j < targetColorwidth/2; j++) {
 						targetvalue2.set(i, targetColorwidth/2+j, targetvalue.getQuick(i));
 					}
-				
 				}
 				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
 				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
