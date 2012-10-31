@@ -256,9 +256,9 @@ public class NELGViewResult {
 		HashMap<String, String> featKey=new HashMap<String, String>(featNames.size());
 		for (int i = 0; i < files.length; i++) {
 			String flname=files[i].getName();
-			if(flname.contains("_bg"))
+			if(flname.endsWith("_bg"))
 				continue;
-			if(flname.contains(targetName))
+			if(flname.startsWith(targetName))
 			{
 				for (String feat:featNames) {
 					if(flname.contains(feat))
