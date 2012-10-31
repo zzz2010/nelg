@@ -297,7 +297,7 @@ public class NELGViewResult {
 			DoubleMatrix1D vec= matrix.viewColumn(i);
 			double sum=vec.zSum();
 				for (int j = 0; j < vec.size(); j++) {
-					vec.setQuick(j, vec.getQuick(j)/sum);
+					vec.set(j, vec.getQuick(j)/sum);
 				}
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
