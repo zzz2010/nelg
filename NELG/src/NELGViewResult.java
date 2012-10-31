@@ -52,6 +52,7 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LinearRegression;
 import weka.clusterers.SimpleKMeans;
+import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -308,6 +309,10 @@ public class NELGViewResult {
 	public static Instances matrix2instances(DoubleMatrix2D matrix)
 	{
 		FastVector attrList=new FastVector(matrix.columns());
+		for (int i = 0; i < matrix.columns(); i++) {
+			Attribute temp=new Attribute( String.valueOf(i));
+			attrList.addElement(temp);
+		}
 		Instances insts=new Instances("", attrList, matrix.rows());
 		for (int i = 0; i < matrix.rows(); i++) {
 			insts.add(new Instance(1, matrix.viewRow(i).toArray()));
