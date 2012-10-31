@@ -42,9 +42,11 @@ import org.jfree.util.ArrayUtilities;
 import org.tc33.jheatchart.HeatChart;
 
 
+import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleFactory2D;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
+import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
@@ -57,6 +59,7 @@ import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
 
 
@@ -290,10 +293,18 @@ public class NELGViewResult {
 	public static DoubleMatrix2D clusterReorder(DoubleMatrix2D matrix)
 	{
 		SimpleKMeans kmean=new SimpleKMeans();
+		for (int i = 0; i < matrix.columns(); i++) {
+			DoubleMatrix1D vec= matrix.viewColumn(i);
+			double sum=vec.zSum();
+				for (int j = 0; j < vec.size(); j++) {
+					vec.setQuick(j, vec.getQuick(j)/sum);
+				}
+			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
 			kmean.setNumClusters(10);
 			Instances data=matrix2instances( matrix);
+			
 			kmean.buildClusterer(data);
 			for (int i = 0; i < matrix.rows(); i++) {
 				clusterlabel.set(i, 0, kmean.clusterInstance(data.instance(i)));
