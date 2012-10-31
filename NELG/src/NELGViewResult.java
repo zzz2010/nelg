@@ -410,10 +410,11 @@ public class NELGViewResult {
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
 		 xyzdataset.addSeries(title, sparseMatrix(matrix));
 		 XYBlockRenderer xyblockrenderer = new XYBlockRenderer();
-	        LookupPaintScale lookuppaintscale = new LookupPaintScale(0.5D, 3.5D, Color.black);
+	        LookupPaintScale lookuppaintscale = new LookupPaintScale(-1D, Double.MAX_VALUE, Color.black);
+	        lookuppaintscale.add(0D, Color.blue);
 	        lookuppaintscale.add(0.5D, Color.green);
-	        lookuppaintscale.add(1.5D, Color.orange);
-	        lookuppaintscale.add(2.5D, Color.red);
+	        lookuppaintscale.add(2D, Color.orange);
+	        lookuppaintscale.add(5D, Color.red);
 	        xyblockrenderer.setPaintScale(lookuppaintscale);
 	        XYPlot xyplot = new XYPlot(xyzdataset, numberaxis1,symaxis, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
 	        xyplot.setDomainGridlinePaint(Color.white);
