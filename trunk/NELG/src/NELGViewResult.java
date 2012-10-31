@@ -30,13 +30,17 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.util.ArrayUtilities;
 import org.tc33.jheatchart.HeatChart;
@@ -158,8 +162,7 @@ public class NELGViewResult {
 		//text summary
 		System.out.println(result.JobTitle);
 		System.out.println(result.toString());
-		if(true)
-		return;
+
 		ClassificationJob jobdata=StateRecovery.LoadClassificationJob(result.JobTitle);
 		
 		if(jobdata!=null)
@@ -338,7 +341,7 @@ public class NELGViewResult {
 		return insts;
 		
 	}
-	public static void drawHeatMap(DoubleMatrix2D matrix, String title)
+	public static void drawHeatMap_1(DoubleMatrix2D matrix, String title)
 	{
 		 String pngfile=title+".heatmap.png";
 
@@ -360,6 +363,36 @@ public class NELGViewResult {
 				e.printStackTrace();
 			}
 	}
+	
+	
+	public static void drawHeatMap(DoubleMatrix2D matrix, String title)
+	{
+		 String pngfile=title+".heatmap.png";
+		 NumberAxis numberaxis = new NumberAxis("Feature");
+		 NumberAxis numberaxis1 = new NumberAxis("Peak");
+		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
+		 xyzdataset.addSeries(title, matrix.toArray());
+		 XYBlockRenderer xyblockrenderer = new XYBlockRenderer();
+	        LookupPaintScale lookuppaintscale = new LookupPaintScale(0.5D, 3.5D, Color.black);
+	        lookuppaintscale.add(0.5D, Color.green);
+	        lookuppaintscale.add(1.5D, Color.orange);
+	        lookuppaintscale.add(2.5D, Color.red);
+	        xyblockrenderer.setPaintScale(lookuppaintscale);
+	        XYPlot xyplot = new XYPlot(xyzdataset, numberaxis, numberaxis1, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
+	        xyplot.setDomainGridlinePaint(Color.white);
+	        xyplot.setRangeGridlinePaint(Color.white);
+	        xyplot.setForegroundAlpha(0.66F);
+	        xyplot.setAxisOffset(new RectangleInsets(5D, 5D, 5D, 5D));
+	        JFreeChart jfreechart = new JFreeChart(title, xyplot);
+	        try {
+				ChartUtilities.saveChartAsPNG(new File(pngfile), jfreechart, 800, 600);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+	
+	
 	public static double linearRegression(Instances data)
 	{
 		double corr=0;
