@@ -295,9 +295,9 @@ public class NELGViewResult {
 		SimpleKMeans kmean=new SimpleKMeans();
 		for (int i = 0; i < matrix.columns(); i++) {
 			DoubleMatrix1D vec= matrix.viewColumn(i);
-			double sum=vec.zSum();
+			double m=vec.zSum()/vec.size();
 				for (int j = 0; j < vec.size(); j++) {
-					vec.set(j, vec.getQuick(j)/sum);
+					vec.set(j, Math.log((vec.getQuick(j)+1)/m));
 				}
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
