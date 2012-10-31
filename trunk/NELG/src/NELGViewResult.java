@@ -398,7 +398,7 @@ public class NELGViewResult {
 	        lookuppaintscale.add(1.5D, Color.orange);
 	        lookuppaintscale.add(2.5D, Color.red);
 	        xyblockrenderer.setPaintScale(lookuppaintscale);
-	        XYPlot xyplot = new XYPlot(xyzdataset, numberaxis1,sa, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
+	        XYPlot xyplot = new XYPlot(xyzdataset, numberaxis1,numberaxis, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
 	        xyplot.setDomainGridlinePaint(Color.white);
 	        xyplot.setRangeGridlinePaint(Color.white);
 	        xyplot.setForegroundAlpha(0.66F);
