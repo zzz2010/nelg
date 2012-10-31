@@ -372,11 +372,11 @@ public class NELGViewResult {
 		IntArrayList cols = new IntArrayList();
 		DoubleArrayList vals = new DoubleArrayList();
 		matrix.getNonZeros(rows, cols, vals);
-		double[][] ret=new double[rows.size()][3];
+		double[][] ret=new double[3][rows.size()];
 		for (int i = 0; i < rows.size(); i++) {
-			ret[i][0]=rows.get(i);
-			ret[i][1]=cols.get(i);
-			ret[i][2]=vals.get(i);
+			ret[0][i]=rows.get(i);
+			ret[1][i]=cols.get(i);
+			ret[2][i]=vals.get(i);
 		}
 		return ret;
 	}
