@@ -174,6 +174,7 @@ public class FeatureSelectionJob implements  Runnable {
 		        	FeatureExtractJob FEJob=new FeatureExtractJob(target_signal_filtered, target_signal_bg, feature_signal, target_signal, featureExtractor, targetValue, targetNormValue);
 		        	try {
 						localjob.addTask(FEJob);
+						FEJob.remoteClient=executor;
 						localclient.execute(FEJob);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -197,9 +198,7 @@ public class FeatureSelectionJob implements  Runnable {
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			 
-			 
+			}		 
 			 List<JPPFTask> jobresult =localjob.getTasks();// localclient.submit(localjob); //
 			for (int i = 0; i < jobresult.size(); i++) {
 				FeatureExtractJob	result1=(FeatureExtractJob)jobresult.get(i);
@@ -211,10 +210,8 @@ public class FeatureSelectionJob implements  Runnable {
 							IsThereFeatures.addAll(result1.IsThereFeatures);
 							ValThereFeatures.addAll(result1.ValThereFeatures);
 				     }
-
 			}
-			
-			
+					
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
