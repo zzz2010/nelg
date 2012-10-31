@@ -242,9 +242,14 @@ public class NELGViewResult {
 				Set<String> selFeatNames=SingleTrackFeatures.keySet();
 				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_")[0]);
 				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
-				DenseDoubleMatrix2D targetvalue2=new DenseDoubleMatrix2D(targetvalue.size(), 1);
+				int targetColorwidth=selFeatNames.size();
+				DenseDoubleMatrix2D targetvalue2=new DenseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
 				for (int i = 0; i < targetvalue.size(); i++) {
-					targetvalue2.set(i, 0, targetvalue.getQuick(i));
+					//use half brand for target value, first half as separate line to feature
+					for (int j = 0; j < targetColorwidth/2; j++) {
+						targetvalue2.set(i, targetColorwidth/2+j, targetvalue.getQuick(i));
+					}
+				
 				}
 				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
 				DoubleMatrix2D combinedP_order=clusterReorder(combined);
@@ -337,9 +342,11 @@ public class NELGViewResult {
 
 			//Create our heat map chart using our data.
 			HeatChart map = new HeatChart(matrix.toArray());
-			
+			map.setLowValueColour(Color.white);
+			map.setLowValueColour(Color.red);
 			//Customise the chart.
 			map.setTitle(title);
+			
 //			map.setXAxisLabel("X Axis");
 //			map.setYAxisLabel("Y Axis");
 			
