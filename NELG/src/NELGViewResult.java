@@ -46,6 +46,8 @@ import org.jfree.util.ArrayUtilities;
 import org.tc33.jheatchart.HeatChart;
 
 
+import cern.colt.list.DoubleArrayList;
+import cern.colt.list.IntArrayList;
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleFactory2D;
 import cern.colt.matrix.DoubleMatrix1D;
@@ -364,6 +366,20 @@ public class NELGViewResult {
 			}
 	}
 	
+	public static double[][] sparseMatrix(DoubleMatrix2D matrix)
+	{
+		IntArrayList rows = new IntArrayList();
+		IntArrayList cols = new IntArrayList();
+		DoubleArrayList vals = new DoubleArrayList();
+		matrix.getNonZeros(rows, cols, vals);
+		double[][] ret=new double[rows.size()][3];
+		for (int i = 0; i < rows.size(); i++) {
+			ret[i][0]=rows.get(i);
+			ret[i][1]=cols.get(i);
+			ret[i][2]=vals.get(i);
+		}
+		return ret;
+	}
 	
 	public static void drawHeatMap(DoubleMatrix2D matrix, String title)
 	{
@@ -371,7 +387,7 @@ public class NELGViewResult {
 		 NumberAxis numberaxis = new NumberAxis("Feature");
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
-		 xyzdataset.addSeries(title, matrix.toArray());
+		 xyzdataset.addSeries(title, sparseMatrix(matrix));
 		 XYBlockRenderer xyblockrenderer = new XYBlockRenderer();
 	        LookupPaintScale lookuppaintscale = new LookupPaintScale(0.5D, 3.5D, Color.black);
 	        lookuppaintscale.add(0.5D, Color.green);
