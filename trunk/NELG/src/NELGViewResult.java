@@ -376,8 +376,8 @@ public class NELGViewResult {
 		matrix.getNonZeros(rows, cols, vals);
 		double[][] ret=new double[3][rows.size()];
 		for (int i = 0; i < rows.size(); i++) {
-			ret[1][i]=rows.get(i);
-			ret[0][i]=cols.get(i);
+			ret[0][i]=rows.get(i);
+			ret[1][i]=cols.get(i);
 			ret[2][i]=vals.get(i);
 		}
 		return ret;
@@ -398,7 +398,7 @@ public class NELGViewResult {
 	        lookuppaintscale.add(1.5D, Color.orange);
 	        lookuppaintscale.add(2.5D, Color.red);
 	        xyblockrenderer.setPaintScale(lookuppaintscale);
-	        XYPlot xyplot = new XYPlot(xyzdataset, sa, numberaxis1, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
+	        XYPlot xyplot = new XYPlot(xyzdataset, numberaxis1,sa, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
 	        xyplot.setDomainGridlinePaint(Color.white);
 	        xyplot.setRangeGridlinePaint(Color.white);
 	        xyplot.setForegroundAlpha(0.66F);
