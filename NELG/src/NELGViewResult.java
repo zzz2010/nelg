@@ -158,8 +158,10 @@ public class NELGViewResult {
 		//text summary
 		System.out.println(result.JobTitle);
 		System.out.println(result.toString());
-		
+		if(true)
+		return;
 		ClassificationJob jobdata=StateRecovery.LoadClassificationJob(result.JobTitle);
+		
 		if(jobdata!=null)
 		{
 			Instances data = ChildModeler.getDatasetFromJob(jobdata);
