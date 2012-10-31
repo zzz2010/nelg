@@ -343,7 +343,7 @@ public class NELGViewResult {
 			//Create our heat map chart using our data.
 			HeatChart map = new HeatChart(matrix.toArray());
 			map.setLowValueColour(Color.white);
-			map.setLowValueColour(Color.red);
+			map.setHighValueColour(Color.red);
 			//Customise the chart.
 			map.setTitle(title);
 			
