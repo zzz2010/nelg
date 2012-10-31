@@ -26,6 +26,8 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.SymbolAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
@@ -260,7 +262,7 @@ public class NELGViewResult {
 				}
 				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
 				DoubleMatrix2D combinedP_order=clusterReorder(combined);
-				drawHeatMap( combinedP_order, result.JobTitle);
+				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames);
 			}
 		}
 	}
@@ -374,17 +376,19 @@ public class NELGViewResult {
 		matrix.getNonZeros(rows, cols, vals);
 		double[][] ret=new double[3][rows.size()];
 		for (int i = 0; i < rows.size(); i++) {
-			ret[0][i]=rows.get(i);
-			ret[1][i]=cols.get(i);
+			ret[1][i]=rows.get(i);
+			ret[0][i]=cols.get(i);
 			ret[2][i]=vals.get(i);
 		}
 		return ret;
 	}
 	
-	public static void drawHeatMap(DoubleMatrix2D matrix, String title)
+	public static void drawHeatMap(DoubleMatrix2D matrix, String title, Collection<String> featName)
 	{
 		 String pngfile=title+".heatmap.png";
-		 NumberAxis numberaxis = new NumberAxis("Feature");
+		 ValueAxis numberaxis = new NumberAxis("Feature");
+		 SymbolAxis sa = new SymbolAxis("Feature",
+				 featName.toArray(new String[0]));
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
 		 xyzdataset.addSeries(title, sparseMatrix(matrix));
@@ -394,7 +398,7 @@ public class NELGViewResult {
 	        lookuppaintscale.add(1.5D, Color.orange);
 	        lookuppaintscale.add(2.5D, Color.red);
 	        xyblockrenderer.setPaintScale(lookuppaintscale);
-	        XYPlot xyplot = new XYPlot(xyzdataset, numberaxis, numberaxis1, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
+	        XYPlot xyplot = new XYPlot(xyzdataset, sa, numberaxis1, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
 	        xyplot.setDomainGridlinePaint(Color.white);
 	        xyplot.setRangeGridlinePaint(Color.white);
 	        xyplot.setForegroundAlpha(0.66F);
