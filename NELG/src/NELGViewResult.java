@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -27,6 +28,8 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.SymbolAxis;
+import org.jfree.chart.axis.TickUnit;
+import org.jfree.chart.axis.TickUnitSource;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DrawingSupplier;
@@ -260,9 +263,10 @@ public class NELGViewResult {
 					}
 				
 				}
+				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
 				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
 				DoubleMatrix2D combinedP_order=clusterReorder(combined);
-				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames);
+				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,8);
 			}
 		}
 	}
@@ -291,9 +295,15 @@ public class NELGViewResult {
 		
 		featNames.retainAll(featKey.keySet());
 		DoubleMatrix2D combined=null;
+		int[] columnIndexes=new int[]{2,5,8,11,14,17,20,23};
 		for (String feat : featNames) {
 			String storekey=featKey.get(feat);
 			DoubleMatrix2D temp=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey);
+			int[] rowIndexes=new int[temp.size()];
+			for (int i = 0; i < rowIndexes.length; i++) {
+				rowIndexes[i]=i;
+			}
+			temp=temp.viewSelection(rowIndexes, columnIndexes);
 			if(temp==null)
 				continue;
 			if(combined==null)
@@ -383,12 +393,20 @@ public class NELGViewResult {
 		return ret;
 	}
 	
-	public static void drawHeatMap(DoubleMatrix2D matrix, String title, Collection<String> featName)
+	public static void drawHeatMap(DoubleMatrix2D matrix, String title, List<String> featName, int stride)
 	{
 		 String pngfile=title+".heatmap.png";
 		 ValueAxis numberaxis = new NumberAxis("Feature");
-		 SymbolAxis sa = new SymbolAxis("Feature",
-				 featName.toArray(new String[0]));
+		 String[] strAttr=new String[matrix.columns()];
+		 for (int i = 0; i < matrix.columns(); i++) {
+			if((i%stride)==(stride/2)&&(i/stride)<featName.size())
+			{
+					strAttr[i]=featName.get(i/stride);
+			}
+			else
+				strAttr[i]="";
+		}
+		 SymbolAxis symaxis=new SymbolAxis(title, strAttr);
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
 		 xyzdataset.addSeries(title, sparseMatrix(matrix));
