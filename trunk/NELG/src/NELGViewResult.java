@@ -434,7 +434,7 @@ public class NELGViewResult {
 	        xyplot.setDomainGridlinePaint(Color.white);
 	        xyplot.setRangeGridlinePaint(Color.white);
 	        xyplot.setForegroundAlpha(0.66F);
-//	        xyplot.setAxisOffset(new RectangleInsets(5D, 5D, 5D, 5D));
+	        xyplot.setAxisOffset(new RectangleInsets(5D, 5D, 5D, 5D));
 	        JFreeChart jfreechart = new JFreeChart(title, xyplot);
 	        
 	        try {
