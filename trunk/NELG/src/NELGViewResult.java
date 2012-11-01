@@ -410,7 +410,7 @@ public class NELGViewResult {
 			{
 				if((i%stride)==(stride-1))
 				{
-					strAttr[i]="--------";
+					strAttr[i]="---";
 				}
 				else
 				strAttr[i]="";
