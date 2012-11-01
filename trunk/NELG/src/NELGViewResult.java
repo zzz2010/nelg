@@ -7,6 +7,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -415,6 +416,7 @@ public class NELGViewResult {
 				strAttr[i]="";
 			}
 		}
+		 System.out.println(Arrays.toString(strAttr));
 		 SymbolAxis symaxis=new SymbolAxis("Feature", strAttr);
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
 		 numberaxis1.setRange(new Range(0, matrix.rows()));
