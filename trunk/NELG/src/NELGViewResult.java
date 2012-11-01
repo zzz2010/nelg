@@ -3,9 +3,11 @@ import java.awt.Paint;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -176,6 +178,15 @@ public class NELGViewResult {
 		System.out.println(result.toString());
 		String[] comps_str=result.JobTitle.split("_");
 		outputDir=outputDir+"/"+comps_str[0];
+		try {
+			FileWriter outFile = new FileWriter(comps_str[1]);
+			PrintWriter out = new PrintWriter(outFile);
+			out.println(result.toString());
+			out.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		ClassificationJob jobdata=StateRecovery.LoadClassificationJob(result.JobTitle);
 		(new File(outputDir)).mkdir();
 		if(jobdata!=null)
