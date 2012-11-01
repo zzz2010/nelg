@@ -2,6 +2,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -35,8 +36,13 @@ public class ClassificationResult implements Serializable {
 		 {
 			 featStr="Classification AUC:"+AUC;	 
 		 }
+		 HashSet<String> visited=new  HashSet<String>();
 		 for (int i = 0; i < FeatureIdBin.size(); i++) {
-			 featStr+="\t"+FeatureIdBin.get(i).key+"|"+FeatureIdBin.get(i).value;
+			 if(!visited.contains(FeatureIdBin.get(i).key))
+			 {
+			 featStr+="\t"+FeatureIdBin.get(i).key;
+			 visited.add(FeatureIdBin.get(i).key);
+			 }
 		}
 		 String outstr=(JobTitle+" can be predicted by"+LearnedModel.getClass().getName()+" with "+featStr);
 	
