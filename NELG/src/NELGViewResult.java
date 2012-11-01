@@ -97,7 +97,7 @@ public class NELGViewResult {
 		options.addOption("i", true, "result file");
 		options.addOption("tauc", true, "AUC Threshold (Default 0)");
 		options.addOption("tcor", true, "Corr Threshold (Default 0)");
-		options.addOption("f", true, "force overwrite the existing folders");
+		options.addOption("f", false, "force overwrite the existing folders");
 		(new File(outputDir)).mkdir();
 		try {
 			cmd = parser.parse( options, args);
