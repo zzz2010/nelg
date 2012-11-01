@@ -408,12 +408,12 @@ public class NELGViewResult {
 			else
 			{
 				if((i%stride)==(stride-1))
-					strAttr[i]="-----";
+					strAttr[i]=".....";
 				else
 				strAttr[i]="";
 			}
 		}
-		 SymbolAxis symaxis=new SymbolAxis(title, strAttr);
+		 SymbolAxis symaxis=new SymbolAxis("Feature", strAttr);
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
 		 numberaxis1.setRange(new Range(0, matrix.rows()));
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
