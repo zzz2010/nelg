@@ -40,6 +40,7 @@ import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.Range;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYDataset;
@@ -254,7 +255,8 @@ public class NELGViewResult {
 				Set<String> selFeatNames=SingleTrackFeatures.keySet();
 				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_")[0]);
 				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
-				int targetColorwidth=selFeatNames.size();
+				int stridesize=8;
+				int targetColorwidth=stridesize;
 				DenseDoubleMatrix2D targetvalue2=new DenseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
 				for (int i = 0; i < targetvalue.size(); i++) {
 					//use half brand for target value, first half as separate line to feature
@@ -265,7 +267,7 @@ public class NELGViewResult {
 				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
 				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
 				DoubleMatrix2D combinedP_order=clusterReorder(combined);
-				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,8);
+				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,stridesize);
 			}
 		}
 	}
@@ -396,6 +398,7 @@ public class NELGViewResult {
 	{
 		 String pngfile=title+".heatmap.png";
 		 ValueAxis numberaxis = new NumberAxis("Feature");
+		 featName.add("targetValue");
 		 String[] strAttr=new String[matrix.columns()];
 		 for (int i = 0; i < matrix.columns(); i++) {
 			if((i%stride)==(stride/2)&&(i/stride)<featName.size())
@@ -403,10 +406,16 @@ public class NELGViewResult {
 					strAttr[i]=featName.get(i/stride);
 			}
 			else
+			{
+				if((i%stride)==(stride-1))
+					strAttr[i]="-----";
+				else
 				strAttr[i]="";
+			}
 		}
 		 SymbolAxis symaxis=new SymbolAxis(title, strAttr);
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
+		 numberaxis1.setRange(new Range(0, matrix.rows()));
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
 		 xyzdataset.addSeries(title, sparseMatrix(matrix));
 		 XYBlockRenderer xyblockrenderer = new XYBlockRenderer();
