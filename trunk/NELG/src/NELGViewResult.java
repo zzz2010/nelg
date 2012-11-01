@@ -404,7 +404,7 @@ public class NELGViewResult {
 		 for (int i = 0; i < matrix.columns(); i++) {
 			if((i%stride)==(stride/2)&&(i/stride)<featName.size())
 			{
-					strAttr[i]=featName.get(i/stride);
+					strAttr[i]="---";//featName.get(i/stride);
 			}
 			else
 			{
