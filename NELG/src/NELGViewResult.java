@@ -84,6 +84,7 @@ public class NELGViewResult {
 	static double auc_cutoff=0;
 	static double corr_cutoff=0;
 	static String outputDir="Figure";
+	static boolean reGen=false;
 	/**
 	 * @param args
 	 */
@@ -96,6 +97,7 @@ public class NELGViewResult {
 		options.addOption("i", true, "result file");
 		options.addOption("tauc", true, "AUC Threshold (Default 0)");
 		options.addOption("tcor", true, "Corr Threshold (Default 0)");
+		options.addOption("f", true, "force overwrite the existing folders");
 		(new File(outputDir)).mkdir();
 		try {
 			cmd = parser.parse( options, args);
@@ -117,6 +119,8 @@ public class NELGViewResult {
 			{
 				corr_cutoff=Double.parseDouble(cmd.getOptionValue("tcor"));
 			}
+			if(cmd.hasOption("f"))
+				reGen=true;
 			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -178,17 +182,18 @@ public class NELGViewResult {
 		System.out.println(result.toString());
 		String[] comps_str=result.JobTitle.split("_");
 		outputDir=outputDir+"/"+comps_str[0];
+		(new File(outputDir)).mkdir();
 		try {
 			FileWriter outFile = new FileWriter(outputDir+"/"+comps_str[1]+".txt");
 			PrintWriter out = new PrintWriter(outFile);
-			out.println(result.toString());
+			out.println(result.toString().replace("with ", "with\n"));
 			out.close();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		ClassificationJob jobdata=StateRecovery.LoadClassificationJob(result.JobTitle);
-		(new File(outputDir)).mkdir();
+		
 		if(jobdata!=null)
 		{
 			Instances data = ChildModeler.getDatasetFromJob(jobdata);
@@ -240,10 +245,13 @@ public class NELGViewResult {
 				e.printStackTrace();
 			}
 			
-			
+			System.out.println(outputDir+"/"+result.JobTitle+".bar.png");
+			if(reGen==false&&(new File(outputDir+"/"+result.JobTitle+".bar.png").exists()))
+				return;
 		//figure generation
 			if(result.isRegression)
 			{
+
 				//regression result
 				XYSeries points=new XYSeries(result.JobTitle);
 				for (int i = 0; i < predictValue.length; i++) {
