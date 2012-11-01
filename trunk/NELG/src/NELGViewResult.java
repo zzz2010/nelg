@@ -67,6 +67,7 @@ import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.trees.RandomForest;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -80,6 +81,7 @@ import weka.filters.unsupervised.attribute.Remove;
 public class NELGViewResult {
 	static double auc_cutoff=0;
 	static double corr_cutoff=0;
+	static String outputDir="Figure";
 	/**
 	 * @param args
 	 */
@@ -172,9 +174,10 @@ public class NELGViewResult {
 		//text summary
 		System.out.println(result.JobTitle);
 		System.out.println(result.toString());
-
+		String[] comps_str=result.JobTitle.split("_");
+		outputDir=outputDir+"/"+comps_str[0];
 		ClassificationJob jobdata=StateRecovery.LoadClassificationJob(result.JobTitle);
-		
+		(new File(outputDir)).mkdir();
 		if(jobdata!=null)
 		{
 			Instances data = ChildModeler.getDatasetFromJob(jobdata);
@@ -250,8 +253,7 @@ public class NELGViewResult {
 			}
 			else
 			{
-				//classification result
-				//feature ranking plot
+
 				
 				//heatmap
 				Set<String> selFeatNames=SingleTrackFeatures.keySet();
@@ -270,6 +272,18 @@ public class NELGViewResult {
 				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
 				DoubleMatrix2D combinedP_order=clusterReorder(combined);
 				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,stridesize);
+				
+				
+				//classification result
+				//feature ranking plot
+				HashMap<String, Double> featRankResult=new HashMap<String, Double>();
+				for (String trackname:SingleTrackFeatures.keySet()) {
+					Instances data_sub=subFilter(data, SingleTrackFeatures.get(trackname));
+					Double auc=classification(data_sub);
+					featRankResult.put(trackname, auc);
+				}
+				//draw
+				DrawBarChart(featRankResult,result.JobTitle,"AUC");
 			}
 		}
 	}
@@ -398,7 +412,7 @@ public class NELGViewResult {
 	
 	public static void drawHeatMap(DoubleMatrix2D matrix, String title, List<String> featName, int stride)
 	{
-		 String pngfile=title+".heatmap.png";
+		 String pngfile=outputDir+"/"+title+".heatmap.png";
 		 ValueAxis numberaxis = new NumberAxis("Feature");
 		 featName.add("targetValue");
 		 String[] strAttr=new String[matrix.columns()];
@@ -465,6 +479,24 @@ public class NELGViewResult {
 		return corr;
 	}
 	
+	public static double classification(Instances data)
+	{
+		double auc=0;
+		Classifier modeler =new RandomForest();
+		Evaluation eval;
+		try {
+			eval = new Evaluation(data);
+			eval.crossValidateModel(modeler, data, 3, new Random(1));
+			auc=eval.areaUnderROC(1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return auc;
+	}
+	
+	
 	public static Instances subFilter(Instances data,String filterstr)
 	{
 		weka.filters.unsupervised.attribute.Remove filter=new Remove();
@@ -501,7 +533,7 @@ public class NELGViewResult {
 	        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
 	      //  setContentPane(chartPanel);
 	        try {
-				ChartUtilities.saveChartAsPNG(new File(Title+".bar.png"), chart, 800, 600);
+				ChartUtilities.saveChartAsPNG(new File(outputDir+"/"+Title+".bar.png"), chart, 800, 600);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -539,7 +571,7 @@ public class NELGViewResult {
 		        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		        rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 	        try {
-				ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 800, 600);
+				ChartUtilities.saveChartAsPNG(new File(outputDir+"/"+pngfile), chart, 800, 600);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
