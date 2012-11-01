@@ -409,8 +409,7 @@ public class NELGViewResult {
 			{
 				if((i%stride)==(stride-1))
 				{
-					System.out.println("zzzz");
-					strAttr[i]=".....";
+					strAttr[i]=(i/stride)+"---";
 				}
 				else
 				strAttr[i]="";
