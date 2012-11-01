@@ -419,8 +419,8 @@ public class NELGViewResult {
 		}
 		
 		 SymbolAxis symaxis=new SymbolAxis("", strAttr);
-		 symaxis.setTickUnit(new NumberTickUnit(stride));
-		 symaxis.setRange(-stride/2,matrix.columns());
+		 symaxis.setTickUnit(new NumberTickUnit(stride/2));
+//		 symaxis.setRange(-stride/2,matrix.columns());
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
 		 numberaxis1.setRange(new Range(0, matrix.rows()));
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
