@@ -549,7 +549,7 @@ public class NELGViewResult {
 		  p.setRangeGridlinePaint(Color.black); 
 
 	        ChartPanel chartPanel = new ChartPanel(chart);
-	        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+	        chartPanel.setPreferredSize(new java.awt.Dimension(1200, 600));
 	      //  setContentPane(chartPanel);
 	        try {
 				ChartUtilities.saveChartAsPNG(new File(outputDir+"/"+Title+".bar.png"), chart, 800, 600);
