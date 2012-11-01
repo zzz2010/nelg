@@ -402,15 +402,15 @@ public class NELGViewResult {
 		 featName.add("targetValue");
 		 String[] strAttr=new String[matrix.columns()];
 		 for (int i = 0; i < matrix.columns(); i++) {
-			if((i%stride)==(stride/2)&&(i/stride)<featName.size())
+			if((i%stride)==(stride/2-1)&&(i/stride)<featName.size())
 			{
-					strAttr[i]=featName.get(i/stride)+"-";
+					strAttr[i]=featName.get(i/stride);
 			}
 			else
 			{
 				if((i%stride)==(stride-1))
 				{
-					strAttr[i]="zzz";
+					strAttr[i]="--------";
 				}
 				else
 				strAttr[i]="";
@@ -418,6 +418,7 @@ public class NELGViewResult {
 		}
 		
 		 SymbolAxis symaxis=new SymbolAxis("Feature", strAttr);
+		 
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
 		 numberaxis1.setRange(new Range(0, matrix.rows()));
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
