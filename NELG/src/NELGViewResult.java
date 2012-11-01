@@ -417,9 +417,8 @@ public class NELGViewResult {
 			}
 		}
 		
-		 SymbolAxis symaxis=new SymbolAxis("Feature", strAttr);
-		 symaxis.setStandardTickUnits(SymbolAxis.createStandardTickUnits()); 
-		 symaxis.setLabelAngle(0.0D); 
+		 SymbolAxis symaxis=new SymbolAxis("", strAttr);
+
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
 		 numberaxis1.setRange(new Range(0, matrix.rows()));
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
@@ -435,8 +434,9 @@ public class NELGViewResult {
 	        xyplot.setDomainGridlinePaint(Color.white);
 	        xyplot.setRangeGridlinePaint(Color.white);
 	        xyplot.setForegroundAlpha(0.66F);
-	        xyplot.setAxisOffset(new RectangleInsets(5D, 5D, 5D, 5D));
+//	        xyplot.setAxisOffset(new RectangleInsets(5D, 5D, 5D, 5D));
 	        JFreeChart jfreechart = new JFreeChart(title, xyplot);
+	        
 	        try {
 				ChartUtilities.saveChartAsPNG(new File(pngfile), jfreechart, 800, 600);
 			} catch (IOException e) {
