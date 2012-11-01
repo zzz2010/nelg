@@ -94,7 +94,7 @@ public class NELGViewResult {
 		options.addOption("i", true, "result file");
 		options.addOption("tauc", true, "AUC Threshold (Default 0)");
 		options.addOption("tcor", true, "Corr Threshold (Default 0)");
-
+		(new File(outputDir)).mkdir();
 		try {
 			cmd = parser.parse( options, args);
 			if(cmd.hasOption("i"))
