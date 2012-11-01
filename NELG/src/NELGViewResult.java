@@ -28,6 +28,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.axis.TickUnit;
 import org.jfree.chart.axis.TickUnitSource;
@@ -408,17 +409,17 @@ public class NELGViewResult {
 			}
 			else
 			{
-				if((i%stride)==(stride-1))
-				{
-					strAttr[i]="";
-				}
-				else
+//				if((i%stride)==(stride-1))
+//				{
+//					strAttr[i]="";
+//				}
+//				else
 				strAttr[i]="";
 			}
 		}
 		
 		 SymbolAxis symaxis=new SymbolAxis("", strAttr);
-
+		 symaxis.setTickUnit(new NumberTickUnit(stride));
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
 		 numberaxis1.setRange(new Range(0, matrix.rows()));
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
