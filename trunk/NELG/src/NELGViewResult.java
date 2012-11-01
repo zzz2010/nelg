@@ -179,7 +179,7 @@ public class NELGViewResult {
 		String[] comps_str=result.JobTitle.split("_");
 		outputDir=outputDir+"/"+comps_str[0];
 		try {
-			FileWriter outFile = new FileWriter(comps_str[1]);
+			FileWriter outFile = new FileWriter(outputDir+"/"+comps_str[1]+".txt");
 			PrintWriter out = new PrintWriter(outFile);
 			out.println(result.toString());
 			out.close();
