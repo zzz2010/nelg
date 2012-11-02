@@ -30,6 +30,7 @@ import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.SymbolAxis;
@@ -551,7 +552,7 @@ public class NELGViewResult {
 		  chart.getTitle().setPaint(Color.blue); 
 		  CategoryPlot p = chart.getCategoryPlot(); 
 		  p.setRangeGridlinePaint(Color.black); 
-		  chart.getCategoryPlot().getDomainAxis().setLabelAngle(45);
+		  chart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
 	        ChartPanel chartPanel = new ChartPanel(chart);
 	        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
 	      //  setContentPane(chartPanel);
