@@ -376,7 +376,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 	{
 //		Index intervalTree = getIntervalTree(dataDir+"/"+tr.FilePrefix+tr.peakSuffix);
 		
-		BEDIntervalIndex  intervalTree=new BEDIntervalIndex(dataDir+"/"+tr.FilePrefix+tr.peakSuffix);
+		BEDIntervalIndex  intervalTree=new BEDIntervalIndex(tr.getPeakData());
 		int queryid=-1;
 		 
 		 

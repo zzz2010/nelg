@@ -26,6 +26,19 @@ public class BEDIntervalIndex {
 		
 	}
 	
+	public BEDIntervalIndex(List<SimpleBEDFeature> rawbed) {
+		indexMap=new LinkedHashMap<String, IntervalTree>();
+		for (int i = 0; i < rawbed.size(); i++) {
+			SimpleBEDFeature temp=rawbed.get(i);
+			if(!indexMap.containsKey(temp.getChr()))
+			{
+				indexMap.put(temp.getChr(), new IntervalTree());
+			}
+			indexMap.get(temp.getChr()).insert(new Interval(temp.getStart(), temp.getEnd(),null));
+		}
+		
+	}
+	
 	public List<SimpleBEDFeature> getBlocks(String chr, int start, int end)
 	{
 		BEDCodec coder=new BEDCodec();
