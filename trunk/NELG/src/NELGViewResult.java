@@ -246,9 +246,12 @@ public class NELGViewResult {
 				e.printStackTrace();
 			}
 			
-			System.out.println(outputDir+"/"+result.JobTitle+".bar.png");
+			
 			if(reGen==false&&(new File(outputDir+"/"+result.JobTitle+".bar.png").exists()))
+			{
+				System.out.println("skip:\t"+outputDir+"/"+result.JobTitle+".bar.png");
 				return;
+			}
 		//figure generation
 			if(result.isRegression)
 			{
@@ -548,9 +551,9 @@ public class NELGViewResult {
 		  chart.getTitle().setPaint(Color.blue); 
 		  CategoryPlot p = chart.getCategoryPlot(); 
 		  p.setRangeGridlinePaint(Color.black); 
-		  chart.getXYPlot().getDomainAxis().setLabelAngle(45);
+		  chart.getCategoryPlot().getDomainAxis().setLabelAngle(45);
 	        ChartPanel chartPanel = new ChartPanel(chart);
-	        chartPanel.setPreferredSize(new java.awt.Dimension(1200, 600));
+	        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
 	      //  setContentPane(chartPanel);
 	        try {
 				ChartUtilities.saveChartAsPNG(new File(outputDir+"/"+Title+".bar.png"), chart, 800, 600);
