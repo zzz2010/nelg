@@ -16,6 +16,7 @@ public class SimulationTrack {
 		//get target peak list
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
 		List<TrackRecord> signalPool=new ArrayList<TrackRecord>();
+		signalPool.add(target);
 		//make 10 BG tracks
 		int bgnum=10;
 		for (int i = 0; i < bgnum; i++) {
