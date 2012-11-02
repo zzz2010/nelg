@@ -11,6 +11,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.log4j.PropertyConfigurator;
 import org.jppf.utils.FileUtils;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix2D;
+
 
 public class SimulationTrack {
 
@@ -44,6 +46,8 @@ public class SimulationTrack {
 		(new File(common.outputDir)).mkdir();
 		(new File(common.tempDir)).mkdir();
 		
+		test();
+		
 		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
 		//get target peak list
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
@@ -58,13 +62,13 @@ public class SimulationTrack {
 		//make 5 isthere tracks
 		int isnum=5;
 		for (int i = 0; i < isnum; i++) {
-			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(isnum-1)/2+0.5,0,((double)i)/(isnum-1)/2,target_peaks.size(),i%8);
+			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(isnum-1)/2+0.5,0,((double)i)/(isnum-1),target_peaks.size(),i%8);
 			signalPool.add(parseTR(temp, "isthere"+i));
 		}
 		int valnum=5;
 		//make 5 valthere tracks
 		for (int i = 0; i < valnum; i++) {
-			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(valnum-1)/2,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1),target_peaks.size(),i%8);
+			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1),target_peaks.size(),i%8);
 			signalPool.add(parseTR(temp, "valthere"+i));
 		}
 		common.predictTarget_debug="wgEncode";
@@ -89,8 +93,9 @@ public class SimulationTrack {
 	
 	public static List<SimpleBEDFeature> makeTrack(List<SimpleBEDFeature> peaks, double isthereRatio, double valthereRatio,double strandbias, int num, int distanceBin)
 	{
+		System.out.println(isthereRatio+","+valthereRatio+","+strandbias+","+distanceBin);
 		List<SimpleBEDFeature> signals=new ArrayList<SimpleBEDFeature>(num);
-		Random rand=new Random(12345);
+		Random rand=new Random();
 		int offset=(int) (50*Math.pow(2, distanceBin)-50);
 		int binsize=(int) (50*Math.pow(2, distanceBin));
 		double maxscore=0;
@@ -138,6 +143,17 @@ public class SimulationTrack {
 		}
 		
 		return signals;
+	}
+	
+	static void test()
+	{
+		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
+		MultiScaleFeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
+		List<SimpleBEDFeature> target_peaks=target.getPeakData();
+		List<SimpleBEDFeature> temp=makeTrack(target_peaks,1,1,0.5,target_peaks.size(),4);
+		TrackRecord feature_signal = parseTR(temp, "test");
+		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal, target.getPeakData().subList(0, 100));
+		System.out.print(feature_BinSignal.toString());
 	}
 
 }

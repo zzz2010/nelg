@@ -387,18 +387,17 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 			if(!intervalTree.indexMap.containsKey(query.getChr()))
 				continue;
 			 int stepWidth=(int) Math.ceil((query.getEnd()-query.getStart())/numbin);
-			    int binId=0;
 			    if(stepWidth<1)
 			    	continue;
 			for (int binId1 = 0; binId1 < numbin; binId1++) {
 				float sumValues=intervalTree.overlapCount(query.getChr(), query.getStart()+binId1*stepWidth, query.getStart()+(binId1+1)*stepWidth);
 				if(query.getStrand()== Strand.NEGATIVE)
 	    		{
-				outputSignal.set(queryid, numbin-binId-1, sumValues+outputSignal.get(queryid, numbin-binId-1));
+				outputSignal.set(queryid, numbin-binId1-1, sumValues+outputSignal.get(queryid, numbin-binId1-1));
 	    			
 	    		}
 	    		else
-	    			outputSignal.set(queryid, binId, sumValues+outputSignal.get(queryid, binId));
+	    			outputSignal.set(queryid, binId1, sumValues+outputSignal.get(queryid, binId1));
 					 
 			}	 
 			
