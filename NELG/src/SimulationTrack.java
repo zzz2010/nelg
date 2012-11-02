@@ -40,7 +40,10 @@ public class SimulationTrack {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 
+		//create directory
+		(new File(common.outputDir)).mkdir();
+		(new File(common.tempDir)).mkdir();
+		
 		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
 		//get target peak list
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
