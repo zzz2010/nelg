@@ -33,8 +33,8 @@ public class SimulationTrack {
 			{
 				common.outputDir="./result_debug/";
 				common.tempDir="./cache_debug/";
-				FileUtils.deletePath(new File(common.outputDir));
-				FileUtils.deletePath(new File(common.tempDir));
+//				FileUtils.deletePath(new File(common.outputDir));
+//				FileUtils.deletePath(new File(common.tempDir));
 			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -52,13 +52,13 @@ public class SimulationTrack {
 		//make 10 BG tracks
 		int bgnum=10;
 		for (int i = 0; i < bgnum; i++) {
-			List<SimpleBEDFeature> temp=makeTrack(target_peaks,0,((double)i)/bgnum,0.5,target_peaks.size(),i%8);
+			List<SimpleBEDFeature> temp=makeTrack(target_peaks,0,((double)i)/bgnum,0.5,target_peaks.size()*10,i%8);
 			signalPool.add(parseTR(temp, "bg"+i));
 		}
 		//make 5 isthere tracks
 		int isnum=5;
 		for (int i = 0; i < isnum; i++) {
-			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(isnum-1)/2+0.5,0,((double)i)/(isnum-1),target_peaks.size(),i%8);
+			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(isnum-1)/2+0.5,0,((double)i)/(isnum-1)/2,target_peaks.size(),i%8);
 			signalPool.add(parseTR(temp, "isthere"+i));
 		}
 		int valnum=5;
