@@ -166,7 +166,10 @@ public class FeatureSelectionJob implements  Runnable {
 			
 		for (TrackRecord feature_signal : SignalPool) {
 			if(common.selectFeature_debug!=""&&!feature_signal.FilePrefix.contains(common.selectFeature_debug))
+			{
+				logger.debug("filter: "+feature_signal.FilePrefix);
 				continue;
+			}
 			
 		        if (!SynonymCheck.isSynonym(feature_signal, target_signal) )
 		        {
