@@ -1,6 +1,15 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.log4j.PropertyConfigurator;
+import org.jppf.utils.FileUtils;
 
 
 public class SimulationTrack {
@@ -12,7 +21,26 @@ public class SimulationTrack {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//initialize
+		PropertyConfigurator.configure( "./log4j.properties" ); 
+		Options options = new Options();
 		 db=new FileStorageAdapter("./data");
+		 options.addOption("debug", false, "use debug folder");
+			CommandLineParser parser = new GnuParser();
+			CommandLine cmd;
+		 try {
+			cmd = parser.parse( options, args);
+			if(cmd.hasOption("debug"))
+			{
+				common.outputDir="./result_debug/";
+				common.tempDir="./cache_debug/";
+				FileUtils.deletePath(new File(common.outputDir));
+				FileUtils.deletePath(new File(common.tempDir));
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
 		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
 		//get target peak list
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
