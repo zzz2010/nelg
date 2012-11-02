@@ -1,3 +1,4 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Paint;
 import java.io.File;
@@ -547,7 +548,7 @@ public class NELGViewResult {
 		  chart.getTitle().setPaint(Color.blue); 
 		  CategoryPlot p = chart.getCategoryPlot(); 
 		  p.setRangeGridlinePaint(Color.black); 
-
+		  chart.getXYPlot().getDomainAxis().setLabelAngle(45);
 	        ChartPanel chartPanel = new ChartPanel(chart);
 	        chartPanel.setPreferredSize(new java.awt.Dimension(1200, 600));
 	      //  setContentPane(chartPanel);
@@ -577,6 +578,7 @@ public class NELGViewResult {
 				Paint paint = ds.getNextPaint();
 				scatterRenderer.setSeriesPaint(i, paint);
 				regressionRenderer.setSeriesPaint(i, paint);
+				regressionRenderer.setSeriesOutlineStroke(i, new BasicStroke(4));
 			}
 			chart.setBackgroundPaint(Color.white);
 			 plot.setBackgroundPaint(Color.white);
