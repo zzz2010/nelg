@@ -5,13 +5,14 @@ import java.util.Random;
 
 public class SimulationTrack {
 
+	static FileStorageAdapter db;
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//initialize
-		FileStorageAdapter db=new FileStorageAdapter("./data");
+		 db=new FileStorageAdapter("./data");
 		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
 		//get target peak list
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
@@ -50,6 +51,7 @@ public class SimulationTrack {
 		tr.ExperimentType="Simulation";
 		tr.hasPeak=true;
 		tr.hasSignal=false;
+		tr.DBoperator=db;
 		tr.PeakCache=peaks;
 		return tr;
 	}
