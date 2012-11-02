@@ -25,7 +25,7 @@ public class TrackRecord implements Serializable{
 	public ArrayList<String> ReplicateSuffix;
 	public String peakSuffix;
 	private List<SimpleBEDFeature> SignalRegionCache=null;
-	private List<SimpleBEDFeature> PeakCache=null;
+	public List<SimpleBEDFeature> PeakCache=null;
 	public String getTrackId()
 	{
 		return FilePrefix;
