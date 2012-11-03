@@ -11,6 +11,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.log4j.PropertyConfigurator;
 import org.jppf.utils.FileUtils;
 
+import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 
@@ -93,7 +94,7 @@ public class SimulationTrack {
 	
 	public static List<SimpleBEDFeature> makeTrack(List<SimpleBEDFeature> peaks, double isthereRatio, double valthereRatio,double strandbias, int num, int distanceBin)
 	{
-		System.out.println(isthereRatio+","+valthereRatio+","+strandbias+","+distanceBin);
+//		System.out.println(isthereRatio+","+valthereRatio+","+strandbias+","+distanceBin);
 		List<SimpleBEDFeature> signals=new ArrayList<SimpleBEDFeature>(num);
 		Random rand=new Random();
 		int offset=(int) (50*Math.pow(2, distanceBin)-50);
@@ -150,10 +151,14 @@ public class SimulationTrack {
 		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
 		MultiScaleFeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
-		List<SimpleBEDFeature> temp=makeTrack(target_peaks,1,1,0.5,target_peaks.size(),4);
+		List<SimpleBEDFeature> temp=makeTrack(target_peaks,1,1,1,target_peaks.size(),0);
 		TrackRecord feature_signal = parseTR(temp, "test");
-		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal, target.getPeakData().subList(0, 100));
-		System.out.print(feature_BinSignal.toString());
+		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks.subList(0, 100));
+		DoubleMatrix1D signal = feature_BinSignal.viewColumn(1);
+		for (int i = 0; i < signal.size(); i++) {
+			System.out.println(signal.get(i)+"\t"+target_peaks.get(i).getScore());
+		}
+		return;
 	}
 
 }

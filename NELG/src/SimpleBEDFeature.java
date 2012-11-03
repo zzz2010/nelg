@@ -41,6 +41,8 @@ public class SimpleBEDFeature implements BEDFeature, Serializable {
 		 end=feat.getEnd();
 		 chr=feat.getChr();
 		 score=feat.getScore();
+		 if(Float.isNaN(score))
+			 score=1;
 		 strand=feat.getStrand();
 		 name=feat.getName();
 		 type=feat.getType();
