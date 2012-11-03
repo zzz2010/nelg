@@ -56,16 +56,16 @@ public class SimulationTrack {
 		signalPool.add(target);
 		//make 10 BG tracks
 		int bgnum=10;
-		for (int i = 0; i < bgnum; i++) {
-			List<SimpleBEDFeature> temp=makeTrack(target_peaks,0,((double)i)/bgnum,0.5,target_peaks.size()*10,i%8);
-			signalPool.add(parseTR(temp, "bg"+i));
-		}
-		//make 5 isthere tracks
-		int isnum=5;
-		for (int i = 0; i < isnum; i++) {
-			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(isnum-1)/2+0.5,0,((double)i)/(isnum-1),target_peaks.size(),i%8);
-			signalPool.add(parseTR(temp, "isthere"+i));
-		}
+//		for (int i = 0; i < bgnum; i++) {
+//			List<SimpleBEDFeature> temp=makeTrack(target_peaks,0,((double)i)/bgnum,0.5,target_peaks.size()*10,i%8);
+//			signalPool.add(parseTR(temp, "bg"+i));
+//		}
+//		//make 5 isthere tracks
+//		int isnum=5;
+//		for (int i = 0; i < isnum; i++) {
+//			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(isnum-1)/2+0.5,0,((double)i)/(isnum-1),target_peaks.size(),i%8);
+//			signalPool.add(parseTR(temp, "isthere"+i));
+//		}
 		int valnum=5;
 		//make 5 valthere tracks
 		for (int i = 0; i < valnum; i++) {
@@ -151,13 +151,15 @@ public class SimulationTrack {
 		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
 		MultiScaleFeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
-		List<SimpleBEDFeature> temp=makeTrack(target_peaks,1,1,1,target_peaks.size(),0);
+		 DoubleMatrix1D target_val = SignalTransform.BedFeatureToValues(target_peaks);
+		List<SimpleBEDFeature> temp=makeTrack(target_peaks,1,1,1,10*target_peaks.size(),0);
 		TrackRecord feature_signal = parseTR(temp, "test");
 		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks.subList(0, 100));
 		DoubleMatrix1D signal = feature_BinSignal.viewColumn(1);
 		for (int i = 0; i < signal.size(); i++) {
 			System.out.println(signal.get(i)+"\t"+target_peaks.get(i).getScore());
 		}
+		System.out.print(SignalComparator.getCorrelation(signal, target_val.viewPart(0,100)));
 		return;
 	}
 
