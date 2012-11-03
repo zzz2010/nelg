@@ -85,9 +85,9 @@ public class FeatureExtractJob extends JPPFTask {
 	        		feature_BinSignal_bg=featureExtractor.extractSignalFeature(feature_signal, target_signal_bg);
 	        		StateRecovery.saveCache_SparseDoubleMatrix2D(feature_BinSignal_bg, storekey2);
 	        	}
-//	        	/***************isthere task****************/
-//	        float maxScore=-1;
-//	        int bestBin=-1;
+	        	/***************isthere task****************/
+	        float maxScore=-1;
+	        int bestBin=-1;
 //	        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
 //	        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
 //	        		float score=SignalComparator.getDiscriminativeCapbaility(featureValue, targetValue);
