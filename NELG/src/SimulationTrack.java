@@ -151,16 +151,17 @@ public class SimulationTrack {
 		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
 		MultiScaleFeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
-		 DoubleMatrix1D target_val = SignalTransform.BedFeatureToValues(target_peaks);
+		 DoubleMatrix1D target_val = SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_peaks));
+		 
 		 int dbin=4;
 		List<SimpleBEDFeature> temp=makeTrack(target_peaks,0.5,0.5,0,10*target_peaks.size(),4);
 		TrackRecord feature_signal = parseTR(temp, "test");
-		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks.subList(0, 100));
+		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks.subList(0, 10000));
 		DoubleMatrix1D signal = feature_BinSignal.viewColumn(3*dbin+2);
 		for (int i = 0; i < signal.size(); i++) {
 			System.out.println(signal.get(i)+"\t"+target_peaks.get(i).getScore());
 		}
-		System.out.print(SignalComparator.getCorrelation(signal, target_val.viewPart(0,100)));
+		System.out.print(SignalComparator.getCorrelation(signal, target_val.viewPart(0,10000)));
 		
 //		System.exit(1);
 		return;
