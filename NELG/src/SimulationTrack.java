@@ -68,7 +68,7 @@ public class SimulationTrack {
 		int valnum=5;
 		//make 5 valthere tracks
 		for (int i = 0; i < valnum; i++) {
-			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1),target_peaks.size(),i%8);
+			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1),target_peaks.size()*10,i%8);
 			signalPool.add(parseTR(temp, "valthere"+i));
 		}
 		common.predictTarget_debug="wgEncode";
