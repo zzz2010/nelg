@@ -152,10 +152,11 @@ public class SimulationTrack {
 		MultiScaleFeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
 		 DoubleMatrix1D target_val = SignalTransform.BedFeatureToValues(target_peaks);
+		 int dbin=4;
 		List<SimpleBEDFeature> temp=makeTrack(target_peaks,1,1,1,10*target_peaks.size(),4);
 		TrackRecord feature_signal = parseTR(temp, "test");
 		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks.subList(0, 10000));
-		DoubleMatrix1D signal = feature_BinSignal.viewColumn(1);
+		DoubleMatrix1D signal = feature_BinSignal.viewColumn(3*dbin-1);
 		for (int i = 0; i < signal.size(); i++) {
 			System.out.println(signal.get(i)+"\t"+target_peaks.get(i).getScore());
 		}
