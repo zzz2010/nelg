@@ -156,7 +156,7 @@ public class SimulationTrack {
 		List<SimpleBEDFeature> temp=makeTrack(target_peaks,1,1,1,10*target_peaks.size(),4);
 		TrackRecord feature_signal = parseTR(temp, "test");
 		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks.subList(0, 10000));
-		DoubleMatrix1D signal = feature_BinSignal.viewColumn(3*dbin-1);
+		DoubleMatrix1D signal = feature_BinSignal.viewColumn(3*dbin+2);
 		for (int i = 0; i < signal.size(); i++) {
 			System.out.println(signal.get(i)+"\t"+target_peaks.get(i).getScore());
 		}
