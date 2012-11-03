@@ -59,6 +59,7 @@ public	static  DoubleMatrix1D normalizeSignal(DoubleMatrix1D inputSignal)
 			bestType=i;
 		}
 	}
+	logger.debug("normalization type: "+bestType);
 	DenseDoubleMatrix1D outputSignal=new DenseDoubleMatrix1D(tryDifferentTransform(inputSignal.toArray(), bestType));
 return outputSignal;	
 }
