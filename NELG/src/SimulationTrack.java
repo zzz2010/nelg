@@ -160,13 +160,13 @@ public class SimulationTrack {
 		System.out.println(temp.get(0)+":"+temp.get(0).getScore());
 
 		TrackRecord feature_signal = parseTR(temp, "test");
-		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks.subList(0, 10000));
+		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks);
 		DoubleMatrix1D signal = feature_BinSignal.viewColumn(3*dbin+2);
 //		
 //		for (int i = 0; i < signal.size(); i++) {
 //			System.out.println(signal.get(i)+"\t"+target_peaks.get(i).getScore());
 //		}
-		System.out.println(SignalComparator.getCorrelation(signal, target_val.viewPart(0,10000)));
+		System.out.println(SignalComparator.getCorrelation(signal, target_val));
 		System.out.println(signal.viewPart(0, 10));
 //		System.exit(1);
 		return;
