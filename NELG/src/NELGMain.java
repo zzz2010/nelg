@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +26,16 @@ public class NELGMain {
 		options.addOption("threadnum", true, "maximum thread number");
 		options.addOption("ram", false, "use ramdisk data folder");
 		options.addOption("debug", false, "use debug folder");
+		options.addOption("nfs", false, "assign the feature extraction job to different node, assume they share the same file system");
 		options.addOption("target", true, "only predict the dataset containing this string");
 		options.addOption("feature", true, "only use the feature dataset containing this string");
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd;
-		String dataDir="./data";
+		
+		
 		//parsing paramters
 		try {
+			String appPath=new File(".").getCanonicalPath()+"/";
 			cmd = parser.parse( options, args);
 			if(cmd.hasOption("threadnum"))
 			{
@@ -40,7 +44,7 @@ public class NELGMain {
 			}
 			if(cmd.hasOption("ram"))
 			{
-				dataDir="./data"+"_ram";
+				common.dataDir="./data"+"_ram/";
 				logger.info("using RAM data");
 			}
 			if(cmd.hasOption("debug"))
@@ -54,11 +58,22 @@ public class NELGMain {
 			{
 				common.predictTarget_debug=cmd.getOptionValue("target");
 			}
+			if(cmd.hasOption("nfs"))
+			{
+				common.NFSmode=true;
+				common.tempDir=appPath+common.tempDir;
+				common.dataDir=appPath+common.dataDir;
+				common.outputDir=appPath+common.outputDir;
+			
+			}
 			if(cmd.hasOption("feature"))
 			{
 				common.selectFeature_debug=cmd.getOptionValue("feature");
 			}
 		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -69,7 +84,7 @@ public class NELGMain {
 		
 		ArrayList<String> Assembly=new ArrayList<String>(); 
 		Assembly.add("hg19");
-		StorageAdapter StorageDB =new FileStorageAdapter(dataDir);
+		StorageAdapter StorageDB =new FileStorageAdapter(common.dataDir);
 		
 		//phase1 
 		for (int i = 0; i < Assembly.size(); i++) {
