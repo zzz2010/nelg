@@ -56,20 +56,20 @@ public class SimulationTrack {
 		signalPool.add(target);
 		//make 10 BG tracks
 		int bgnum=10;
-		for (int i = 0; i < bgnum; i++) {
-			List<SimpleBEDFeature> temp=makeTrack(target_peaks,0,((double)i)/bgnum,0.5,target_peaks.size()*10,i%8);
-			signalPool.add(parseTR(temp, "bg"+i));
-		}
-		//make 5 isthere tracks
-		int isnum=5;
-		for (int i = 0; i < isnum; i++) {
-			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(isnum-1)/2+0.5,0,((double)i)/(isnum-1),target_peaks.size(),i%8);
-			signalPool.add(parseTR(temp, "isthere"+i));
-		}
+//		for (int i = 0; i < bgnum; i++) {
+//			List<SimpleBEDFeature> temp=makeTrack(target_peaks,0,((double)i)/bgnum,0.5,target_peaks.size()*10,i%8);
+//			signalPool.add(parseTR(temp, "bg"+i));
+//		}
+//		//make 5 isthere tracks
+//		int isnum=5;
+//		for (int i = 0; i < isnum; i++) {
+//			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(isnum-1)/2+0.5,0,((double)i)/(isnum-1),target_peaks.size(),i%8);
+//			signalPool.add(parseTR(temp, "isthere"+i));
+//		}
 		int valnum=5;
 		//make 5 valthere tracks
 		for (int i = 0; i < valnum; i++) {
-			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1),target_peaks.size()*(valnum+2-i),i%8);
+			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1),target_peaks.size()*10,i%8);
 			System.out.println(temp.get(0)+":"+temp.get(0).getScore());
 			signalPool.add(parseTR(temp, "valthere"+i));
 		}
