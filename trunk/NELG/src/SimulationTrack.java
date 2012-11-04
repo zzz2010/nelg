@@ -70,6 +70,7 @@ public class SimulationTrack {
 		//make 5 valthere tracks
 		for (int i = 0; i < valnum; i++) {
 			List<SimpleBEDFeature> temp=makeTrack(target_peaks,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1)/2+0.5,((double)i)/(valnum-1),target_peaks.size()*10,i%8);
+			System.out.println(temp.get(0)+":"+temp.get(0).getScore());
 			signalPool.add(parseTR(temp, "valthere"+i));
 			break;
 		}
@@ -156,7 +157,7 @@ public class SimulationTrack {
 		 
 		 int dbin=0;
 		List<SimpleBEDFeature> temp=makeTrack(target_peaks,0.5,0.5,0,10*target_peaks.size(),dbin);
-		System.out.println(temp.get(0));
+		System.out.println(temp.get(0)+":"+temp.get(0).getScore());
 
 		TrackRecord feature_signal = parseTR(temp, "test");
 		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks.subList(0, 10000));
