@@ -88,43 +88,42 @@ public class FeatureExtractJob extends JPPFTask {
 	        	/***************isthere task****************/
 	        float maxScore=-1;
 	        int bestBin=-1;
-//	        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
-//	        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
-//	        		float score=SignalComparator.getDiscriminativeCapbaility(featureValue, targetValue);
-//	        		if(score>maxScore)
-//	        		{
-//	        			bestBin=i;
-//	        			maxScore=score;
-//	        		}
-//	        		if(!common.onlyBestBin)
-//	        		{	
-//	        			
-//				        if(score>common.AUC_cutoff)
-//				      	{
-//				        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
-//					        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, score,i);	       
-//				      		IsThereFeatures.add(isF);
-//				      		logger.debug("isthere: "+isF);
-//				      	}
-//				        	
-//	        		}
-//				}
-//	        	//bestBin idea, consider strand
-//	        	if(common.onlyBestBin)
-//	        	{
-//			        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(bestBin), feature_BinSignal_bg.viewColumn(bestBin)) ;
-//			        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
-//			        
-//			        if(maxScore>common.AUC_cutoff)
-//			      	{
-//			      		IsThereFeatures.add(isF);
-//			      	}
-//			        	logger.debug("isthere: "+isF);
-//	        	}
+	        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
+	        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
+	        		float score=SignalComparator.getDiscriminativeCapbaility(featureValue, targetValue);
+	        		if(score>maxScore)
+	        		{
+	        			bestBin=i;
+	        			maxScore=score;
+	        		}
+	        		if(!common.onlyBestBin)
+	        		{	
+	        			
+				        if(score>common.AUC_cutoff)
+				      	{
+				        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
+					        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, score,i);	       
+				      		IsThereFeatures.add(isF);
+				      		logger.debug("isthere: "+isF);
+				      	}
+				        	
+	        		}
+				}
+	        	//bestBin idea, consider strand
+	        	if(common.onlyBestBin)
+	        	{
+			        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(bestBin), feature_BinSignal_bg.viewColumn(bestBin)) ;
+			        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
+			        
+			        if(maxScore>common.AUC_cutoff)
+			      	{
+			      		IsThereFeatures.add(isF);
+			      	}
+			        	logger.debug("isthere: "+isF);
+	        	}
 	        	/***************valthere task****************/
 	        	maxScore=-1;
 		    bestBin=-1;
-		    System.out.println(feature_BinSignal.viewColumn(2).viewPart(0, 10));
 	        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
 	        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
 	        		float score=SignalComparator.getCorrelation(featureValue, targetNormValue);
