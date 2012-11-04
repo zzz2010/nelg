@@ -152,7 +152,7 @@ public class SimulationTrack {
 	{
 		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
 		MultiScaleFeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
-		List<SimpleBEDFeature> target_peaks=SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target),common.SignalRange,true);
+		List<SimpleBEDFeature> target_peaks=target.getPeakData();
 		 DoubleMatrix1D target_val = SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_peaks));
 		 
 		 int dbin=0;
