@@ -49,7 +49,7 @@ public class SimulationTrack {
 		
 		test();
 		
-		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
+		TrackRecord target=db.getTrackById("wgEncodeRikenCageK562CytosolPapPlusSignal");
 		//get target peak list
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
 		List<TrackRecord> signalPool=new ArrayList<TrackRecord>();
@@ -150,7 +150,7 @@ public class SimulationTrack {
 	
 	static void test()
 	{
-		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
+		TrackRecord target=db.getTrackById("wgEncodeRikenCageK562CytosolPapPlusSignal");
 		MultiScaleFeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
 		 DoubleMatrix1D target_val = SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_peaks));
