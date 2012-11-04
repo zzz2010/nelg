@@ -124,7 +124,7 @@ public class FeatureExtractJob extends JPPFTask {
 	        	/***************valthere task****************/
 	        	maxScore=-1;
 		    bestBin=-1;
-		    System.out.println(feature_BinSignal.viewColumn(0).viewPart(0, 10));
+		    System.out.println(feature_BinSignal.viewColumn(2).viewPart(0, 10));
 	        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
 	        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
 	        		float score=SignalComparator.getCorrelation(featureValue, targetNormValue);
