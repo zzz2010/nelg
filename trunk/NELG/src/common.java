@@ -3,6 +3,7 @@ public class common {
 
 	static String outputDir="./result/";
 	static String tempDir="./cache/";
+	static String dataDir="./data/";
 	static int SignalRange=10000;
 	static int MinimumPeakNum=50;
 	static String predictTarget_debug="";
@@ -11,4 +12,6 @@ public class common {
 	static double AUC_cutoff=0.6;
 	static double Corr_cutoff=0.2;
 	static int threadNum=12;
+	static boolean NFSmode=false;
+	
 }
