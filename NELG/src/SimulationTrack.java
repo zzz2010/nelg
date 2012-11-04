@@ -154,8 +154,8 @@ public class SimulationTrack {
 		List<SimpleBEDFeature> target_peaks=target.getPeakData();
 		 DoubleMatrix1D target_val = SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_peaks));
 		 
-		 int dbin=4;
-		List<SimpleBEDFeature> temp=makeTrack(target_peaks,0.5,0.5,0,10*target_peaks.size(),0);
+		 int dbin=0;
+		List<SimpleBEDFeature> temp=makeTrack(target_peaks,0.5,0.5,0,10*target_peaks.size(),dbin);
 		TrackRecord feature_signal = parseTR(temp, "test");
 		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks.subList(0, 10000));
 		DoubleMatrix1D signal = feature_BinSignal.viewColumn(3*dbin+2);
