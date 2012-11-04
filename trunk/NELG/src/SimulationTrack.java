@@ -156,7 +156,7 @@ public class SimulationTrack {
 		 DoubleMatrix1D target_val = SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_peaks));
 		 
 		 int dbin=0;
-		List<SimpleBEDFeature> temp=makeTrack(target_peaks,0.5,0.5,0,10*target_peaks.size(),dbin);
+		List<SimpleBEDFeature> temp=makeTrack(target_peaks,1,1,0,10*target_peaks.size(),dbin);
 		System.out.println(temp.get(0)+":"+temp.get(0).getScore());
 
 		TrackRecord feature_signal = parseTR(temp, "test");
