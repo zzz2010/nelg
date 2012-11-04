@@ -95,7 +95,7 @@ public class SimulationTrack {
 	
 	public static List<SimpleBEDFeature> makeTrack(List<SimpleBEDFeature> peaks, double isthereRatio, double valthereRatio,double strandbias, int num, int distanceBin)
 	{
-//		System.out.println(isthereRatio+","+valthereRatio+","+strandbias+","+distanceBin);
+		System.out.println(isthereRatio+","+valthereRatio+","+strandbias+","+distanceBin);
 		List<SimpleBEDFeature> signals=new ArrayList<SimpleBEDFeature>(num);
 		Random rand=new Random((long) (valthereRatio*1000));
 		int offset=(int) (50*Math.pow(2, distanceBin)-50);
@@ -151,11 +151,13 @@ public class SimulationTrack {
 	{
 		TrackRecord target=db.getTrackById("wgEncodeBroadHistoneK562H3k4me3");
 		MultiScaleFeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
-		List<SimpleBEDFeature> target_peaks=target.getPeakData();
+		List<SimpleBEDFeature> target_peaks=SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target),common.SignalRange,true);
 		 DoubleMatrix1D target_val = SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_peaks));
 		 
 		 int dbin=0;
 		List<SimpleBEDFeature> temp=makeTrack(target_peaks,0.5,0.5,0,10*target_peaks.size(),dbin);
+		System.out.println(temp.get(0));
+
 		TrackRecord feature_signal = parseTR(temp, "test");
 		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks.subList(0, 10000));
 		DoubleMatrix1D signal = feature_BinSignal.viewColumn(3*dbin+2);
