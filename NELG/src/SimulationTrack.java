@@ -159,11 +159,12 @@ public class SimulationTrack {
 		TrackRecord feature_signal = parseTR(temp, "test");
 		SparseDoubleMatrix2D feature_BinSignal = featureExtractor.extractSignalFeature(feature_signal,target_peaks.subList(0, 10000));
 		DoubleMatrix1D signal = feature_BinSignal.viewColumn(3*dbin+2);
+		
 		for (int i = 0; i < signal.size(); i++) {
 			System.out.println(signal.get(i)+"\t"+target_peaks.get(i).getScore());
 		}
-		System.out.print(SignalComparator.getCorrelation(signal, target_val.viewPart(0,10000)));
-		
+		System.out.println(SignalComparator.getCorrelation(signal, target_val.viewPart(0,10000)));
+		System.out.println(signal.viewPart(0, 10));
 //		System.exit(1);
 		return;
 	}
