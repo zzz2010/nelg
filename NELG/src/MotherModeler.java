@@ -42,11 +42,11 @@ public class MotherModeler {
 	{	
 		if(common.NFSmode)
 		{
-			executor = new PooledExecutor(new LinkedQueue());
-			executor.setMinimumPoolSize(common.threadNum);
+			executor = new PooledExecutor(new LinkedQueue(),common.threadNum);
+			executor.setMinimumPoolSize(common.threadNum/2);
 		}
 		else
-		executor = new PooledExecutor(2);
+		  executor = new PooledExecutor(2);
 //		
 //		
 		
