@@ -54,30 +54,31 @@ public class MotherModeler {
 		FeatureSelectionJob.resultsListener=resultListener;
 		//take out one as class label, the rest as feature data
 		for (TrackRecord target_signal : SignalPool) {
+			System.out.println(target_signal.FilePrefix);
 
-			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
-				continue;
-			if(common.predictTarget_debug!=""&&!target_signal.FilePrefix.contains(common.predictTarget_debug))
-				continue;
-			 JPPFClient jppfCLient = new JPPFClient();
-			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,jppfCLient);
-			FeatureSelectionJob FSJob2=StateRecovery.CheckFeatureSelectionJob(target_signal);
-			try {
-				if(FSJob2==null)
-				{
-				executor.execute(FSJob);
-//				FSJob.run();
-				}
-				else
-				{
-					logger.info("loading fsj: "+target_signal.FilePrefix);
-					executor.execute(FSJob2);
-//					FSJob2.run();
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
+//				continue;
+//			if(common.predictTarget_debug!=""&&!target_signal.FilePrefix.contains(common.predictTarget_debug))
+//				continue;
+//			 JPPFClient jppfCLient = new JPPFClient();
+//			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,jppfCLient);
+//			FeatureSelectionJob FSJob2=StateRecovery.CheckFeatureSelectionJob(target_signal);
+//			try {
+//				if(FSJob2==null)
+//				{
+//				executor.execute(FSJob);
+////				FSJob.run();
+//				}
+//				else
+//				{
+//					logger.info("loading fsj: "+target_signal.FilePrefix);
+//					executor.execute(FSJob2);
+////					FSJob2.run();
+//				}
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 						 
 		}
 		
