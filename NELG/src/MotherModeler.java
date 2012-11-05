@@ -40,8 +40,14 @@ public class MotherModeler {
 	
 	public void Run()
 	{	
+		if(common.NFSmode)
+		{
+			executor = new PooledExecutor(new LinkedQueue());
+			executor.setMinimumPoolSize(threadNum);
+		}
+		else
 		executor = new PooledExecutor(2);
-//		executor.setMinimumPoolSize(threadNum);
+//		
 //		
 		executor.setKeepAliveTime(1000 * 60*500 );
 		ClassificationResultListener resultListener=new ClassificationResultListener();
