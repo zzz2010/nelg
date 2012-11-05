@@ -42,8 +42,8 @@ public class MotherModeler {
 	{	
 		if(common.NFSmode)
 		{
-			executor = new PooledExecutor(common.threadNum);
-			executor.setMinimumPoolSize(common.threadNum/2);
+			executor = new PooledExecutor(new LinkedQueue());
+			executor.setMinimumPoolSize(common.threadNum);
 		}
 		else
 		  executor = new PooledExecutor(2);
@@ -51,7 +51,7 @@ public class MotherModeler {
 //		
 		
 		executor.setKeepAliveTime(1000 * 60*500 );
-		executor.discardOldestWhenBlocked();
+
 		 
 		ClassificationResultListener resultListener=new ClassificationResultListener();
 		FeatureSelectionJob.resultsListener=resultListener;
@@ -76,10 +76,10 @@ public class MotherModeler {
 				else
 				{
 					logger.info("loading fsj: "+target_signal.FilePrefix);
-					executor.execute(FSJob2);
-//					FSJob2.run();
+//					executor.execute(FSJob2);
+					FSJob2.run();
 				}
-				Thread.sleep(1000);
+				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
