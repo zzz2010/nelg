@@ -42,14 +42,17 @@ public class MotherModeler {
 	{	
 		if(common.NFSmode)
 		{
-			executor = new PooledExecutor(new LinkedQueue());
-			executor.setMinimumPoolSize(threadNum);
+			executor = new PooledExecutor(new LinkedQueue(),common.threadNum);
+			executor.setMinimumPoolSize(1);
 		}
 		else
 		executor = new PooledExecutor(2);
 //		
 //		
+		
 		executor.setKeepAliveTime(1000 * 60*500 );
+		executor.waitWhenBlocked();
+		 
 		ClassificationResultListener resultListener=new ClassificationResultListener();
 		FeatureSelectionJob.resultsListener=resultListener;
 		 JPPFClient jppfCLient = new JPPFClient();
@@ -67,14 +70,14 @@ public class MotherModeler {
 			try {
 				if(FSJob2==null)
 				{
-//				executor.execute(FSJob);
-				FSJob.run();
+				executor.execute(FSJob);
+//				FSJob.run();
 				}
 				else
 				{
 					logger.info("loading fsj: "+target_signal.FilePrefix);
-//					executor.execute(FSJob2);
-					FSJob2.run();
+					executor.execute(FSJob2);
+//					FSJob2.run();
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
