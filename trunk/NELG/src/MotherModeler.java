@@ -79,10 +79,12 @@ public class MotherModeler {
 					executor.execute(FSJob2);
 //					FSJob2.run();
 				}
+				Thread.sleep(1000);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 						 
 		}
 		
