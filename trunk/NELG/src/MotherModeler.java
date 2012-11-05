@@ -62,24 +62,24 @@ public class MotherModeler {
 			if(common.predictTarget_debug!=""&&!target_signal.FilePrefix.contains(common.predictTarget_debug))
 				continue;
 					
-//			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,jppfCLient);
-//			FeatureSelectionJob FSJob2=StateRecovery.CheckFeatureSelectionJob(target_signal);
-//			try {
-//				if(FSJob2==null)
-//				{
-//				executor.execute(FSJob);
-////				FSJob.run();
-//				}
-//				else
-//				{
-//					logger.info("loading fsj: "+target_signal.FilePrefix);
-//					executor.execute(FSJob2);
-////					FSJob2.run();
-//				}
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,jppfCLient);
+			FeatureSelectionJob FSJob2=StateRecovery.CheckFeatureSelectionJob(target_signal);
+			try {
+				if(FSJob2==null)
+				{
+				executor.execute(FSJob);
+//				FSJob.run();
+				}
+				else
+				{
+					logger.info("loading fsj: "+target_signal.FilePrefix);
+					executor.execute(FSJob2);
+//					FSJob2.run();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 						 
 		}
 		
@@ -90,7 +90,9 @@ public class MotherModeler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		jppfCLient.close();
 	}
+	
 	
 
 }
