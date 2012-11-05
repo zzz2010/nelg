@@ -300,6 +300,7 @@ public class FeatureSelectionJob implements  Runnable {
 		// Submit the job and wait until the results are returned.
 		   // The results are returned as a list of JPPFTask instances,
 		   // in the same order as the one in which the tasks where initially added the job.
+		if(job.getTasks().size()>0)
 		   try {
 			   if(resultsListener==null)
 			    resultsListener=new JPPFResultCollector(job.getTasks().size());
