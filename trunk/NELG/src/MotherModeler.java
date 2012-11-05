@@ -51,7 +51,7 @@ public class MotherModeler {
 //		
 		
 		executor.setKeepAliveTime(1000 * 60*500 );
-		executor.waitWhenBlocked();
+		executor.runWhenBlocked();
 		 
 		ClassificationResultListener resultListener=new ClassificationResultListener();
 		FeatureSelectionJob.resultsListener=resultListener;
