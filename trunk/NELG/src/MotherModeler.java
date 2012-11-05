@@ -52,15 +52,16 @@ public class MotherModeler {
 		executor.setKeepAliveTime(1000 * 60*500 );
 		ClassificationResultListener resultListener=new ClassificationResultListener();
 		FeatureSelectionJob.resultsListener=resultListener;
+		 JPPFClient jppfCLient = new JPPFClient();
 		//take out one as class label, the rest as feature data
 		for (TrackRecord target_signal : SignalPool) {
 			System.out.println(target_signal.FilePrefix);
 
-//			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
-//				continue;
-//			if(common.predictTarget_debug!=""&&!target_signal.FilePrefix.contains(common.predictTarget_debug))
-//				continue;
-//			 JPPFClient jppfCLient = new JPPFClient();
+			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
+				continue;
+			if(common.predictTarget_debug!=""&&!target_signal.FilePrefix.contains(common.predictTarget_debug))
+				continue;
+					
 //			FeatureSelectionJob FSJob=new FeatureSelectionJob(target_signal, SignalPool,jppfCLient);
 //			FeatureSelectionJob FSJob2=StateRecovery.CheckFeatureSelectionJob(target_signal);
 //			try {
