@@ -70,8 +70,8 @@ public class MotherModeler {
 			try {
 				if(FSJob2==null)
 				{
-				executor.execute(FSJob);
-//				FSJob.run();
+//				executor.execute(FSJob);
+				FSJob.run();
 				}
 				else
 				{
