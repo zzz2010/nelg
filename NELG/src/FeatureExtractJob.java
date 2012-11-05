@@ -159,6 +159,16 @@ public class FeatureExtractJob extends JPPFTask {
 			        	}
 		    	logger.debug("valthere: "+valF);
 	        	}
+	        	
+	 //clean up the input data     	
+	        	target_signal_filtered=null;
+	       target_signal_bg=null;
+	      feature_signal=null;
+	       target_signal=null;
+	       featureExtractor=null;
+	      targetValue=null;
+	       targetNormValue=null;
+	        	
 	        setResult(this);
 	}
 
