@@ -45,6 +45,7 @@ public class StateRecovery {
 				fileIn = new FileInputStream(f1.getAbsolutePath());
 				 ObjectInputStream in = new ObjectInputStream(fileIn);
 				 ClassificationJob temp=(ClassificationJob)in.readObject();
+				 fileIn.close();
 				 return temp;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -90,6 +91,7 @@ public class StateRecovery {
 				fileIn = new FileInputStream(f1.getAbsolutePath());
 				 ObjectInputStream in = new ObjectInputStream(fileIn);
 				 SparseDoubleMatrix2D temp=(SparseDoubleMatrix2D)in.readObject();
+				 fileIn.close();
 				 return temp;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
