@@ -201,7 +201,7 @@ public class FeatureSelectionJob implements  Runnable {
 			if(common.NFSmode)
 			{
 				jobresult=NFSclient.submit(localjob);
-				NFSclient.close();
+				
 			}
 			else
 			{
