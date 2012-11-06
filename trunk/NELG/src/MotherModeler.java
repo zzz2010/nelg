@@ -94,7 +94,7 @@ public class MotherModeler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		jppfCLient.close();
+		
 	}
 	
 	
