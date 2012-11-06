@@ -25,6 +25,7 @@ public class StateRecovery {
 				fileIn = new FileInputStream(f1.getAbsolutePath());
 				 ObjectInputStream in = new ObjectInputStream(fileIn);
 				 ClassificationResult temp=(ClassificationResult)in.readObject();
+				 fileIn.close();
 				 return temp;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -119,6 +120,7 @@ public class StateRecovery {
 				 fsjob.target_signal_filtered=temp.target_signal_filtered;
 				 fsjob.ValThereFeatures=temp.ValThereFeatures;
 				 fsjob.executor=new JPPFClient();
+				 fileIn.close();
 				 return fsjob;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
