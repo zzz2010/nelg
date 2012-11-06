@@ -35,7 +35,7 @@ public class FeatureSelectionJob implements  Runnable {
 	/**
 	 * 
 	 */
-	public static TaskResultListener resultsListener ;
+	public  TaskResultListener resultsListener ;
 	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(FeatureSelectionJob.class);
 	TrackRecord target_signal;
 	List<TrackRecord> SignalPool;
@@ -58,7 +58,7 @@ public class FeatureSelectionJob implements  Runnable {
 		// TODO Auto-generated method stub
 		FileInputStream fileIn;
 		 ObjectInputStream in ;
-		 
+		 resultsListener=new ClassificationResultListener();
 		 //initialize JPPF
 		 JPPFJob job = new JPPFJob();
 		 job.setName(target_signal.FilePrefix);
