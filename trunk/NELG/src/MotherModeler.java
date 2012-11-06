@@ -70,13 +70,13 @@ public class MotherModeler {
 			try {
 				if(FSJob2==null)
 				{
-//				executor.execute(FSJob);
-				FSJob.run();
+				executor.execute(FSJob);
+//				FSJob.run();
 				}
 				else
 				{
 					logger.info("loading fsj: "+target_signal.FilePrefix);
-//					executor.execute(FSJob2);
+					executor.execute(FSJob2);
 					FSJob2.run();
 				}
 				
