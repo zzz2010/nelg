@@ -218,7 +218,7 @@ public class FileStorageAdapter implements StorageAdapter{
 				try {
 					BBFileReader bbReader = new BBFileReader(filename);
 					BBFileHeader bbFileHdr=bbReader.getBBFileHeader();
-			       
+					
 			        // get zoom level data
 			        int zoomLevels = bbReader.getZoomLevelCount();
 			        ZoomLevelIterator zoomIterator = null;
@@ -254,7 +254,7 @@ public class FileStorageAdapter implements StorageAdapter{
 			        {
 			        	SignalRegion=SignalTransform.intersectSortedRegions(SignalRegion, ContigRegions);
 			        }
-			       
+			        bbReader.getBBFis().close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
