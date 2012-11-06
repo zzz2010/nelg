@@ -74,6 +74,7 @@ public class MotherModeler {
 				}
 				else
 				{
+					FSJob2.executor=jppfCLient;
 					logger.info("loading fsj: "+target_signal.FilePrefix);
 //					executor.execute(FSJob2);
 					FSJob2.run();

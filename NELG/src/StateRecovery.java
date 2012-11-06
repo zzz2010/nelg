@@ -115,12 +115,13 @@ public class StateRecovery {
 				fileIn = new FileInputStream(f1.getAbsolutePath());
 				 ObjectInputStream in = new ObjectInputStream(fileIn);
 				 FeatureSelectionSObj temp=(FeatureSelectionSObj)in.readObject();
+				 fileIn.close();
 				 FeatureSelectionJob fsjob=new FeatureSelectionJob(target_signal, null, null);
 				 fsjob.IsThereFeatures=temp.IsThereFeatures;
 				 fsjob.target_signal_filtered=temp.target_signal_filtered;
 				 fsjob.ValThereFeatures=temp.ValThereFeatures;
-				 fsjob.executor=new JPPFClient();
-				 fileIn.close();
+//				 fsjob.executor=new JPPFClient();
+				 
 				 return fsjob;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
