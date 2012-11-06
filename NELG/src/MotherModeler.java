@@ -52,8 +52,8 @@ public class MotherModeler {
 		
 		executor.setKeepAliveTime(1000 * 60*500 );
 
-		 
-
+	FeatureSelectionJob.resultsListener=new ClassificationResultListener();
+		
 		 JPPFClient jppfCLient = new JPPFClient();
 		//take out one as class label, the rest as feature data
 		for (TrackRecord target_signal : SignalPool) {
@@ -69,14 +69,14 @@ public class MotherModeler {
 			try {
 				if(FSJob2==null)
 				{
-//				executor.execute(FSJob);
-				FSJob.run();
+				executor.execute(FSJob);
+//				FSJob.run();
 				}
 				else
 				{
 					logger.info("loading fsj: "+target_signal.FilePrefix);
-//					executor.execute(FSJob2);
-					FSJob2.run();
+					executor.execute(FSJob2);
+//					FSJob2.run();
 				}
 				
 			} catch (Exception e) {
