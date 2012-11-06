@@ -60,6 +60,9 @@ public class ClassificationJob extends JPPFTask implements  Serializable {
 				 }
 			 }
 		 }		 
+		 if(common.NFSmode)
+			 result.toFile(); //use compute-node to write
+		 else
 		 setResult(result);
 	    }
 	 
