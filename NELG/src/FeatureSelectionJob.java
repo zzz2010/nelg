@@ -308,7 +308,7 @@ public class FeatureSelectionJob implements  Runnable {
 			   
 			   job.setResultListener(resultsListener);
 			// set the job as non-blocking
-			   job.setBlocking(true);
+			   job.setBlocking(false);
 			 executor.submit(job);
 	
 		} catch (Exception e) {
