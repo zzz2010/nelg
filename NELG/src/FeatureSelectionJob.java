@@ -308,6 +308,7 @@ public class FeatureSelectionJob implements  Runnable {
 			   {
 			    resultsListener=new JPPFResultCollector(job);		  
 			   }
+			   if(!common.NFSmode)
 			   job.setResultListener(resultsListener);
 			// set the job as non-blocking
 			   job.setBlocking(false);
