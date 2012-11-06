@@ -157,7 +157,7 @@ public class FeatureSelectionJob implements  Runnable {
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 		 JPPFJob localjob = new JPPFJob();
 		 localjob.setName("local_"+target_signal.FilePrefix);
-		
+		 
 		 JPPFClient NFSclient=null;
 		 PooledExecutor localclient=null;
 		 if(common.NFSmode)
