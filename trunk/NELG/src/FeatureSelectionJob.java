@@ -313,7 +313,7 @@ public class FeatureSelectionJob implements  Runnable {
 			// set the job as non-blocking
 			   job.setBlocking(false);
 			 executor.submit(job);
-			 while (!executor.hasAvailableConnection()) Thread.sleep(1L);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
