@@ -58,7 +58,18 @@ public class FeatureSelectionJob implements  Runnable {
 		// TODO Auto-generated method stub
 		FileInputStream fileIn;
 		 ObjectInputStream in ;
-		
+		 JPPFClient NFSclient=null;
+		 PooledExecutor localclient=null;
+		 if(common.NFSmode)
+		 {
+			 NFSclient=new JPPFClient("nfs executor");
+		 }
+		 else
+		 {
+			 localclient=new PooledExecutor(new LinkedQueue());
+		 localclient.setMinimumPoolSize(common.threadNum);		
+		 localclient.setKeepAliveTime(1000 * 60*500 );
+		 }
 		 //initialize JPPF
 		 JPPFJob job = new JPPFJob();
 		 job.setName(target_signal.FilePrefix);
@@ -158,18 +169,7 @@ public class FeatureSelectionJob implements  Runnable {
 		 JPPFJob localjob = new JPPFJob();
 		 localjob.setName("local_"+target_signal.FilePrefix);
 		 
-		 JPPFClient NFSclient=null;
-		 PooledExecutor localclient=null;
-		 if(common.NFSmode)
-		 {
-			 NFSclient=executor;//new JPPFClient("nfs executor");
-		 }
-		 else
-		 {
-			 localclient=new PooledExecutor(new LinkedQueue());
-		 localclient.setMinimumPoolSize(common.threadNum);		
-		 localclient.setKeepAliveTime(1000 * 60*500 );
-		 }
+
 			
 		for (TrackRecord feature_signal : SignalPool) {
 			if(common.selectFeature_debug!=""&&!feature_signal.FilePrefix.contains(common.selectFeature_debug))
@@ -312,7 +312,7 @@ public class FeatureSelectionJob implements  Runnable {
 			   }
 			// set the job as non-blocking
 			   job.setBlocking(true);
-			 executor.submit(job);
+			   NFSclient.submit(job);
 			 while (!executor.hasAvailableConnection()) Thread.sleep(1L);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
