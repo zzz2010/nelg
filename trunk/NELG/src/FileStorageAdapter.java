@@ -278,6 +278,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 				BBFileReader bbReader;
 				try {
 					bbReader = new BBFileReader(filename);
+					
 				      // get zoom level data
 			        int zoomLevels = bbReader.getZoomLevelCount();
 			        int queryid=-1;
@@ -363,7 +364,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 					    			outputSignal.set(queryid, binId, sumValues+outputSignal.get(queryid, binId));
 						 }
 					}
-					
+					bbReader.getBBFis().close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -510,7 +511,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 				    			outputSignal.get(queryid).set(binId, sumValues+outputSignal.get(queryid).get(binId));
 						 }
 					}
-					
+					bbReader.getBBFis().close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
