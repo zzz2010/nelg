@@ -53,8 +53,7 @@ public class MotherModeler {
 		executor.setKeepAliveTime(1000 * 60*500 );
 
 		 
-		ClassificationResultListener resultListener=new ClassificationResultListener();
-		FeatureSelectionJob.resultsListener=resultListener;
+
 		 JPPFClient jppfCLient = new JPPFClient();
 		//take out one as class label, the rest as feature data
 		for (TrackRecord target_signal : SignalPool) {
