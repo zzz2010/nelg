@@ -200,6 +200,7 @@ public class FeatureSelectionJob implements  Runnable {
 			 List<JPPFTask> jobresult =null;
 			if(common.NFSmode)
 			{
+				while (!executor.hasAvailableConnection()) Thread.sleep(1L);
 				jobresult=NFSclient.submit(localjob);
 				
 			}
