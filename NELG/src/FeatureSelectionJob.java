@@ -303,15 +303,14 @@ public class FeatureSelectionJob implements  Runnable {
 		   // in the same order as the one in which the tasks where initially added the job.
 		if(job.getTasks().size()>0)
 		   try {
-			   if(!common.NFSmode)//NFSmode using node to write, no need to send back
+			   if(common.NFSmode||resultsListener==null)//NFSmode using node to write, no need to send back
 			   {
-			   if(resultsListener==null)
-			    resultsListener=new JPPFResultCollector(job.getTasks().size());
-			   
-			   job.setResultListener(resultsListener);
+			    resultsListener=new JPPFResultCollector(job);		  
 			   }
+			   job.setResultListener(resultsListener);
 			// set the job as non-blocking
 			   job.setBlocking(false);
+			while (!executor.hasAvailableConnection()) Thread.sleep(1L);
 			 executor.submit(job);
 			
 		} catch (Exception e) {
