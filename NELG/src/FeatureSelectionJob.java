@@ -185,7 +185,7 @@ public class FeatureSelectionJob implements  Runnable {
 		        	
 		        	FeatureExtractJob FEJob=new FeatureExtractJob(target_signal_filtered, target_signal_bg, feature_signal, target_signal, featureExtractor, targetValue, targetNormValue);
 		        	try {
-		        		
+		        		FEJob.setTimeoutSchedule(new JPPFSchedule(1000*60*60));
 						localjob.addTask(FEJob);
 						if(!common.NFSmode)
 							localclient.execute(FEJob);
