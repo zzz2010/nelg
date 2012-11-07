@@ -18,6 +18,8 @@ import org.jppf.client.JPPFJob;
 import org.jppf.client.JPPFResultCollector;
 import org.jppf.client.concurrent.JPPFExecutorService;
 import org.jppf.client.event.TaskResultListener;
+import org.jppf.management.JPPFSystemInformation;
+import org.jppf.node.policy.ExecutionPolicy;
 import org.jppf.scheduling.JPPFSchedule;
 import org.jppf.server.protocol.JPPFTask;
 
@@ -196,7 +198,10 @@ public class FeatureSelectionJob implements  Runnable {
 		try {
 			logger.debug("Number of Feature Extraction Tasks:"+localjob.getTasks().size());
 			 localjob.setBlocking(true);
-			 
+			 localjob.getSLA().setMaxNodes(1000);
+			 localjob.getSLA().setPriority(1);
+			 localjob.getSLA().setCancelUponClientDisconnect(false);
+			 localjob.getSLA().setJobExpirationSchedule(new JPPFSchedule(1000*60*60));
 			 List<JPPFTask> jobresult =null;
 			if(common.NFSmode)
 			{
