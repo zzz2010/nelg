@@ -62,7 +62,7 @@ public class FeatureSelectionJob implements  Runnable {
 		 ObjectInputStream in ;
 		
 		 //initialize JPPF
-		 JPPFJob job = new JPPFJob();
+		 JPPFJob job = new JPPFJob(common.getDataProvider());
 		 job.setName(target_signal.FilePrefix);
 		 
 		if(target_signal_filtered!=null)//
@@ -157,7 +157,7 @@ public class FeatureSelectionJob implements  Runnable {
 //		FeatureExtractor featureExtractor=new EqualBinFeatureExtractor(20);
 		FeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
-		 JPPFJob localjob = new JPPFJob();
+		 JPPFJob localjob = new JPPFJob(common.getDataProvider());
 		 localjob.setName("local_"+target_signal.FilePrefix);
 		 
 		 JPPFClient NFSclient=null;

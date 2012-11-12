@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jppf.server.protocol.JPPFTask;
+import org.jppf.task.storage.MemoryMapDataProvider;
 
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.impl.SparseDoubleMatrix1D;
@@ -23,6 +24,9 @@ public class ClassificationJob extends JPPFTask implements  Serializable {
 	String JobTitle;
 	DoubleMatrix1D targetValue;
 	Boolean Regression=false;
+	
+	
+	
 	public ClassificationJob(List<FeatureSignal> featureMatrix,
 			String jobTitle, DoubleMatrix1D targetValue) {
 		
@@ -32,6 +36,8 @@ public class ClassificationJob extends JPPFTask implements  Serializable {
 	}
 	
 	 public void run() {
+		 MemoryMapDataProvider dataProvider=(MemoryMapDataProvider)getDataProvider();
+			common.loadDataProvider(dataProvider);
 		 System.out.println("this is the node executing task:"+JobTitle);
 //		 toFile();
 		 ChildModeler modeler=new ChildModeler();
