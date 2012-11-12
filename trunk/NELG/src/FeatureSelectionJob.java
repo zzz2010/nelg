@@ -127,7 +127,7 @@ public class FeatureSelectionJob implements  Runnable {
 		else	
 		{
 		//get filtered target signal
-		String storekey=target_signal.FilePrefix+common.SignalRange;
+		String storekey=target_signal.FilePrefix+"/"+common.SignalRange;
 	  	target_signal_filtered= StateRecovery.loadCache_BEDFeatureList(storekey);
 	  	if(target_signal_filtered==null)
 	  	{
