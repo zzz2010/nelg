@@ -7,13 +7,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.jppf.client.JPPFClient;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 
 public class StateRecovery {
-
+	static Logger logger = Logger.getLogger(StateRecovery.class);
 	//if not finish return null
 	static ClassificationResult CheckClassificationJob(String JobId)
 	{
@@ -63,7 +64,7 @@ public class StateRecovery {
 		File subdir=new File(common.tempDir+path);
 		if(!subdir.getParentFile().exists())
 		{
-			System.out.println("mkdir: "+subdir.getParentFile().getAbsolutePath());
+			logger.debug("mkdir: "+subdir.getParentFile().getAbsolutePath());
 			subdir.getParentFile().mkdir();
 		}
 		
