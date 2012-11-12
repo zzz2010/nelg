@@ -63,6 +63,7 @@ public class ChildModeler {
 		NumericCleaner numCleaner=new NumericCleaner();
 		try {
 			numCleaner.setInputFormat(data);
+			numCleaner.setDecimals(6);
 			data = Filter.useFilter(data, numCleaner);
 		} catch (Exception e2) {
 			// TODO Auto-generated catch block
@@ -187,6 +188,7 @@ public class ChildModeler {
 		
 		NumericCleaner numCleaner=new NumericCleaner();
 		try {
+			numCleaner.setDecimals(6);
 			numCleaner.setInputFormat(data);
 			data = Filter.useFilter(data, numCleaner);
 		} catch (Exception e2) {
