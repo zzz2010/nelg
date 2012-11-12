@@ -60,14 +60,12 @@ public class StateRecovery {
 	
 	static String key2Path(String key)
 	{
-		String path=key.replace('_', '/');
+		String path=key;
 		File subdir=new File(common.tempDir+path);
-		logger.debug("mkdir: "+subdir.getAbsolutePath());
-		System.out.println("mkdir: "+subdir.getAbsolutePath());
 		if(!subdir.getParentFile().exists())
 		{
-			
-			subdir.getParentFile().mkdir();
+			logger.debug("mkdir: "+subdir.getAbsolutePath());
+			subdir.getParentFile().mkdirs();
 		}
 		
 		return path;

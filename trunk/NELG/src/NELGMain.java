@@ -96,7 +96,7 @@ public class NELGMain {
 		for (int j = 0; j < cell_lines.size(); j++) {
 			//load track ids in the given cell line
 			List<TrackRecord> TrackList=StorageDB.getTrackId_inCellLine(Assembly.get(i),cell_lines.get(j));	
-
+			logger.debug("Signal Pool:"+TrackList);
 			MotherModeler MainModelMachine=new MotherModeler(TrackList);
 			MainModelMachine.threadNum=max_threadNum;
 			MainModelMachine.Run();
