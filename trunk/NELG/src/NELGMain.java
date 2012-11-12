@@ -90,7 +90,7 @@ public class NELGMain {
 		for (int i = 0; i < Assembly.size(); i++) {
 			
 			//load general track
-			List<TrackRecord> GeneralTrackList=StorageDB.getTrackId_inCellLine(Assembly.get(i),"-");
+			List<TrackRecord> GeneralTrackList=StorageDB.getTrackId_inCellLine(Assembly.get(i),"All");
 			//load cell line
 			List<String>cell_lines=StorageDB.getCellLineName(Assembly.get(i));
 		for (int j = 0; j < cell_lines.size(); j++) {

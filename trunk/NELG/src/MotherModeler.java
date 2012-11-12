@@ -59,6 +59,8 @@ public class MotherModeler {
 		for (TrackRecord target_signal : SignalPool) {
 			System.out.println(target_signal.FilePrefix);
 
+			if(target_signal.Cell_Line.equalsIgnoreCase("All"))
+				continue;  //skip general track
 			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
 				continue;
 			if(common.predictTarget_debug!=""&&!target_signal.FilePrefix.contains(common.predictTarget_debug))

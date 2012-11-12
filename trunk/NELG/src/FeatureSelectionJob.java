@@ -316,6 +316,7 @@ public class FeatureSelectionJob implements  Runnable {
 			   if(!common.NFSmode)
 			   job.setResultListener(resultsListener);
 			// set the job as non-blocking
+			   job.getSLA().setCancelUponClientDisconnect(false);
 			   job.setBlocking(false);
 			while (!executor.hasAvailableConnection()) Thread.sleep(1L);
 			 executor.submit(job);
