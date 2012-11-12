@@ -45,7 +45,7 @@ public class FeatureExtractJob extends JPPFTask {
 		super();
 		this.target_signal_bg = target_signal_bg;
 		this.feature_signal = feature_signal;
-		String storekey=target_signal.FilePrefix+common.SignalRange;
+		String storekey=target_signal.FilePrefix+"/"+common.SignalRange;
 	  	target_signal_filtered= StateRecovery.loadCache_BEDFeatureList(storekey);
 	  	if(target_signal_filtered==null)
 	  	{
@@ -70,7 +70,7 @@ public class FeatureExtractJob extends JPPFTask {
 		IsThereFeatures=new ArrayList<FeatureSignal>();
 		ValThereFeatures=new ArrayList<FeatureSignal>();
 	        	logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
-	        	String storekey1=target_signal.FilePrefix+feature_signal.FilePrefix+featureExtractor.getClass().getName();
+	        	String storekey1=target_signal.FilePrefix+"/"+feature_signal.FilePrefix+featureExtractor.getClass().getName();
 	        	String storekey2=storekey1+"_bg";
 	        	SparseDoubleMatrix2D feature_BinSignal=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey1);
 	        	if(feature_BinSignal==null)
