@@ -57,17 +57,30 @@ public class StateRecovery {
 		return null;
 	}
 	
+	static String key2Path(String key)
+	{
+		String path=key.replace('_', '/');
+		File subdir=new File(common.tempDir+path);
+		if(!subdir.getParentFile().exists())
+			subdir.getParentFile().mkdirs();
+		
+		return path;
+	}
+	
 	static void saveCache_BEDFeatureList(List<SimpleBEDFeature> obj, String key)
 	{
+		key=key2Path(key);
 		SimpleBEDFeature.toFile(obj, common.tempDir+key);
 	}
 	static List<SimpleBEDFeature> loadCache_BEDFeatureList(String key)
 	{
+		key=key2Path(key);
 		return FileStorageAdapter.getBEDData(key);
 	}
 	
 	static void saveCache_SparseDoubleMatrix2D(SparseDoubleMatrix2D obj, String key)
 	{
+		key=key2Path(key);
         try {
        	 FileOutputStream fileOut =
    		         new FileOutputStream(common.tempDir+key);
@@ -84,6 +97,7 @@ public class StateRecovery {
 	
 	static SparseDoubleMatrix2D loadCache_SparseDoubleMatrix2D(String key)
 	{
+		key=key2Path(key);
 		File f1=new File(common.tempDir+key);
 		if(f1.exists())
 		{
