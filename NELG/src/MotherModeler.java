@@ -60,7 +60,7 @@ public class MotherModeler {
 			System.out.println(target_signal.FilePrefix);
 
 			if(target_signal.Cell_Line.equalsIgnoreCase("All"))
-				continue;  //skip general track
+				continue;
 			if(target_signal.ExperimentId.contains("Control")||target_signal.ExperimentId.contains("Input"))
 				continue;
 			if(common.predictTarget_debug!=""&&!target_signal.FilePrefix.contains(common.predictTarget_debug))
@@ -71,15 +71,15 @@ public class MotherModeler {
 			try {
 				if(FSJob2==null)
 				{
-				executor.execute(FSJob);
-//				FSJob.run();
+//				executor.execute(FSJob);
+				FSJob.run();
 				}
 				else
 				{
 					FSJob2.executor=jppfCLient;
 					logger.info("loading fsj: "+target_signal.FilePrefix);
-					executor.execute(FSJob2);
-//					FSJob2.run();
+//					executor.execute(FSJob2);
+					FSJob2.run();
 				}
 				
 			} catch (Exception e) {
