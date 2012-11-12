@@ -44,6 +44,7 @@ import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Normalize;
+import weka.filters.unsupervised.attribute.NumericCleaner;
 
 
 
@@ -51,11 +52,23 @@ import weka.filters.unsupervised.attribute.Normalize;
 
 public class ChildModeler {
 	static Logger logger = Logger.getLogger(ChildModeler.class);
+	
+	
 	public ClassificationResult doClassification(ClassificationJob job)
 	{
 		double auc=0;
 		ArrayList<Integer> selecedAttributes=new ArrayList<Integer>();
 		Instances data=getDatasetFromJob(job);
+		
+		NumericCleaner numCleaner=new NumericCleaner();
+		try {
+			numCleaner.setInputFormat(data);
+			data = Filter.useFilter(data, numCleaner);
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		Instances data2 =null;//filtered dataset
 		if(data.numAttributes()>Math.log(job.targetValue.size())/Math.log(2)+1)
 		{
@@ -171,6 +184,15 @@ public class ChildModeler {
 	{
 		double corr=0;
 		Instances data=getDatasetFromJob(job);
+		
+		NumericCleaner numCleaner=new NumericCleaner();
+		try {
+			numCleaner.setInputFormat(data);
+			data = Filter.useFilter(data, numCleaner);
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 		
 		ArrayList<Integer> selecedAttributes=new ArrayList<Integer>();
 		ArrayList<String> finalFeatureSel=new ArrayList<String>();
@@ -350,6 +372,7 @@ public class ChildModeler {
 			 Instance instance = new Instance(1, values);
 			 jobdata.add(instance);
 		}
+
 		jobdata.setClassIndex(featureNum);
 		  Normalize m_normalize = new Normalize();
 		  try {
