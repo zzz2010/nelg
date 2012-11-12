@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.jppf.server.protocol.JPPFTask;
+import org.jppf.task.storage.MemoryMapDataProvider;
 
 import cern.colt.matrix.DoubleFactory1D;
 import cern.colt.matrix.DoubleMatrix1D;
@@ -22,6 +23,7 @@ public class FeatureExtractJob extends JPPFTask {
 	
 	ArrayList<FeatureSignal> IsThereFeatures;
 	ArrayList<FeatureSignal> ValThereFeatures;
+
 
 
 	public FeatureExtractJob(List<SimpleBEDFeature> target_signal_filtered,
@@ -66,6 +68,9 @@ public class FeatureExtractJob extends JPPFTask {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		MemoryMapDataProvider dataProvider=(MemoryMapDataProvider)getDataProvider();
+		common.loadDataProvider(dataProvider);
+		
 		logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
 		IsThereFeatures=new ArrayList<FeatureSignal>();
 		ValThereFeatures=new ArrayList<FeatureSignal>();

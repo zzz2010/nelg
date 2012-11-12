@@ -1,3 +1,5 @@
+import org.jppf.task.storage.MemoryMapDataProvider;
+
 
 public class common {
 
@@ -13,5 +15,42 @@ public class common {
 	static double Corr_cutoff=0.2;
 	static int threadNum=12;
 	static boolean NFSmode=false;
+	
+	
+	static void loadDataProvider(MemoryMapDataProvider dataProvider)
+	{
+		common.NFSmode=(Boolean) dataProvider.getValue("NFSmode");
+		common.tempDir=(String) dataProvider.getValue("tempDir");
+		common.dataDir=(String) dataProvider.getValue("dataDir");
+		common.outputDir=(String) dataProvider.getValue("outputDir");
+		common.onlyBestBin= (Boolean) dataProvider.getValue("onlyBestBin");
+		common.predictTarget_debug=(String) dataProvider.getValue("predictTarget_debug");
+		common.selectFeature_debug= (String) dataProvider.getValue("selectFeature_debug");
+		common.SignalRange= (Integer) dataProvider.getValue("SignalRange");
+		common.MinimumPeakNum= (Integer) dataProvider.getValue("MinimumPeakNum");
+		common.AUC_cutoff=  (Double) dataProvider.getValue("AUC_cutoff");
+		common.Corr_cutoff=  (Double) dataProvider.getValue("Corr_cutoff");
+		common.threadNum= (Integer) dataProvider.getValue("threadNum");
+	}
+	
+	static MemoryMapDataProvider getDataProvider()
+	{
+		MemoryMapDataProvider config=new MemoryMapDataProvider();
+		config.setValue("outputDir", outputDir);
+		config.setValue("tempDir", tempDir);
+		config.setValue("dataDir", dataDir);
+		config.setValue("SignalRange", SignalRange);
+		config.setValue("MinimumPeakNum", MinimumPeakNum);
+		config.setValue("predictTarget_debug", predictTarget_debug);
+		config.setValue("selectFeature_debug", selectFeature_debug);
+		config.setValue("onlyBestBin", onlyBestBin);
+		config.setValue("AUC_cutoff", AUC_cutoff);
+		config.setValue("Corr_cutoff", Corr_cutoff);
+		config.setValue("threadNum", threadNum);
+		config.setValue("NFSmode", NFSmode);
+
+		
+		return config;
+	}
 	
 }
