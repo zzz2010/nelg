@@ -182,7 +182,7 @@ public class FeatureSelectionJob implements  Runnable {
 			
 		        if (!SynonymCheck.isSynonym(feature_signal, target_signal) )
 		        {
-		        	
+		        	logger.debug("add Tasks:"+target_signal.FilePrefix+"_"+feature_signal.FilePrefix);
 		        	FeatureExtractJob FEJob=new FeatureExtractJob(target_signal_filtered, target_signal_bg, feature_signal, target_signal, featureExtractor, targetValue, targetNormValue);
 		        	try {
 		        		FEJob.setTimeoutSchedule(new JPPFSchedule(1000*60*60));
@@ -193,6 +193,10 @@ public class FeatureSelectionJob implements  Runnable {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} 
+		        }
+		        else
+		        {
+		        	logger.debug("Synonym filter:"+target_signal.FilePrefix+"_"+feature_signal.FilePrefix);
 		        }
 		    }
 		try {
