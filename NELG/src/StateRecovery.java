@@ -62,9 +62,10 @@ public class StateRecovery {
 	{
 		String path=key.replace('_', '/');
 		File subdir=new File(common.tempDir+path);
+		logger.debug("mkdir: "+subdir.getParentFile().getAbsolutePath());
 		if(!subdir.getParentFile().exists())
 		{
-			logger.debug("mkdir: "+subdir.getParentFile().getAbsolutePath());
+			
 			subdir.getParentFile().mkdir();
 		}
 		
