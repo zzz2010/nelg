@@ -17,6 +17,8 @@ public class SynonymCheck {
 	
 	static String firstCapital(String input)
 	{
+		if(input!=null&&input.length()>0)
+		{
 		String out=input.substring(0,1);
 		int i=1;
 		for ( i = 1; i < input.length(); i++) {
@@ -25,5 +27,7 @@ public class SynonymCheck {
 		}
 		out+=input.substring(1,i);
 		return out;
+		}
+		return "";
 	}
 }
