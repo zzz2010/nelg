@@ -37,6 +37,7 @@ public class ClassificationJob extends JPPFTask implements  Serializable {
 	
 	 public void run() {
 		 MemoryMapDataProvider dataProvider=(MemoryMapDataProvider)getDataProvider();
+		 if(dataProvider!=null)
 			common.loadDataProvider(dataProvider);
 		 System.out.println("this is the node executing task:"+JobTitle);
 //		 toFile();

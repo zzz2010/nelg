@@ -69,6 +69,7 @@ public class FeatureExtractJob extends JPPFTask {
 	public void run() {
 		// TODO Auto-generated method stub
 		MemoryMapDataProvider dataProvider=(MemoryMapDataProvider)getDataProvider();
+		if(dataProvider!=null)
 		common.loadDataProvider(dataProvider);
 		
 		logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
