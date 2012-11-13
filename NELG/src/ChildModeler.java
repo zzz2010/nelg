@@ -59,7 +59,7 @@ public class ChildModeler {
 		double auc=0;
 		ArrayList<Integer> selecedAttributes=new ArrayList<Integer>();
 		Instances data=getDatasetFromJob(job);
-		
+		 System.out.println("ClassificationJob:"+job.JobTitle);
 		NumericCleaner numCleaner=new NumericCleaner();
 		try {
 			numCleaner.setInputFormat(data);
@@ -73,7 +73,7 @@ public class ChildModeler {
 		Instances data2 =null;//filtered dataset
 		if(data.numAttributes()>Math.log(job.targetValue.size())/Math.log(2)+1)
 		{
-		
+			 System.out.println("Feature Selection, number of input features:"+data.numAttributes());
 		HashMap<String,Integer> FeatureNameMap=new HashMap<String, Integer>();
 		for (int i = 0; i < data.numAttributes(); i++) {
 			FeatureNameMap.put(data.attribute(i).name(),i);
@@ -121,7 +121,7 @@ public class ChildModeler {
 			}
 		}
 	  
-		
+		 System.out.println("Number of input features:"+data2.numAttributes());
 		//classifier selection
 		Classifier bestModeler=null;
 		double bestscore=-1;
@@ -147,6 +147,7 @@ public class ChildModeler {
 			eval1.crossValidateModel(modeler, data2, 5, new Random(1));
 			auc=eval1.areaUnderROC(1);
 			logger.debug(modeler.getClass().getName()+" auc:"+auc);
+			 System.out.println(modeler.getClass().getName()+" auc:"+auc);
 			if(bestscore<auc)
 			{
 				bestscore=auc;

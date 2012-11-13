@@ -26,6 +26,7 @@ public class NELGMain {
 		options.addOption("threadnum", true, "maximum thread number");
 		options.addOption("ram", false, "use ramdisk data folder");
 		options.addOption("debug", false, "use debug folder");
+		options.addOption("local", false, "disable all jppf communication");
 		options.addOption("nfs", false, "assign the feature extraction job to different node, assume they share the same file system");
 		options.addOption("target", true, "only predict the dataset containing this string");
 		options.addOption("feature", true, "only use the feature dataset containing this string");
@@ -47,6 +48,7 @@ public class NELGMain {
 				common.dataDir="./data"+"_ram/";
 				logger.info("using RAM data");
 			}
+
 			if(cmd.hasOption("debug"))
 			{
 				common.outputDir="./result_debug/";
@@ -65,6 +67,11 @@ public class NELGMain {
 				common.dataDir=appPath+common.dataDir;
 				common.outputDir=appPath+common.outputDir;
 			
+			}
+			if(cmd.hasOption("local"))
+			{
+				common.Localmode=true;
+				common.NFSmode=false;
 			}
 			if(cmd.hasOption("feature"))
 			{

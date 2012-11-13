@@ -313,20 +313,28 @@ public class FeatureSelectionJob implements  Runnable {
 		   // in the same order as the one in which the tasks where initially added the job.
 		if(job.getTasks().size()>0)
 		   try {
-			   if(common.NFSmode||resultsListener==null)//NFSmode using node to write, no need to send back
+			   if(common.Localmode)
 			   {
-			    resultsListener=new JPPFResultCollector(job);		  
+                  for (JPPFTask iterable_element : job.getTasks()) {
+                	  iterable_element.run();
+				} 
 			   }
-			   if(!common.NFSmode)
+			   else
 			   {
-				 executor.setLocalExecutionEnabled(true);
-			     job.setResultListener(resultsListener);
+				   if(common.NFSmode||resultsListener==null)//NFSmode using node to write, no need to send back
+				   {
+				    resultsListener=new JPPFResultCollector(job);		  
+				   }
+				   if(!common.NFSmode)
+				   {
+				     job.setResultListener(resultsListener);
+				   }
+				// set the job as non-blocking
+				   job.getSLA().setCancelUponClientDisconnect(false);
+				   job.setBlocking(false);
+				while (!executor.hasAvailableConnection()) Thread.sleep(1L);
+				 executor.submit(job);
 			   }
-			// set the job as non-blocking
-			   job.getSLA().setCancelUponClientDisconnect(false);
-			   job.setBlocking(false);
-			while (!executor.hasAvailableConnection()) Thread.sleep(1L);
-			 executor.submit(job);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
