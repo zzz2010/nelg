@@ -127,7 +127,7 @@ public class ChildModeler {
 		double bestscore=-1;
 		ArrayList<Classifier> modelerSet=new ArrayList<Classifier>();
 		modelerSet.add(new J48graft());
-		if(data2.numAttributes()>2)
+		if(data2.numAttributes()>2&&data2.numAttributes()<10)
 			modelerSet.add(new KStar());
 		if(data2.numAttributes()>3)
 			modelerSet.add(new Logistic());
