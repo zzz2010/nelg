@@ -314,16 +314,14 @@ public class NELGViewResult {
 	
 	public static DoubleMatrix2D LoadFeatureData(Collection<String> featNames,String targetName)
 	{
-		File dir=new File(common.tempDir);
+		File dir=new File(common.tempDir+targetName);
 		File[] files=dir.listFiles();
 		HashMap<String, String> featKey=new HashMap<String, String>(featNames.size());
 		for (int i = 0; i < files.length; i++) {
 			String flname=files[i].getName();
 			if(flname.endsWith("_bg"))
 				continue;
-			if(flname.startsWith(targetName))
-			{
-				for (String feat:featNames) {
+			for (String feat:featNames) {
 					if(flname.contains(feat))
 					{
 						featKey.put(feat, flname);
@@ -331,7 +329,7 @@ public class NELGViewResult {
 					}
 					
 				}
-			}
+			
 		}
 		
 		featNames.retainAll(featKey.keySet());
