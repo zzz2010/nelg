@@ -318,7 +318,10 @@ public class FeatureSelectionJob implements  Runnable {
 			    resultsListener=new JPPFResultCollector(job);		  
 			   }
 			   if(!common.NFSmode)
-			   job.setResultListener(resultsListener);
+			   {
+				 executor.setLocalExecutionEnabled(true);
+			     job.setResultListener(resultsListener);
+			   }
 			// set the job as non-blocking
 			   job.getSLA().setCancelUponClientDisconnect(false);
 			   job.setBlocking(false);
