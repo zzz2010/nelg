@@ -15,6 +15,7 @@ public class common {
 	static double Corr_cutoff=0.2;
 	static int threadNum=12;
 	static boolean NFSmode=false;
+	static boolean Localmode=false;
 	
 	
 	static void loadDataProvider(MemoryMapDataProvider dataProvider)

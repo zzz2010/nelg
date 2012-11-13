@@ -54,7 +54,9 @@ public class MotherModeler {
 
 	FeatureSelectionJob.resultsListener=new ClassificationResultListener();
 		
-		 JPPFClient jppfCLient = new JPPFClient();
+		 JPPFClient jppfCLient = null;
+		 if(!common.Localmode)
+		 jppfCLient=new JPPFClient();
 		//take out one as class label, the rest as feature data
 		for (TrackRecord target_signal : SignalPool) {
 			System.out.println(target_signal.FilePrefix);
