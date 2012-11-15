@@ -189,7 +189,9 @@ public static ArrayList<SimpleBEDFeature> extractNegativeSignal_Gauss(List<Simpl
 		{
 			start=(int) (gaplist.get(selgap).getEnd()+regionlen*(-deviate/4));
 		}
-		outputSignal.add(new SimpleBEDFeature(start-bgregion_size/2, start+bgregion_size/2, chrom));
+		SimpleBEDFeature temp = new SimpleBEDFeature(start-bgregion_size/2, start+bgregion_size/2, chrom);
+		temp.setScore(-1);
+		outputSignal.add(temp);
 	}
 	return outputSignal;
 }
@@ -238,7 +240,9 @@ public static ArrayList<SimpleBEDFeature> extractNegativeSignal_Uniform(List<Sim
 		String chrom=gaplist.get(selgap).getChr();
 		int regionlen=gaplist.get(selgap).getEnd()-gaplist.get(selgap).getStart();
 		int start=(int) (gaplist.get(selgap).getStart()+regionlen*(pointer-cumprob.get(selgap)));
-		outputSignal.add(new SimpleBEDFeature(start-bgregion_size/2, start+bgregion_size/2, chrom));
+		SimpleBEDFeature temp = new SimpleBEDFeature(start-bgregion_size/2, start+bgregion_size/2, chrom);
+		temp.setScore(-1);
+		outputSignal.add(temp);
 	}
 	return outputSignal;
 }
