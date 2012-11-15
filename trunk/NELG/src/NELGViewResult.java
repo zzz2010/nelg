@@ -1,5 +1,6 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.Paint;
 import java.io.File;
 import java.io.FileFilter;
@@ -41,7 +42,9 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.GrayPaintScale;
 import org.jfree.chart.renderer.LookupPaintScale;
+import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -58,6 +61,7 @@ import org.jfree.util.ArrayUtilities;
 import org.tc33.jheatchart.HeatChart;
 
 
+import cern.colt.function.DoubleDoubleFunction;
 import cern.colt.list.DoubleArrayList;
 import cern.colt.list.IntArrayList;
 import cern.colt.matrix.DoubleFactory1D;
@@ -281,11 +285,18 @@ public class NELGViewResult {
 				
 				//heatmap
 				Set<String> selFeatNames=SingleTrackFeatures.keySet();
+				//load 1/2 background peak
 				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_")[0]);
 				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
+//				for (int i = 0; i < targetvalue.size(); i++) {
+//					if(Double.isNaN(targetvalue.get(i)))
+//					{
+//						targetvalue.set(i, -1);
+//					}
+//				}
 				int stridesize=8;
 				int targetColorwidth=stridesize;
-				DenseDoubleMatrix2D targetvalue2=new DenseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
+				SparseDoubleMatrix2D targetvalue2=new SparseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
 				for (int i = 0; i < targetvalue.size(); i++) {
 					//use half brand for target value, first half as separate line to feature
 					for (int j = 0; j < targetColorwidth/2; j++) {
@@ -324,7 +335,7 @@ public class NELGViewResult {
 			for (String feat:featNames) {
 					if(flname.contains(feat))
 					{
-						featKey.put(feat, flname);
+						featKey.put(feat, targetName+"/"+flname);
 						break;
 					}
 					
@@ -338,15 +349,22 @@ public class NELGViewResult {
 		for (String feat : featNames) {
 			String storekey=featKey.get(feat);
 			DoubleMatrix2D temp=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey);
+			DoubleMatrix2D temp_bg=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey+"_bg");
 			int[] rowIndexes=new int[temp.rows()];
+			int[] rowIndexes_bg=new int[temp.rows()/2];
 			for (int i = 0; i < temp.rows(); i++) {
 				rowIndexes[i]=i;
+				if(i<temp.rows()/2)
+				rowIndexes_bg[i]=i;
 			}
 			temp=temp.viewSelection(rowIndexes, columnIndexes);
+			temp_bg=temp_bg.viewSelection(rowIndexes_bg, columnIndexes);
 			if(temp==null)
 				continue;
+			//append backgound
+			temp=DoubleFactory2D.sparse.appendRows(temp, temp_bg);
 			if(combined==null)
-				combined=temp;
+				combined= temp;
 			else
 				combined=DoubleFactory2D.sparse.appendColumns(combined, temp);
 		}
@@ -359,13 +377,23 @@ public class NELGViewResult {
 		for (int i = 0; i < matrix.columns(); i++) {
 			DoubleMatrix1D vec= matrix.viewColumn(i);
 			double m=vec.zSum()/vec.size();
+			if(Double.isNaN(m))
+				m=1;
+			if(m>0.0)
+			{
 				for (int j = 0; j < vec.size(); j++) {
-					vec.set(j, Math.log((vec.getQuick(j)+1)/(m+1)));
+					double temp=Math.log((vec.getQuick(j)+1)/(m+1));
+					vec.set(j, temp);
+				}
+			}
+			else
+				for (int j = 0; j < vec.size(); j++) {
+					vec.set(j, Double.NaN);
 				}
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
-			kmean.setNumClusters(5);
+			kmean.setNumClusters(10);
 			Instances data=matrix2instances( matrix);
 			
 			kmean.buildClusterer(data);
@@ -432,8 +460,10 @@ public class NELGViewResult {
 		return ret;
 	}
 	
+	
 	public static void drawHeatMap(DoubleMatrix2D matrix, String title, List<String> featName, int stride)
 	{
+		 
 		 String pngfile=outputDir+"/"+title+".heatmap.png";
 		 ValueAxis numberaxis = new NumberAxis("Feature");
 		 featName.add("targetValue");
@@ -454,6 +484,19 @@ public class NELGViewResult {
 			}
 		}
 		
+		 double minvalue=0;
+		 for (int i = 0; i < matrix.rows(); i++) {
+			for (int j = 0; j < matrix.columns(); j++) {
+				double temp=matrix.getQuick(i, j);
+				if(!Double.isNaN(temp))
+				{
+					if(temp<minvalue)
+						minvalue=temp;
+				}
+
+			}
+		}
+		 
 		 SymbolAxis symaxis=new SymbolAxis("", strAttr);
 		 symaxis.setTickUnit(new NumberTickUnit(stride/2));
 //		 symaxis.setRange(-stride/2,matrix.columns());
@@ -462,12 +505,17 @@ public class NELGViewResult {
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
 		 xyzdataset.addSeries(title, sparseMatrix(matrix));
 		 XYBlockRenderer xyblockrenderer = new XYBlockRenderer();
-	        LookupPaintScale lookuppaintscale = new LookupPaintScale(-1D, Double.MAX_VALUE, Color.black);
-	        lookuppaintscale.add(0D, Color.blue);
-	        lookuppaintscale.add(0.5D, Color.green);
-	        lookuppaintscale.add(1D, Color.orange);
-	        lookuppaintscale.add(2D, Color.red);
-	        xyblockrenderer.setPaintScale(lookuppaintscale);
+//	        LookupPaintScale lookuppaintscale = new LookupPaintScale(-1D, Double.MAX_VALUE, Color.black);
+//	        lookuppaintscale.add(0D, Color.blue);
+//	        lookuppaintscale.add(0.5D, Color.green);
+//	        lookuppaintscale.add(1D, Color.orange);
+//	        lookuppaintscale.add(2D, Color.red);
+//	        xyblockrenderer.setPaintScale(lookuppaintscale);
+	        
+
+	        xyblockrenderer.setPaintScale(getPaintScale(minvalue, 5D));
+	        
+	        
 	        XYPlot xyplot = new XYPlot(xyzdataset, numberaxis1,symaxis, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
 	        xyplot.setDomainGridlinePaint(Color.white);
 	        xyplot.setRangeGridlinePaint(Color.white);
@@ -484,6 +532,48 @@ public class NELGViewResult {
 	}
 	
 	
+
+	public static PaintScale getPaintScale(double min, double max)
+	{
+	       //... Setting PaintScale ...//
+        LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, Color.GRAY);
+        int numscale=100;
+        double stepsize=(max-min)/numscale;
+        Color purle=new Color(255, 0, 255);
+        ps.add(min, Color.GRAY);
+        double valPoint=min;
+        int num_trans=numscale/3;
+       for (int i = 0; i < num_trans; i++) {
+    	   ps.add(valPoint=valPoint+stepsize, blend(Color.blue,Color.GRAY,((double)i)/(num_trans)));
+	  }
+       for (int i = 0; i < num_trans; i++) {
+    	   ps.add(valPoint=valPoint+stepsize, blend(Color.GREEN,Color.blue,((double)i)/(num_trans)));
+	  }
+       for (int i = 0; i < num_trans; i++) {
+    	   ps.add(valPoint=valPoint+stepsize, blend(Color.RED,Color.GREEN,((double)i)/(num_trans)));
+	  }
+       ps.add(Double.MAX_VALUE,Color.RED);
+        return ps;
+	}
+	
+	 public static Color blend (Color color1, Color color2, double ratio)
+	  {
+	    float r  = (float) ratio;
+	    float ir = (float) 1.0 - r;
+
+	    float rgb1[] = new float[3];
+	    float rgb2[] = new float[3];    
+
+	    color1.getColorComponents (rgb1);
+	    color2.getColorComponents (rgb2);    
+
+	    Color color = new Color (rgb1[0] * r + rgb2[0] * ir, 
+	                             rgb1[1] * r + rgb2[1] * ir, 
+	                             rgb1[2] * r + rgb2[2] * ir);
+	    
+	    return color;
+	  }
+	 
 	public static double linearRegression(Instances data)
 	{
 		double corr=0;
