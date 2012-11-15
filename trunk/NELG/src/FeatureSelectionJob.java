@@ -209,7 +209,7 @@ public class FeatureSelectionJob implements  Runnable {
 			 List<JPPFTask> jobresult =null;
 			if(common.NFSmode)
 			{
-				while (!executor.hasAvailableConnection()) Thread.sleep(1L);
+//				while (!executor.hasAvailableConnection()) Thread.sleep(1L);
 				jobresult=NFSclient.submit(localjob);
 				
 			}
@@ -332,7 +332,7 @@ public class FeatureSelectionJob implements  Runnable {
 				// set the job as non-blocking
 				   job.getSLA().setCancelUponClientDisconnect(false);
 				   job.setBlocking(false);
-				while (!executor.hasAvailableConnection()) Thread.sleep(1L);
+//				while (!executor.hasAvailableConnection()) Thread.sleep(1L);
 				 executor.submit(job);
 			   }
 			
