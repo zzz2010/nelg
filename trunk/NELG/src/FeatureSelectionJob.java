@@ -231,7 +231,8 @@ public class FeatureSelectionJob implements  Runnable {
 				FeatureExtractJob	result1=(FeatureExtractJob)jobresult.get(i);
 				 if (result1.getException() != null) {
 				       // process the exception here ...
-					 logger.debug(result1.feature_signal.ExperimentId+" got exception.");
+					// logger.debug(result1.feature_signal.ExperimentId+" got exception.");
+					 logger.debug(result1.getException().getMessage());
 				     } else {
 				       // process the result here ...
 							IsThereFeatures.addAll(result1.IsThereFeatures);
