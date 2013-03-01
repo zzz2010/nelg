@@ -82,7 +82,7 @@ public class FileStorageAdapter implements StorageAdapter{
 	
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("alltracklist.txt not found.");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

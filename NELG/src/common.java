@@ -16,6 +16,7 @@ public class common {
 	static int threadNum=12;
 	static boolean NFSmode=false;
 	static boolean Localmode=false;
+	static boolean SynonymCheck=true;
 	
 	
 	static void loadDataProvider(MemoryMapDataProvider dataProvider)
