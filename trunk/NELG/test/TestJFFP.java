@@ -9,7 +9,7 @@ import org.jppf.server.protocol.JPPFTask;
 
 public class TestJFFP extends JPPFTask {
 
-	@Override
+	
 	public void run() {
 		// TODO Auto-generated method stub
 		   // write your task code here.
