@@ -1,5 +1,7 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +66,7 @@ public class PeakClassifier {
 					peakfile2=cmd.getOptionValue("peakfile2");;
 				}
 				
-				common.tempDir="./cache_debug/";
+				
 				if(cmd.hasOption("outputDir"))
 				{
 					common.outputDir=cmd.getOptionValue("outputDir");
@@ -102,5 +104,28 @@ public class PeakClassifier {
 		    FeatureSelectionJob FSJob=new FeatureSelectionJob(peakTrack1, peakTrack2,SignalPool,jppfCLient);
 		    FSJob.run();
 			
+		    /////////////////view result///////////////////////
+		    String resultfile="";
+		    File outdir=new File(common.outputDir);
+		    for(File fl :outdir.listFiles())
+		    {
+		    	if(fl.getName().indexOf(peakTrack1.ExperimentId)>-1&&fl.getName().endsWith("cr"))
+		    	{
+		    		resultfile=fl.getAbsolutePath();
+		    		break;
+		    	}
+		    }
+		    FileInputStream fileIn;
+			 try {
+				fileIn = new FileInputStream(resultfile);
+				 ObjectInputStream in = new ObjectInputStream(fileIn);
+				 ClassificationResult Result=(ClassificationResult)in.readObject();
+				 NELGViewResult.ViewClassificationResult(Result);
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				System.out.println(e.getMessage());
+			} 
+		    
 		}
 }
