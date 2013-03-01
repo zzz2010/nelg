@@ -17,7 +17,7 @@ public class EqualBinFeatureExtractor implements FeatureExtractor {
 		this.numBin = numBin;
 	}
 
-	@Override
+	
 	public SparseDoubleMatrix2D extractSignalFeature(TrackRecord signaltrack,
 			List<SimpleBEDFeature> query) {
 		SparseDoubleMatrix2D feature_BinSignal=SignalTransform.OverlapBinSignal(signaltrack, query,numBin);

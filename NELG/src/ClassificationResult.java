@@ -24,7 +24,7 @@ public class ClassificationResult implements Serializable {
 	String JobTitle="";
 	
 	
-	@Override
+	
 	public String toString() {
 		// TODO Auto-generated method stub
 		 String featStr="";

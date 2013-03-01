@@ -56,7 +56,7 @@ public class TrackRecord implements Serializable{
 		return DBoperator.overlapBinSignal_fixStepSize(this, query_regions, stepsize);
 	}
 
-	@Override
+	
 	public String toString() {
 		// TODO Auto-generated method stub
 		return FilePrefix;

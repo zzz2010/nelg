@@ -28,12 +28,12 @@ public class FeatureSignal implements Comparable,Serializable  {
 		this.featureSelectScore = featureSelectScore;
 		this.binId = binId;
 	}
-	@Override
+	
 	public int compareTo(Object arg0) {
 		// TODO Auto-generated method stub
 		return (int) -(this.featureSelectScore - ((FeatureSignal) arg0).featureSelectScore); //decrease order
 	}
-	@Override
+	
 	public String toString() {
 		// TODO Auto-generated method stub
 		return FeatureId+" at bin "+binId+", score:"+featureSelectScore;

@@ -5,7 +5,7 @@ import org.broad.tribble.bed.BEDFeature;
 
 public class BEDPositionComparator implements Comparator<BEDFeature> {
 
-	@Override
+	
 	public int compare(BEDFeature o1, BEDFeature o2) {
 		// TODO Auto-generated method stub
 		if(o1.getChr().equalsIgnoreCase(o2.getChr()))

@@ -134,13 +134,13 @@ public class FileStorageAdapter implements StorageAdapter{
 		return temp;
 	}
 	
-	@Override
+	
 	public List<String> getCellLineName(String assembly) {
 		// TODO Auto-generated method stub
 		return new ArrayList<String>(Assembly2CellLine.get(assembly));
 	}
 
-	@Override
+	
 	public List<TrackRecord> getTrackId_inCellLine(String assemble,
 			String CellLineName) {
 		// TODO Auto-generated method stub
@@ -160,7 +160,7 @@ public class FileStorageAdapter implements StorageAdapter{
 		return filteredRecord;
 	}
 
-	@Override
+	
 	public TrackRecord getTrackById(String trackId) {
 		// TODO Auto-generated method stub
 		return DataBase.get(trackId);
@@ -187,7 +187,7 @@ public class FileStorageAdapter implements StorageAdapter{
 		return peakList;
 
 	}
-	@Override
+	
 	public List<SimpleBEDFeature> getPeakData(TrackRecord tr) {
 		// TODO Auto-generated method stub
 		List<SimpleBEDFeature>  peakList=new ArrayList<SimpleBEDFeature>();
@@ -206,7 +206,7 @@ public class FileStorageAdapter implements StorageAdapter{
 		return peakList;
 	}
 
-	@Override
+	
 	public List<SimpleBEDFeature> getSignalContigRegion(TrackRecord tr) {
 		// TODO Auto-generated method stub
 		List<SimpleBEDFeature> SignalRegion=new ArrayList<SimpleBEDFeature>();
