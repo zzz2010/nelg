@@ -65,7 +65,7 @@ public class FeatureExtractJob extends JPPFTask {
 
 
 	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(FeatureExtractJob.class);
-	@Override
+	
 	public void run() {
 		// TODO Auto-generated method stub
 		MemoryMapDataProvider dataProvider=(MemoryMapDataProvider)getDataProvider();

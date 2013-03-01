@@ -23,7 +23,7 @@ public class SimpleBEDFeature implements BEDFeature, Serializable {
     //private String identifier;
     private String link;
 	
-	@Override
+	
 	public List<Exon> getExons() {
 		// TODO Auto-generated method stub
 		return null;
@@ -49,7 +49,7 @@ public class SimpleBEDFeature implements BEDFeature, Serializable {
 		 link=feat.getLink();
 		 description=feat.getDescription();
 	 }
-	    @Override
+	    
 	public String toString() {
 		// TODO Auto-generated method stub
 		return this.chr+":"+ this.start+"-"+ this.end;

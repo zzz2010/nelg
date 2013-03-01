@@ -58,7 +58,7 @@ int level=8;
 		return feature_Signal;
 	}
 	
-	@Override
+	
 	public SparseDoubleMatrix2D extractSignalFeature(TrackRecord signaltrack,
 			List<SimpleBEDFeature> query) {
 		int binNum=(int) (Math.pow(2, level)-1);
