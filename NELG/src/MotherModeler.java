@@ -47,9 +47,7 @@ public class MotherModeler {
 		}
 		else
 		  executor = new PooledExecutor(2);
-//		
-//		
-		
+
 		executor.setKeepAliveTime(1000 * 60*500 );
 
 	FeatureSelectionJob.resultsListener=new ClassificationResultListener();
@@ -88,8 +86,7 @@ public class MotherModeler {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-						 
+
 		}
 		
 		try {

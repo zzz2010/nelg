@@ -335,6 +335,8 @@ public class FeatureSelectionJob implements  Runnable {
 			   {
                   for (JPPFTask iterable_element : job.getTasks()) {
                 	  iterable_element.run();
+                	ClassificationResult reslut=(ClassificationResult) iterable_element.getResult();
+                	 reslut.toFile();
 				} 
 			   }
 			   else
