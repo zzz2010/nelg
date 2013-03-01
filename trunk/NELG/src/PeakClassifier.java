@@ -60,7 +60,7 @@ public class PeakClassifier {
 				}
 				if(cmd.hasOption("peakfile2"))
 				{
-					peakfile1=cmd.getOptionValue("peakfile2");;
+					peakfile2=cmd.getOptionValue("peakfile2");;
 				}
 				
 				common.tempDir="./cache_debug/";
@@ -78,13 +78,12 @@ public class PeakClassifier {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+			common.SynonymCheck=false;
+			FileUtils.deletePath(new File(common.tempDir));
 			//create directory
 			(new File(common.outputDir)).mkdir();
 			(new File(common.tempDir)).mkdir();
 			
-			ArrayList<String> Assembly=new ArrayList<String>(); 
-			Assembly.add("hg19");
 			File datafolder=new File(common.dataDir);
 			//////////////////prepare track record//////////////////
 			TrackRecord peakTrack1=TrackRecord.createTrackRecord_peak(peakfile1);
@@ -92,7 +91,7 @@ public class PeakClassifier {
 			List<TrackRecord>  SignalPool=new ArrayList<TrackRecord>();
 			for(File sfl:datafolder.listFiles())
 			{
-				if(sfl.getName().length()<4)
+				if(!sfl.getName().endsWith("bigWig"))
 					continue;
 				SignalPool.add(TrackRecord.createTrackRecord_signal(sfl.getAbsolutePath()));
 			}

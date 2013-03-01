@@ -37,12 +37,13 @@ public class TrackRecord implements Serializable{
 		TrackRecord tr=new TrackRecord();
 		tr.hasPeak=true;
 		tr.hasSignal=false;
+		tr.ExperimentType="unknown";
 		File file = new File(peakfile);
 		tr.DBoperator=new FileStorageAdapter(file.getParent());
 		String[] tokens = file.getName().split("\\.(?=[^\\.]+$)");
 		tr.ExperimentId=tokens[0];
 		tr.FilePrefix=tokens[0];
-		tr.peakSuffix=tokens[1];
+		tr.peakSuffix="."+tokens[1];
 		return tr;
 	}
 	
@@ -50,6 +51,7 @@ public class TrackRecord implements Serializable{
 	{
 		TrackRecord tr=new TrackRecord();
 		tr.hasPeak=false;
+		tr.ExperimentType="unknown";
 		tr.hasSignal=true;
 		File file = new File(signalfile);
 		tr.DBoperator=new FileStorageAdapter(file.getParent());
@@ -57,7 +59,7 @@ public class TrackRecord implements Serializable{
 		tr.ExperimentId=tokens[0];
 		tr.FilePrefix=tokens[0];
 		tr.ReplicateSuffix=new ArrayList<String>();
-		tr.ReplicateSuffix.add(tokens[1]);
+		tr.ReplicateSuffix.add("."+tokens[1]);
 		return tr;
 	}
 	

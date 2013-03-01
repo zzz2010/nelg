@@ -4,6 +4,8 @@ public class SynonymCheck {
 	static boolean isSynonym(TrackRecord t1, TrackRecord t2)
 	{
 
+		if(!common.SynonymCheck)
+			return false;
 		
 		if(t1.ExperimentType.contains("Cage")&&t2.ExperimentType.contains("Cage"))
 			return true;
