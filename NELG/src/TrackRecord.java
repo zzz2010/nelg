@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,35 @@ public class TrackRecord implements Serializable{
 	public String getTrackId()
 	{
 		return FilePrefix;
+	}
+	
+	public static TrackRecord createTrackRecord_peak(String peakfile)
+	{
+		TrackRecord tr=new TrackRecord();
+		tr.hasPeak=true;
+		tr.hasSignal=false;
+		File file = new File(peakfile);
+		tr.DBoperator=new FileStorageAdapter(file.getParent());
+		String[] tokens = file.getName().split("\\.(?=[^\\.]+$)");
+		tr.ExperimentId=tokens[0];
+		tr.FilePrefix=tokens[0];
+		tr.peakSuffix=tokens[1];
+		return tr;
+	}
+	
+	public static TrackRecord createTrackRecord_signal(String signalfile)
+	{
+		TrackRecord tr=new TrackRecord();
+		tr.hasPeak=false;
+		tr.hasSignal=true;
+		File file = new File(signalfile);
+		tr.DBoperator=new FileStorageAdapter(file.getParent());
+		String[] tokens = file.getName().split("\\.(?=[^\\.]+$)");
+		tr.ExperimentId=tokens[0];
+		tr.FilePrefix=tokens[0];
+		tr.ReplicateSuffix=new ArrayList<String>();
+		tr.ReplicateSuffix.add(tokens[1]);
+		return tr;
 	}
 	
 	public List<SimpleBEDFeature> getPeakData()

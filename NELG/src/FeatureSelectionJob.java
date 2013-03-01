@@ -45,7 +45,7 @@ public class FeatureSelectionJob implements  Runnable {
 	JPPFClient executor ;
 	ArrayList<FeatureSignal> IsThereFeatures;
 	ArrayList<FeatureSignal> ValThereFeatures;
-
+	List<SimpleBEDFeature>target_signal_bg=null;
 	
 	public FeatureSelectionJob(TrackRecord target_signal,
 			List<TrackRecord> signalPool,JPPFClient Executor ) {
@@ -53,6 +53,20 @@ public class FeatureSelectionJob implements  Runnable {
 		executor=Executor;
 		this.target_signal = target_signal;
 		SignalPool = signalPool;
+	}
+	
+	
+	public FeatureSelectionJob(TrackRecord target_signal,TrackRecord target_bg_track,
+			List<TrackRecord> signalPool,JPPFClient Executor ) {
+		super();
+		executor=Executor;
+		this.target_signal = target_signal;
+		SignalPool = signalPool;
+		List<SimpleBEDFeature>target_signal_bg=target_bg_track.getPeakData();
+		//make negative score
+		for (int i = 0; i < target_signal_bg.size(); i++) {
+			target_signal_bg.get(i).setScore(0-target_signal_bg.get(i).getScore());
+		}
 	}
 
 	@Override
@@ -69,8 +83,10 @@ public class FeatureSelectionJob implements  Runnable {
 		{
 			if(target_signal_filtered.size()<50)
 				return;
-			List<SimpleBEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
-		  	DoubleMatrix1D targetValue=SignalTransform.BedFeatureToValues(target_signal_filtered);
+			if(target_signal_bg==null)
+				target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
+		  	
+			DoubleMatrix1D targetValue=SignalTransform.BedFeatureToValues(target_signal_filtered);
 		  	targetValue=DoubleFactory1D.sparse.append(targetValue, SignalTransform.BedFeatureToValues(target_signal_bg));
 		  
 		  	DoubleMatrix1D targetNormValue=SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_signal_filtered));
@@ -140,7 +156,8 @@ public class FeatureSelectionJob implements  Runnable {
 	  		return;
 	  	}
 	  	
-	  	List<SimpleBEDFeature>target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
+	  	if(target_signal_bg==null)
+	  	      target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
 	  	
 	  	
 	  	StateRecovery.saveCache_BEDFeatureList(target_signal_bg, storekey+"bg.bed");
