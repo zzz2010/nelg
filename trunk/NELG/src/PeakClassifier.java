@@ -39,6 +39,7 @@ public class PeakClassifier {
 			String peakfile2="";
 			common.Localmode=true;
 			common.NFSmode=false;
+			
 			//parsing paramters
 			try {
 				String appPath=new File(".").getCanonicalPath()+"/";
@@ -95,7 +96,7 @@ public class PeakClassifier {
 					continue;
 				SignalPool.add(TrackRecord.createTrackRecord_signal(sfl.getAbsolutePath()));
 			}
-			//////////////////exact feature data////////////////////
+			//////////////////extract feature data////////////////////
 			FeatureSelectionJob.resultsListener=new ClassificationResultListener();
 				 JPPFClient jppfCLient = null;
 		    FeatureSelectionJob FSJob=new FeatureSelectionJob(peakTrack1, peakTrack2,SignalPool,jppfCLient);
