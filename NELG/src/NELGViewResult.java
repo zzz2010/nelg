@@ -286,7 +286,8 @@ public class NELGViewResult {
 				//heatmap
 				Set<String> selFeatNames=SingleTrackFeatures.keySet();
 				//load 1/2 background peak
-				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_")[0]);
+				//Arrays.toString(result.JobTitle.split("_"))).replaceAll("\\[|\\]", "").replaceAll(", ","\t")
+				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_(?!.*_)")[0]);
 				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
 //				for (int i = 0; i < targetvalue.size(); i++) {
 //					if(Double.isNaN(targetvalue.get(i)))
