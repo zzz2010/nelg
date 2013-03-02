@@ -286,8 +286,7 @@ public class NELGViewResult {
 				//heatmap
 				Set<String> selFeatNames=SingleTrackFeatures.keySet();
 				//load 1/2 background peak
-				//Arrays.toString(result.JobTitle.split("_"))).replaceAll("\\[|\\]", "").replaceAll(", ","\t")
-				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_(?!.*_)")[0]);
+				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_(?!.*_)")[0]); //only split the last "_"
 				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
 //				for (int i = 0; i < targetvalue.size(); i++) {
 //					if(Double.isNaN(targetvalue.get(i)))
@@ -352,11 +351,12 @@ public class NELGViewResult {
 			String storekey=featKey.get(feat);
 			DoubleMatrix2D temp=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey);
 			DoubleMatrix2D temp_bg=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey+"_bg");
+			int bgrowCnt=Math.min(temp.rows()/2, temp_bg.rows());
 			int[] rowIndexes=new int[temp.rows()];
-			int[] rowIndexes_bg=new int[temp.rows()/2];
+			int[] rowIndexes_bg=new int[bgrowCnt];
 			for (int i = 0; i < temp.rows(); i++) {
 				rowIndexes[i]=i;
-				if(i<temp.rows()/2)
+				if(i<bgrowCnt)
 				rowIndexes_bg[i]=i;
 			}
 			temp=temp.viewSelection(rowIndexes, columnIndexes);
