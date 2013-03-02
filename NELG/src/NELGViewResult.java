@@ -527,6 +527,7 @@ public class NELGViewResult {
 	        
 	        try {
 				ChartUtilities.saveChartAsPNG(new File(pngfile), jfreechart, 800, 600);
+				System.out.println("Draw heatmap to file: "+pngfile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
