@@ -3,6 +3,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -15,6 +19,10 @@ import org.apache.log4j.PropertyConfigurator;
 import org.jppf.client.JPPFClient;
 import org.jppf.utils.FileUtils;
 
+import cern.colt.matrix.DoubleFactory2D;
+import cern.colt.matrix.DoubleMatrix1D;
+import cern.colt.matrix.DoubleMatrix2D;
+
 import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
 
 
@@ -24,6 +32,21 @@ public class PeakClassifier {
 		 * @param args
 		 */
 		 public static int max_threadNum=4;
+		 
+		 
+			public static void drawSignalAroundPeakBatch(Collection<TrackRecord> signalPool,String targetName,List<SimpleBEDFeature> query)
+			{
+				DoubleMatrix1D targetValue = SignalTransform.BedFeatureToValues(query);
+				EqualBinFeatureExtractor FE=new EqualBinFeatureExtractor(8);
+				for (TrackRecord feat : signalPool) {
+					
+					DoubleMatrix2D temp=FE.extractSignalFeature(feat, query);
+
+					NELGViewResult.drawSignalAroundPeakCurve(temp, targetValue, feat.ExperimentId, targetName);
+				}
+					
+			}
+			
 		public static void main(String[] args) {
 			PropertyConfigurator.configure( "./log4j.properties" ); 
 			// TODO Auto-generated method stub
@@ -103,7 +126,21 @@ public class PeakClassifier {
 				 JPPFClient jppfCLient = null;
 		    FeatureSelectionJob FSJob=new FeatureSelectionJob(peakTrack1, peakTrack2,SignalPool,jppfCLient);
 		    FSJob.run();
-			
+		    /////////////////plot signal around peak///////////////////////
+		    List<SimpleBEDFeature> query =new ArrayList<SimpleBEDFeature>( FSJob.target_signal_filtered);
+		    query.addAll(FSJob.target_signal_bg);
+		    HashSet<TrackRecord> SelectedSignalPool=new HashSet<TrackRecord>();
+		    HashSet<String> selectedName=new HashSet<String>();
+		    for (FeatureSignal itFea : FSJob.IsThereFeatures) {
+		    	selectedName.add(itFea.FeatureId);
+			}
+		    for (TrackRecord signal_track : SignalPool) {
+				if(selectedName.contains(signal_track.ExperimentId))
+				{
+					SelectedSignalPool.add(signal_track);
+				}
+			}
+		    drawSignalAroundPeakBatch(SelectedSignalPool, peakTrack1.ExperimentId, query);
 		    /////////////////view result///////////////////////
 		    String resultfile="";
 		    File outdir=new File(common.outputDir);
