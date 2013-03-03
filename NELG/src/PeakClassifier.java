@@ -134,13 +134,15 @@ public class PeakClassifier {
 		    HashSet<String> selectedName=new HashSet<String>();
 		    for (FeatureSignal itFea : FSJob.IsThereFeatures) {
 		    	selectedName.add(itFea.FeatureId);
-		    	System.out.println(itFea.FeatureId);
+		    	
 			}
+		    System.out.println(selectedName.toString());
 		    System.out.println("=============================");
 		    for (TrackRecord signal_track : SignalPool) {
-		    	System.out.println(signal_track.ExperimentId);
+		    
 				if(selectedName.contains(signal_track.ExperimentId))
 				{
+					System.out.println(signal_track.ExperimentId);
 					SelectedSignalPool.add(signal_track);
 				}
 			}
