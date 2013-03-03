@@ -23,11 +23,12 @@ public class common {
 	
 	static DoubleMatrix2D RowNormalizeMatrix(DoubleMatrix2D matrix)
 	{
+		double smallnum=1.0/SignalRange;
 		DoubleMatrix2D matrix2=matrix.copy();
 		for (int i = 0; i < matrix.rows(); i++) {
-			double sum=matrix.viewRow(i).zSum();
+			double sum=matrix.viewRow(i).zSum()+matrix2.columns()*smallnum;
 			for (int j = 0; j < matrix2.columns(); j++) {
-				matrix2.setQuick(i, j, matrix.getQuick(i, j)/sum);
+				matrix2.setQuick(i, j, (matrix.getQuick(i, j)+smallnum)/sum);
 			}
 		}
 		return matrix2;
