@@ -16,7 +16,7 @@ public class MultiScaleFeatureExtractor implements FeatureExtractor {
 	 * 
 	 */
 	private static final long serialVersionUID = 8219547590510791987L;
-	boolean isRowNormalized=false;
+	boolean isRowNormalized=true;
 int level=8;
 
 	public MultiScaleFeatureExtractor(int level) {
