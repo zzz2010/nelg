@@ -290,7 +290,7 @@ public class NELGViewResult {
 				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
 				
 				
-				drawSignalAroundPeakBatch(selFeatNames, result.JobTitle.split("_(?!.*_)")[0], targetvalue);
+			//	drawSignalAroundPeakBatch(selFeatNames, result.JobTitle.split("_(?!.*_)")[0], targetvalue);
 //				for (int i = 0; i < targetvalue.size(); i++) {
 //					if(Double.isNaN(targetvalue.get(i)))
 //					{
@@ -416,9 +416,7 @@ public class NELGViewResult {
 						featKey.put(feat, targetName+"/"+flname);
 						break;
 					}
-					
 				}
-			
 		}	
 		featNames.retainAll(featKey.keySet());
 		DoubleMatrix2D combined=null;
