@@ -328,7 +328,7 @@ public class NELGViewResult {
 	
 	public static void drawSignalAroundPeakCurve(DoubleMatrix2D signal_matrix,DoubleMatrix1D targetvalue,String signalName, String jobTitle )
 	{
-		String pngfile= outputDir+"/"+jobTitle+"_"+signalName+".png";
+		String pngfile= common.outputDir+"/"+jobTitle+"_"+signalName+".png";
 		
 		//////////////prepare data points/////////////////
 		XYSeriesCollection dataset = new XYSeriesCollection(); 
