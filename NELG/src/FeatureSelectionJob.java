@@ -171,8 +171,8 @@ public class FeatureSelectionJob implements  Runnable {
 
 		
 		boolean onlyBestBin=false;
-//		FeatureExtractor featureExtractor=new EqualBinFeatureExtractor(20);
-		FeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
+		FeatureExtractor featureExtractor=new EqualBinFeatureExtractor(20);
+//		FeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 		 JPPFJob localjob = new JPPFJob(common.getDataProvider());
 		 localjob.setName("local_"+target_signal.FilePrefix);
