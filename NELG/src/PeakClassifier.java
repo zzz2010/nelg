@@ -41,7 +41,7 @@ public class PeakClassifier {
 				for (TrackRecord feat : signalPool) {
 					
 					DoubleMatrix2D temp=FE.extractSignalFeature(feat, query);
-
+					System.out.println(feat.ExperimentId);
 					NELGViewResult.drawSignalAroundPeakCurve(temp, targetValue, feat.ExperimentId, targetName);
 				}
 					
@@ -105,6 +105,7 @@ public class PeakClassifier {
 				e.printStackTrace();
 			}
 			common.SynonymCheck=false;
+			 NELGViewResult.reGen=true;
 			FileUtils.deletePath(new File(common.tempDir));
 			FileUtils.deletePath(new File(common.outputDir));
 			//create directory
@@ -136,13 +137,13 @@ public class PeakClassifier {
 		    	selectedName.add(itFea.FeatureId);
 		    	
 			}
-		    System.out.println(selectedName.toString());
-		    System.out.println("=============================");
+//		    System.out.println(selectedName.toString());
+//		    System.out.println("=============================");
 		    for (TrackRecord signal_track : SignalPool) {
 		    
 				if(selectedName.contains(signal_track.ExperimentId))
 				{
-					System.out.println(signal_track.ExperimentId);
+//					System.out.println(signal_track.ExperimentId);
 					SelectedSignalPool.add(signal_track);
 				}
 			}
@@ -163,7 +164,7 @@ public class PeakClassifier {
 				fileIn = new FileInputStream(resultfile);
 				 ObjectInputStream in = new ObjectInputStream(fileIn);
 				 ClassificationResult Result=(ClassificationResult)in.readObject();
-				 NELGViewResult.reGen=true;
+				
 				 NELGViewResult.ViewClassificationResult(Result);
 				
 			} catch (Exception e) {
