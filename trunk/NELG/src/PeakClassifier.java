@@ -37,7 +37,7 @@ public class PeakClassifier {
 			public static void drawSignalAroundPeakBatch(Collection<TrackRecord> signalPool,String targetName,List<SimpleBEDFeature> query)
 			{
 				DoubleMatrix1D targetValue = SignalTransform.BedFeatureToValues(query);
-				EqualBinFeatureExtractor FE=new EqualBinFeatureExtractor(8);
+				EqualBinFeatureExtractor FE=new EqualBinFeatureExtractor(20);
 				for (TrackRecord feat : signalPool) {
 					
 					DoubleMatrix2D temp=FE.extractSignalFeature(feat, query);
