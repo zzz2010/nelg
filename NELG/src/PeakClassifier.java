@@ -120,6 +120,7 @@ public class PeakClassifier {
 				fileIn = new FileInputStream(resultfile);
 				 ObjectInputStream in = new ObjectInputStream(fileIn);
 				 ClassificationResult Result=(ClassificationResult)in.readObject();
+				 NELGViewResult.reGen=true;
 				 NELGViewResult.ViewClassificationResult(Result);
 				
 			} catch (Exception e) {
