@@ -457,7 +457,7 @@ public class NELGViewResult {
 		
 		featNames.retainAll(featKey.keySet());
 		DoubleMatrix2D combined=null;
-		int[] columnIndexes=new int[]{2,5,8,11,14,17,20,23};
+		int[] columnIndexes=new int[]{2,5,8,11,14,17,20};
 		for (String feat : featNames) {
 			String storekey=featKey.get(feat);
 			DoubleMatrix2D temp=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey);
