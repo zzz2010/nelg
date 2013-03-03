@@ -1,5 +1,7 @@
 import org.jppf.task.storage.MemoryMapDataProvider;
 
+import cern.colt.matrix.DoubleMatrix2D;
+
 
 public class common {
 
@@ -18,6 +20,18 @@ public class common {
 	static boolean Localmode=false;
 	static boolean SynonymCheck=true;
 	
+	
+	static DoubleMatrix2D RowNormalizeMatrix(DoubleMatrix2D matrix)
+	{
+		DoubleMatrix2D matrix2=matrix.copy();
+		for (int i = 0; i < matrix.rows(); i++) {
+			double sum=matrix.viewRow(i).zSum();
+			for (int j = 0; j < matrix2.columns(); j++) {
+				matrix2.setQuick(i, j, matrix.getQuick(i, j)/sum);
+			}
+		}
+		return matrix2;
+	}
 	
 	static void loadDataProvider(MemoryMapDataProvider dataProvider)
 	{

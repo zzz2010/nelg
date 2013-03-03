@@ -16,6 +16,7 @@ public class MultiScaleFeatureExtractor implements FeatureExtractor {
 	 * 
 	 */
 	private static final long serialVersionUID = 8219547590510791987L;
+	boolean isRowNormalized=true;
 int level=8;
 
 	public MultiScaleFeatureExtractor(int level) {
@@ -54,7 +55,8 @@ int level=8;
 			feature_Signal.set(queryId, 3*levelid+1, right);
 			feature_Signal.set(queryId, 3*levelid+2, left+right);
 		}
-		
+		if(isRowNormalized)
+			return (SparseDoubleMatrix2D) common.RowNormalizeMatrix(feature_Signal);
 		return feature_Signal;
 	}
 	
@@ -81,7 +83,8 @@ int level=8;
 			feature_Signal.viewColumn(3*i+1).assign(right);
 			feature_Signal.viewColumn(3*i+2).assign(sum);
 		}
-		
+		if(isRowNormalized)
+			return (SparseDoubleMatrix2D) common.RowNormalizeMatrix(feature_Signal);
 		return feature_Signal;
 	}
 
