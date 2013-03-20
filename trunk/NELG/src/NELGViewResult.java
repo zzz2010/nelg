@@ -404,7 +404,7 @@ public class NELGViewResult {
 	{
 		File dir=new File(common.tempDir+targetName);
 		File[] files=dir.listFiles();
-		System.out.println("Loading feature files from :"+dir.getAbsolutePath());
+		//System.out.println("Loading feature files from :"+dir.getAbsolutePath());
 		HashMap<String, String> featKey=new HashMap<String, String>(featNames.size());
 		for (int i = 0; i < files.length; i++) {
 			String flname=files[i].getName();
@@ -436,7 +436,7 @@ public class NELGViewResult {
 	{
 		File dir=new File(common.tempDir+targetName);
 		File[] files=dir.listFiles();
-		System.out.println("Loading feature files from :"+dir.getAbsolutePath());
+		//System.out.println("Loading feature files from :"+dir.getAbsolutePath());
 		HashMap<String, String> featKey=new HashMap<String, String>(featNames.size());
 		for (int i = 0; i < files.length; i++) {
 			String flname=files[i].getName();

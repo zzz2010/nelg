@@ -41,7 +41,7 @@ public class PeakClassifier {
 				for (TrackRecord feat : signalPool) {
 					
 					DoubleMatrix2D temp=FE.extractSignalFeature(feat, query);
-					System.out.println(feat.ExperimentId);
+					//System.out.println(feat.ExperimentId);
 					NELGViewResult.drawSignalAroundPeakCurve(temp, targetValue, feat.ExperimentId, targetName);
 				}
 					
