@@ -497,7 +497,7 @@ public class NELGViewResult {
 			double median=vec.viewSorted().get(vec.size()/2);  //vec.zSum()/vec.size();
 			if(Double.isNaN(median))
 				median=1;
-			if(median>0.0)
+			if(median>=0.0)
 			{
 				for (int j = 0; j < vec.size(); j++) {
 					double temp=Math.log((vec.getQuick(j)+1)/(median+1));
