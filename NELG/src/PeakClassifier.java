@@ -134,6 +134,7 @@ public class PeakClassifier {
 				System.out.println("only one peak file, clustering analysis");
 				 FSJob=new FeatureSelectionJob(peakTrack1,SignalPool,jppfCLient);
 				common.SignalRange=2000;
+				NELGViewResult.stridesize=20;
 				FeatureSelectionJob.featureExtractor=new EqualBinFeatureExtractor(20);
 				FSJob.run();
 
