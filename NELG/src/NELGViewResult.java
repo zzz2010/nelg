@@ -512,7 +512,7 @@ public class NELGViewResult {
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
-			kmean.setNumClusters(10);
+			kmean.setNumClusters(5);
 			Instances data=matrix2instances( matrix);
 			
 			kmean.buildClusterer(data);
@@ -632,7 +632,7 @@ public class NELGViewResult {
 //	        xyblockrenderer.setPaintScale(lookuppaintscale);
 	        
 
-	      //  xyblockrenderer.setPaintScale(getPaintScale(minvalue, 5D));
+	        xyblockrenderer.setPaintScale(getPaintScale(minvalue, 5D));
 	       
 	        
 	        XYPlot xyplot = new XYPlot(xyzdataset, numberaxis1,symaxis, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
