@@ -632,7 +632,7 @@ public class NELGViewResult {
 //	        xyblockrenderer.setPaintScale(lookuppaintscale);
 	        
 
-	        xyblockrenderer.setPaintScale(getPaintScale(minvalue, 5D));
+	      //  xyblockrenderer.setPaintScale(getPaintScale(minvalue, 5D));
 	       
 	        
 	        XYPlot xyplot = new XYPlot(xyzdataset, numberaxis1,symaxis, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
