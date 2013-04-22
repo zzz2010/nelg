@@ -91,6 +91,7 @@ public class NELGViewResult {
 	static double corr_cutoff=0;
 	static String outputDir="Figure";
 	static boolean reGen=false;
+	static int stridesize=8;
 	/**
 	 * @param args
 	 */
@@ -297,7 +298,7 @@ public class NELGViewResult {
 //						targetvalue.set(i, -1);
 //					}
 //				}
-				int stridesize=8;
+				
 				int targetColorwidth=stridesize;
 				SparseDoubleMatrix2D targetvalue2=new SparseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
 				for (int i = 0; i < targetvalue.size(); i++) {
@@ -493,13 +494,13 @@ public class NELGViewResult {
 		SimpleKMeans kmean=new SimpleKMeans();
 		for (int i = 0; i < matrix.columns(); i++) {
 			DoubleMatrix1D vec= matrix.viewColumn(i);
-			double m=vec.zSum()/vec.size();
-			if(Double.isNaN(m))
-				m=1;
-			if(m>0.0)
+			double median=vec.viewSorted().get(vec.size()/2);  //vec.zSum()/vec.size();
+			if(Double.isNaN(median))
+				median=1;
+			if(median>0.0)
 			{
 				for (int j = 0; j < vec.size(); j++) {
-					double temp=Math.log((vec.getQuick(j)+1)/(m+1));
+					double temp=Math.log((vec.getQuick(j)+1)/(median+1));
 					vec.set(j, temp);
 				}
 			}
