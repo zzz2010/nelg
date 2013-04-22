@@ -93,6 +93,7 @@ public class NELGViewResult {
 	static boolean reGen=false;
 	static int stridesize=8;
 	static int foldsize=3;
+	static int bgFold=2;
 	/**
 	 * @param args
 	 */
@@ -468,7 +469,7 @@ public class NELGViewResult {
 				columnIndexes[ii]=i;
 				ii++;
 			}
-			int bgrowCnt=Math.min(temp.rows()/2, temp_bg.rows());
+			int bgrowCnt=Math.min(temp.rows()/bgFold, temp_bg.rows());
 			int[] rowIndexes=new int[temp.rows()];
 			int[] rowIndexes_bg=new int[bgrowCnt];
 			for (int i = 0; i < temp.rows(); i++) {
