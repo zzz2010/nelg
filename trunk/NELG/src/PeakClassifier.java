@@ -115,7 +115,9 @@ public class PeakClassifier {
 			File datafolder=new File(common.dataDir);
 			//////////////////prepare track record//////////////////
 			TrackRecord peakTrack1=TrackRecord.createTrackRecord_peak(peakfile1);
-			TrackRecord peakTrack2=TrackRecord.createTrackRecord_peak(peakfile2);
+			TrackRecord peakTrack2=null;
+			if(peakfile2!="")
+				peakTrack2=TrackRecord.createTrackRecord_peak(peakfile2);
 			List<TrackRecord>  SignalPool=new ArrayList<TrackRecord>();
 			for(File sfl:datafolder.listFiles())
 			{
@@ -123,11 +125,27 @@ public class PeakClassifier {
 					continue;
 				SignalPool.add(TrackRecord.createTrackRecord_signal(sfl.getAbsolutePath()));
 			}
+			
+			JPPFClient jppfCLient = null;
+			FeatureSelectionJob FSJob=null;
+			////////////////////single peak file clustering //////////////
+			if(peakTrack2==null)
+			{
+				System.out.println("only one peak file, clustering analysis");
+				 FSJob=new FeatureSelectionJob(peakTrack1,SignalPool,jppfCLient);
+				common.SignalRange=2000;
+				FeatureSelectionJob.featureExtractor=new EqualBinFeatureExtractor(20);
+				FSJob.run();
+
+			}
+			else
+			{
 			//////////////////extract feature data////////////////////
 			FeatureSelectionJob.resultsListener=new ClassificationResultListener();
-				 JPPFClient jppfCLient = null;
-		    FeatureSelectionJob FSJob=new FeatureSelectionJob(peakTrack1, peakTrack2,SignalPool,jppfCLient);
+				 
+		     FSJob=new FeatureSelectionJob(peakTrack1, peakTrack2,SignalPool,jppfCLient);
 		    FSJob.run();
+			}
 		    /////////////////plot signal around peak///////////////////////
 		    List<SimpleBEDFeature> query =new ArrayList<SimpleBEDFeature>( FSJob.target_signal_filtered);
 		    query.addAll(FSJob.target_signal_bg);

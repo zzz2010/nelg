@@ -39,6 +39,8 @@ public class FeatureSelectionJob implements  Runnable {
 	 */
 	public  static TaskResultListener resultsListener ;
 	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(FeatureSelectionJob.class);
+//	FeatureExtractor featureExtractor=new EqualBinFeatureExtractor(20);
+	public  static FeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
 	TrackRecord target_signal;
 	List<TrackRecord> SignalPool;
 	List<SimpleBEDFeature>target_signal_filtered;
@@ -171,8 +173,7 @@ public class FeatureSelectionJob implements  Runnable {
 
 		
 		boolean onlyBestBin=false;
-//		FeatureExtractor featureExtractor=new EqualBinFeatureExtractor(20);
-		FeatureExtractor featureExtractor=new MultiScaleFeatureExtractor(8);
+
 		logger.debug("number of peaks of "+target_signal.ExperimentId+" :"+target_signal_filtered.size());
 		 JPPFJob localjob = new JPPFJob(common.getDataProvider());
 		 localjob.setName("local_"+target_signal.FilePrefix);
