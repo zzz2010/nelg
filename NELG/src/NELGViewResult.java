@@ -92,6 +92,7 @@ public class NELGViewResult {
 	static String outputDir="Figure";
 	static boolean reGen=false;
 	static int stridesize=8;
+	static int foldsize=3;
 	/**
 	 * @param args
 	 */
@@ -461,9 +462,9 @@ public class NELGViewResult {
 			String storekey=featKey.get(feat);
 			DoubleMatrix2D temp=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey);
 			DoubleMatrix2D temp_bg=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey+"_bg");
-			int[] columnIndexes=new int[(int)(temp.columns()/3)];
+			int[] columnIndexes=new int[(int)(temp.columns()/foldsize)];
 			int ii=0;
-			for (int i = 2; i < temp.columns(); i+=3) {
+			for (int i = foldsize-1; i < temp.columns(); i+=foldsize) {
 				columnIndexes[ii]=i;
 				ii++;
 			}
