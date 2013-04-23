@@ -93,7 +93,7 @@ public class FeatureSelectionJob implements  Runnable {
 		  
 		  	DoubleMatrix1D targetNormValue=SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_signal_filtered));
 		  	
-		  	int TopN=100;
+		  	int TopN=common.topNfeatures;
 			if(IsThereFeatures.size()>0)
 			{
 				 ClassificationResult IsThereJob2=StateRecovery.CheckClassificationJob(target_signal.FilePrefix+"_IsThere");
