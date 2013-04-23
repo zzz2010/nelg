@@ -138,7 +138,7 @@ public class PeakClassifier {
 				common.Corr_cutoff=0;
 				NELGViewResult.stridesize=20;
 				NELGViewResult.foldsize=1;
-				NELGViewResult.bgFold=100;//remove bgsignal
+				NELGViewResult.bgFold=5;//remove bgsignal
 				FeatureSelectionJob.featureExtractor=new EqualBinFeatureExtractor(20);
 				FSJob.run();
 
