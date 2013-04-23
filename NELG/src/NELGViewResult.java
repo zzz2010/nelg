@@ -659,15 +659,15 @@ public class NELGViewResult {
 	public static PaintScale getPaintScale(double min, double max)
 	{
 	       //... Setting PaintScale ...//
-        LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, Color.white);
+        LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, Color.gray);
         int numscale=100;
         double stepsize=(max-min)/numscale;
         Color purle=new Color(255, 0, 255);
-        ps.add(min, Color.white);
+        ps.add(min, Color.gray);
         double valPoint=min;
         int num_trans=numscale/3;
        for (int i = 0; i < num_trans; i++) {
-    	   ps.add(valPoint=valPoint+stepsize, blend(Color.blue,Color.white,((double)i)/(num_trans)));
+    	   ps.add(valPoint=valPoint+stepsize, blend(Color.blue,Color.gray,((double)i)/(num_trans)));
 	  }
        for (int i = 0; i < num_trans; i++) {
     	   ps.add(valPoint=valPoint+stepsize, blend(Color.GREEN,Color.blue,((double)i)/(num_trans)));
