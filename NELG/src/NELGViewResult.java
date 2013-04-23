@@ -296,10 +296,12 @@ public class NELGViewResult {
 				
 				
 			//	drawSignalAroundPeakBatch(selFeatNames, result.JobTitle.split("_(?!.*_)")[0], targetvalue);
+//				int countneg=0;
 //				for (int i = 0; i < targetvalue.size(); i++) {
-//					if(Double.isNaN(targetvalue.get(i)))
+//					if(targetvalue.get(i)>1)//if(Double.isNaN(targetvalue.get(i)))
 //					{
 //						targetvalue.set(i, -1);
+//						countneg++;
 //					}
 //				}
 				
@@ -501,7 +503,8 @@ public class NELGViewResult {
 			double median=vec.viewSorted().get(vec.size()/2);  //vec.zSum()/vec.size();
 			if(Double.isNaN(median))
 				median=1;
-			if(median>=0.0)
+
+			if(median>-2)
 			{
 				for (int j = 0; j < vec.size(); j++) {
 					double temp=Math.log((vec.getQuick(j)+2)/(median+2));
@@ -512,6 +515,8 @@ public class NELGViewResult {
 				for (int j = 0; j < vec.size(); j++) {
 					vec.set(j, Double.NaN);
 				}
+			if(i==matrix.columns()-1)
+			i=i+1;
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
@@ -607,6 +612,7 @@ public class NELGViewResult {
 		}
 		
 		 double minvalue=0;
+		 double maxvalue=0;
 		 for (int i = 0; i < matrix.rows(); i++) {
 			for (int j = 0; j < matrix.columns(); j++) {
 				double temp=matrix.getQuick(i, j);
@@ -614,6 +620,8 @@ public class NELGViewResult {
 				{
 					if(temp<minvalue)
 						minvalue=temp;
+					if(temp>maxvalue)
+						maxvalue=temp;
 				}
 
 			}
@@ -625,7 +633,7 @@ public class NELGViewResult {
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
 		 numberaxis1.setRange(new Range(0, matrix.rows()));
 		 DefaultXYZDataset xyzdataset = new DefaultXYZDataset();
-		 xyzdataset.addSeries(title, sparseMatrix(matrix));
+		 xyzdataset.addSeries(title, sparseMatrix(matrix));  //here only the non-zero element will be colored
 		 XYBlockRenderer xyblockrenderer = new XYBlockRenderer();
 //	        LookupPaintScale lookuppaintscale = new LookupPaintScale(-1D, Double.MAX_VALUE, Color.black);
 //	        lookuppaintscale.add(0D, Color.blue);
@@ -635,7 +643,7 @@ public class NELGViewResult {
 //	        xyblockrenderer.setPaintScale(lookuppaintscale);
 	        
 
-	        xyblockrenderer.setPaintScale(getPaintScale(minvalue, 5D));
+	        xyblockrenderer.setPaintScale(getPaintScale(minvalue, maxvalue));
 	       
 	        
 	        XYPlot xyplot = new XYPlot(xyzdataset, numberaxis1,symaxis, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
@@ -660,10 +668,10 @@ public class NELGViewResult {
 	{
 	       //... Setting PaintScale ...//
         LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, Color.gray);
-        int numscale=100;
+        int numscale=30;
         double stepsize=(max-min)/numscale;
         Color purle=new Color(255, 0, 255);
-        ps.add(min, Color.gray);
+        ps.add(Double.MIN_VALUE, Color.gray);
         double valPoint=min;
         int num_trans=numscale/3;
        for (int i = 0; i < num_trans; i++) {
