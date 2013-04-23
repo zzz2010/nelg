@@ -105,7 +105,7 @@ public class FeatureExtractJob extends JPPFTask {
 	        		if(!common.onlyBestBin)
 	        		{	
 	        			
-				        if(score>common.AUC_cutoff)
+				        if(score>=common.AUC_cutoff)
 				      	{
 				        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
 					        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, score,i);	       
@@ -121,7 +121,7 @@ public class FeatureExtractJob extends JPPFTask {
 			        	SparseDoubleMatrix1D featureBestBinValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(bestBin), feature_BinSignal_bg.viewColumn(bestBin)) ;
 			        FeatureSignal isF=new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);
 			        
-			        if(maxScore>common.AUC_cutoff)
+			        if(maxScore>=common.AUC_cutoff)
 			      	{
 			      		IsThereFeatures.add(isF);
 			      	}
@@ -141,7 +141,7 @@ public class FeatureExtractJob extends JPPFTask {
 	        		if(!common.onlyBestBin)
 	        		{	
 	        			logger.debug("corr: "+score);
-				        if(score>common.Corr_cutoff)
+				        if(score>=common.Corr_cutoff)
 				      	{
 				        	SparseDoubleMatrix1D featureBestBinValue = (SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
 				        	
@@ -159,7 +159,7 @@ public class FeatureExtractJob extends JPPFTask {
 		        	SparseDoubleMatrix1D featureBestBinValue = (SparseDoubleMatrix1D) feature_BinSignal.viewColumn(bestBin);
 
 		        	 FeatureSignal valF= 	new FeatureSignal(featureBestBinValue, feature_signal.ExperimentId, maxScore,bestBin);	
-		        	 if(maxScore>common.Corr_cutoff)
+		        	 if(maxScore>=common.Corr_cutoff)
 			        	{
 			        		ValThereFeatures.add(valF);
 			        	}
