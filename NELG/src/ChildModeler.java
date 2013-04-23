@@ -71,7 +71,7 @@ public class ChildModeler {
 		}
 		
 		Instances data2 =null;//filtered dataset
-		if(data.numAttributes()>Math.log(job.targetValue.size())/Math.log(2)+1)
+		if(common.filterFeature&&(data.numAttributes()>Math.log(job.targetValue.size())/Math.log(2)+1))
 		{
 			 System.out.println("Feature Selection, number of input features:"+data.numAttributes());
 		HashMap<String,Integer> FeatureNameMap=new HashMap<String, Integer>();
@@ -200,7 +200,7 @@ public class ChildModeler {
 		ArrayList<Integer> selecedAttributes=new ArrayList<Integer>();
 		ArrayList<String> finalFeatureSel=new ArrayList<String>();
 		Instances data2 =null;//filtered dataset
-		if(data.numAttributes()>Math.log(job.targetValue.size())/Math.log(2)+1)
+		if(common.filterFeature&&(data.numAttributes()>Math.log(job.targetValue.size())/Math.log(2)+1))
 		{
 		
 		HashMap<String,Integer> FeatureNameMap=new HashMap<String, Integer>();
