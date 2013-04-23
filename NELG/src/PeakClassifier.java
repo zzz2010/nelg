@@ -128,6 +128,8 @@ public class PeakClassifier {
 			
 			JPPFClient jppfCLient = null;
 			FeatureSelectionJob FSJob=null;
+			try
+			{
 			////////////////////single peak file clustering //////////////
 			if(peakTrack2==null)
 			{
@@ -141,7 +143,9 @@ public class PeakClassifier {
 				NELGViewResult.foldsize=1;
 				NELGViewResult.bgFold=5;//remove bgsignal
 				FeatureSelectionJob.featureExtractor=new EqualBinFeatureExtractor(20);
+
 				FSJob.run();
+
 
 			}
 			else
@@ -151,6 +155,11 @@ public class PeakClassifier {
 				 
 		     FSJob=new FeatureSelectionJob(peakTrack1, peakTrack2,SignalPool,jppfCLient);
 		    FSJob.run();
+			}
+			}
+			catch (Exception E)
+			{
+					System.err.println(E.getMessage());
 			}
 		    /////////////////plot signal around peak///////////////////////
 		    List<SimpleBEDFeature> query =new ArrayList<SimpleBEDFeature>( FSJob.target_signal_filtered);
