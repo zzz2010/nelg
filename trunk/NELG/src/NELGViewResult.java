@@ -315,7 +315,7 @@ public class NELGViewResult {
 				}
 				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
 				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
-				DoubleMatrix2D combinedP_order=clusterReorder(combined);
+				DoubleMatrix2D combinedP_order=clusterReorder_Rowbased(combined);
 				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,stridesize);
 				
 				
@@ -498,6 +498,7 @@ public class NELGViewResult {
 	public static DoubleMatrix2D clusterReorder(DoubleMatrix2D matrix)
 	{
 		SimpleKMeans kmean=new SimpleKMeans();
+		
 		for (int i = 0; i < matrix.columns(); i++) {
 			DoubleMatrix1D vec= matrix.viewColumn(i);
 			double median=vec.viewSorted().get(vec.size()/2);  //vec.zSum()/vec.size();
@@ -515,8 +516,7 @@ public class NELGViewResult {
 				for (int j = 0; j < vec.size(); j++) {
 					vec.set(j, Double.NaN);
 				}
-			if(i==matrix.columns()-1)
-			i=i+1;
+
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
@@ -534,7 +534,48 @@ public class NELGViewResult {
 		DoubleMatrix2D combined=DoubleFactory2D.dense.appendColumns(matrix, clusterlabel);
 		return combined.viewSorted(combined.columns()-1);
 	}
-	
+	public static DoubleMatrix2D clusterReorder_Rowbased(DoubleMatrix2D matrix)
+	{
+		SimpleKMeans kmean=new SimpleKMeans();
+		
+		for (int i = 0; i < matrix.rows(); i++) {
+			DoubleMatrix1D vec= matrix.viewRow(i);
+			for(int ii=0;ii<matrix.columns()-stridesize;ii+=stridesize)
+			{
+				double median=vec.viewPart(ii, stridesize).viewSorted().get(stridesize/2);  //vec.zSum()/vec.size();
+				if(Double.isNaN(median))
+					median=1;
+
+				if(median>-2)
+				{
+					for (int j = ii; j < ii+stridesize; j++) {
+						double temp=Math.log((vec.getQuick(j)+2)/(median+2));
+						vec.set(j, temp);
+					}
+				}
+				else
+					for (int j = ii; j < ii+stridesize; j++) {
+						vec.set(j, Double.NaN);
+					}
+			}
+
+			}
+		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
+		try {
+			kmean.setNumClusters(5);
+			Instances data=matrix2instances( matrix);
+			
+			kmean.buildClusterer(data);
+			for (int i = 0; i < matrix.rows(); i++) {
+				clusterlabel.set(i, 0, kmean.clusterInstance(data.instance(i)));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		DoubleMatrix2D combined=DoubleFactory2D.dense.appendColumns(matrix, clusterlabel);
+		return combined.viewSorted(combined.columns()-1);
+	}
 	public static Instances matrix2instances(DoubleMatrix2D matrix)
 	{
 		FastVector attrList=new FastVector(matrix.columns());
