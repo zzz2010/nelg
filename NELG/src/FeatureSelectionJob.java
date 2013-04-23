@@ -266,7 +266,7 @@ public class FeatureSelectionJob implements  Runnable {
 		//save to file
 		toFile();
 		 //wrap up to classification job , and put it into queue
-		int TopN=100; //selected best TopN features
+		int TopN=common.topNfeatures; //selected best TopN features
    //put job to the execution queue
 		 try {
 			 if(IsThereFeatures.size()>0)
