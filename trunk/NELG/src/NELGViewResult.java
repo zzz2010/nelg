@@ -93,6 +93,8 @@ public class NELGViewResult {
 	static boolean reGen=false;
 	static int stridesize=8;
 	static int foldsize=3;
+//	static int stridesize=20;
+//	static int foldsize=1;
 	static int bgFold=2;
 	/**
 	 * @param args
@@ -502,7 +504,7 @@ public class NELGViewResult {
 			if(median>=0.0)
 			{
 				for (int j = 0; j < vec.size(); j++) {
-					double temp=Math.log((vec.getQuick(j)+1)/(median+1));
+					double temp=Math.log((vec.getQuick(j)+2)/(median+2));
 					vec.set(j, temp);
 				}
 			}
