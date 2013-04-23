@@ -667,7 +667,7 @@ public class NELGViewResult {
         double valPoint=min;
         int num_trans=numscale/3;
        for (int i = 0; i < num_trans; i++) {
-    	   ps.add(valPoint=valPoint+stepsize, blend(Color.blue,Color.GRAY,((double)i)/(num_trans)));
+    	   ps.add(valPoint=valPoint+stepsize, blend(Color.blue,Color.white,((double)i)/(num_trans)));
 	  }
        for (int i = 0; i < num_trans; i++) {
     	   ps.add(valPoint=valPoint+stepsize, blend(Color.GREEN,Color.blue,((double)i)/(num_trans)));
