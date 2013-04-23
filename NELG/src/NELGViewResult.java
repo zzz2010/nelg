@@ -91,10 +91,10 @@ public class NELGViewResult {
 	static double corr_cutoff=0;
 	static String outputDir="Figure";
 	static boolean reGen=false;
-	static int stridesize=8;
-	static int foldsize=3;
-//	static int stridesize=20;
-//	static int foldsize=1;
+//	static int stridesize=8;
+//	static int foldsize=3;
+	static int stridesize=20;
+	static int foldsize=1;
 	static int bgFold=2;
 	/**
 	 * @param args
@@ -695,7 +695,7 @@ public class NELGViewResult {
 	        JFreeChart jfreechart = new JFreeChart(title, xyplot);
 	        
 	        try {
-				ChartUtilities.saveChartAsPNG(new File(pngfile), jfreechart, 800, 600);
+				ChartUtilities.saveChartAsPNG(new File(pngfile), jfreechart, 2800, 2600);
 				System.out.println("Draw heatmap to file: "+pngfile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
