@@ -136,6 +136,7 @@ public class PeakClassifier {
 				common.SignalRange=2000;
 				common.AUC_cutoff=0.0;
 				common.Corr_cutoff=0;
+				common.topNfeatures=1000000;
 				NELGViewResult.stridesize=20;
 				NELGViewResult.foldsize=1;
 				NELGViewResult.bgFold=5;//remove bgsignal

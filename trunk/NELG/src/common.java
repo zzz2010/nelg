@@ -19,6 +19,7 @@ public class common {
 	static boolean NFSmode=false;
 	static boolean Localmode=false;
 	static boolean SynonymCheck=true;
+	static int topNfeatures=100;
 	
 	
 	static DoubleMatrix2D RowNormalizeMatrix(DoubleMatrix2D matrix)
