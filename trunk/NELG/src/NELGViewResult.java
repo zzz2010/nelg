@@ -563,7 +563,7 @@ public class NELGViewResult {
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
-			kmean.setNumClusters(5);
+			kmean.setNumClusters(10);
 			Instances data=matrix2instances( matrix);
 			
 			kmean.buildClusterer(data);
