@@ -545,11 +545,12 @@ public class NELGViewResult {
 				double median=vec.viewPart(ii, stridesize).viewSorted().get(stridesize/2);  //vec.zSum()/vec.size();
 				if(Double.isNaN(median))
 					median=1;
-
+				if(median<5)
+					median=5;
 				if(median>-2)
 				{
 					for (int j = ii; j < ii+stridesize; j++) {
-						double temp=Math.log((vec.getQuick(j)+2)/(median+2));
+						double temp=Math.log((vec.getQuick(j)+1)/(median+1));
 						vec.set(j, temp);
 					}
 				}
@@ -670,6 +671,7 @@ public class NELGViewResult {
 		 
 		 SymbolAxis symaxis=new SymbolAxis("", strAttr);
 		 symaxis.setTickUnit(new NumberTickUnit(stride/2));
+		 symaxis.setLabelFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 22));
 //		 symaxis.setRange(-stride/2,matrix.columns());
 		 NumberAxis numberaxis1 = new NumberAxis("Peak");
 		 numberaxis1.setRange(new Range(0, matrix.rows()));
