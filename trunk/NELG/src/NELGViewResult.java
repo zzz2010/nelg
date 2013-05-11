@@ -653,21 +653,21 @@ public class NELGViewResult {
 			}
 		}
 		
-		 double minvalue=0;
-		 double maxvalue=0;
-		 for (int i = 2; i < matrix.rows(); i++) {
-			for (int j = 2; j < matrix.columns(); j++) {
-				double temp=matrix.getQuick(i, j);
-				if(!Double.isNaN(temp))
-				{
-					if(temp<minvalue)
-						minvalue=temp;
-					if(temp>maxvalue)
-						maxvalue=temp;
-				}
-
-			}
-		}
+//		 double minvalue=0;
+//		 double maxvalue=0;
+//		 for (int i = 2; i < matrix.rows(); i++) {
+//			for (int j = 2; j < matrix.columns(); j++) {
+//				double temp=matrix.getQuick(i, j);
+//				if(!Double.isNaN(temp))
+//				{
+//					if(temp<minvalue)
+//						minvalue=temp;
+//					if(temp>maxvalue)
+//						maxvalue=temp;
+//				}
+//
+//			}
+//		}
 		 
 		 SymbolAxis symaxis=new SymbolAxis("", strAttr);
 		 symaxis.setTickUnit(new NumberTickUnit(stride/2));
@@ -686,7 +686,7 @@ public class NELGViewResult {
 //	        xyblockrenderer.setPaintScale(lookuppaintscale);
 	        
 
-	        xyblockrenderer.setPaintScale(getPaintScale(minvalue, maxvalue));
+	        xyblockrenderer.setPaintScale(getPaintScale(matrix));
 	       
 	        
 	        XYPlot xyplot = new XYPlot(xyzdataset, numberaxis1,symaxis, xyblockrenderer);xyplot.setBackgroundPaint(Color.lightGray);
@@ -705,7 +705,46 @@ public class NELGViewResult {
 			}
 	}
 	
-	
+	 
+ 	public static PaintScale getPaintScale(DoubleMatrix2D matrix)
+{
+ 		
+ 		DoubleMatrix1D vecD =matrix.viewRow(0);
+ 		for (int i = 1; i <matrix.rows(); i++) {
+ 			vecD=DoubleFactory1D.dense.append(vecD, matrix.viewRow(i));
+		}
+ 		DoubleMatrix1D vecSortD = vecD.viewSorted();
+       //... Setting PaintScale ...//
+ 		double min=vecSortD.get(0);
+ 		double point1=vecSortD.get(vecSortD.size()/3);
+ 		double point2=vecSortD.get(2*vecSortD.size()/3);
+ 		double max=vecSortD.get(vecSortD.size()-1);
+ 	
+    LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, Color.gray);
+    int numscale=10;
+  
+    Color purle=new Color(255, 0, 255);
+    ps.add(Double.MIN_VALUE, Color.gray);
+    double valPoint=min;
+    int num_trans=numscale;
+    double stepsize=(point1-min)/numscale;
+   for (int i = 0; i < num_trans; i++) {
+	   ps.add(valPoint=valPoint+stepsize, blend(Color.blue,Color.gray,((double)i)/(num_trans)));
+  }
+   
+   stepsize=(point2-point1)/numscale;
+   for (int i = 0; i < num_trans; i++) {
+	   ps.add(valPoint=valPoint+stepsize, blend(Color.GREEN,Color.blue,((double)i)/(num_trans)));
+  }
+   
+   stepsize=(max-point2)/numscale;
+   for (int i = 0; i < num_trans; i++) {
+	   ps.add(valPoint=valPoint+stepsize, blend(Color.RED,Color.GREEN,((double)i)/(num_trans)));
+  }
+   ps.add(Double.MAX_VALUE,Color.RED);
+    return ps;
+}
+ 
 
 	public static PaintScale getPaintScale(double min, double max)
 	{
