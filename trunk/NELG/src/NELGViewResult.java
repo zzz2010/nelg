@@ -655,8 +655,8 @@ public class NELGViewResult {
 		
 		 double minvalue=0;
 		 double maxvalue=0;
-		 for (int i = 0; i < matrix.rows(); i++) {
-			for (int j = 0; j < matrix.columns(); j++) {
+		 for (int i = 2; i < matrix.rows(); i++) {
+			for (int j = 2; j < matrix.columns(); j++) {
 				double temp=matrix.getQuick(i, j);
 				if(!Double.isNaN(temp))
 				{
