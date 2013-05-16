@@ -190,21 +190,22 @@ public class PeakClassifier {
 		    	if(fl.getName().indexOf(peakTrack1.ExperimentId)>-1&&fl.getName().endsWith("cr"))
 		    	{
 		    		resultfile=fl.getAbsolutePath();
-		    		break;
+				    FileInputStream fileIn;
+					 try {
+						fileIn = new FileInputStream(resultfile);
+						 ObjectInputStream in = new ObjectInputStream(fileIn);
+						 ClassificationResult Result=(ClassificationResult)in.readObject();
+						
+						 NELGViewResult.ViewClassificationResult(Result);
+						
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						System.out.println(e.getMessage());
+					} 
+		    		
 		    	}
 		    }
-		    FileInputStream fileIn;
-			 try {
-				fileIn = new FileInputStream(resultfile);
-				 ObjectInputStream in = new ObjectInputStream(fileIn);
-				 ClassificationResult Result=(ClassificationResult)in.readObject();
-				
-				 NELGViewResult.ViewClassificationResult(Result);
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				System.out.println(e.getMessage());
-			} 
+
 		    
 		}
 }
