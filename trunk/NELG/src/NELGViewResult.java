@@ -538,8 +538,8 @@ public class NELGViewResult {
 	public static DoubleMatrix2D clusterReorder_Rowbased(DoubleMatrix2D matrix)
 	{
 		weka.clusterers.AbstractClusterer clustering=null;
-	//	clustering=new SimpleKMeans();
-		clustering=new HierarchicalClusterer();
+		clustering=new SimpleKMeans();
+	//	clustering=new HierarchicalClusterer();
 		
 		for (int i = 0; i < matrix.rows(); i++) {
 			DoubleMatrix1D vec= matrix.viewRow(i);
@@ -700,7 +700,7 @@ public class NELGViewResult {
 	        JFreeChart jfreechart = new JFreeChart(title, xyplot);
 	        
 	        try {
-				ChartUtilities.saveChartAsPNG(new File(pngfile), jfreechart, (int)Math.floor(matrix.rows()*0.1),  matrix.columns()*10);
+				ChartUtilities.saveChartAsPNG(new File(pngfile), jfreechart, (int)Math.floor(matrix.rows()*0.1),  matrix.columns()*5);
 				System.out.println("Draw heatmap to file: "+pngfile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
