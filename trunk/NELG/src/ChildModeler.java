@@ -127,6 +127,8 @@ public class ChildModeler {
 		double bestscore=-1;
 		ArrayList<Classifier> modelerSet=new ArrayList<Classifier>();
 		modelerSet.add(new J48graft());
+		if(!common.printMode)
+		{
 		if(data2.numAttributes()>2&&data2.numAttributes()<10)
 			modelerSet.add(new KStar());
 		if(data2.numAttributes()>3)
@@ -137,6 +139,7 @@ public class ChildModeler {
 			modelerSet.add(new SMO());
 		if(data2.numAttributes()>6)
 			modelerSet.add(new AdaBoostM1());
+		}
 			
 		for (int i = 0; i < modelerSet.size(); i++) {
 			
@@ -260,6 +263,8 @@ public class ChildModeler {
 		double bestscore=-1;
 		ArrayList<Classifier> modelerSet=new ArrayList<Classifier>();
 		modelerSet.add(new M5P());
+		if(!common.printMode)
+		{
 	   if(data2.numAttributes()>2)
 			modelerSet.add(new LeastMedSq());
 	   if(data2.numAttributes()>3)
@@ -270,7 +275,7 @@ public class ChildModeler {
 			modelerSet.add(new PaceRegression());
 //		if(data2.numAttributes()>6)
 //			modelerSet.add(new SMOreg());
-
+		}
 			
 		for (int i = 0; i < modelerSet.size(); i++) {
 			

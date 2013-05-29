@@ -53,8 +53,10 @@ public class PeakClassifier {
 			Options options = new Options();
 			options.addOption("threadnum", true, "maximum thread number");
 			options.addOption("dataDir", true, "folder with bigWig data");
+			options.addOption("clusternum", true, "number of clusters in heatmap (default: 10)");
 			options.addOption("outputDir", true, "folder for output data");
 			options.addOption("peakfile1", true, "first set of peaks(bed format)");
+			options.addOption("print", false, "fast mode for generating figures");
 			options.addOption("peakfile2", true, "second set of peaks(bed format)");
 	
 			CommandLineParser parser = new GnuParser();
@@ -73,6 +75,12 @@ public class PeakClassifier {
 				{
 					max_threadNum=Integer.parseInt(cmd.getOptionValue("threadnum"));
 					common.threadNum=max_threadNum;
+				}
+				if(cmd.hasOption("print"))
+					common.printMode=true;
+				if(cmd.hasOption("clusternum"))
+				{
+					common.ClusterNum=Integer.parseInt(cmd.getOptionValue("clusternum"));
 				}
 				if(cmd.hasOption("dataDir"))
 				{
