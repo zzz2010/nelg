@@ -96,7 +96,10 @@ public class FeatureExtractJob extends JPPFTask {
 	        int bestBin=-1;
 	        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
 	        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) DoubleFactory1D.sparse.append(feature_BinSignal.viewColumn(i), feature_BinSignal_bg.viewColumn(i)) ;
-	        		float score=SignalComparator.getDiscriminativeCapbaility(featureValue, targetValue);
+	        		float score=(float) (common.AUC_cutoff+1);
+	        		if(!common.printMode)
+	        			score=SignalComparator.getDiscriminativeCapbaility(featureValue, targetValue);
+	        		
 	        		if(score>maxScore)
 	        		{
 	        			bestBin=i;
@@ -132,7 +135,9 @@ public class FeatureExtractJob extends JPPFTask {
 		    bestBin=-1;
 	        	for (int i = 0; i < feature_BinSignal.columns(); i++) {
 	        		SparseDoubleMatrix1D featureValue=(SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
-	        		float score=SignalComparator.getCorrelation(featureValue, targetNormValue);
+	        		float score=(float) (common.Corr_cutoff+1);
+	        		if(!common.printMode)
+	        			score=SignalComparator.getCorrelation(featureValue, targetNormValue);
 	        		if(score>maxScore)
 	        		{
 	        			bestBin=i;
