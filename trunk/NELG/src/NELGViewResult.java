@@ -567,6 +567,8 @@ public class NELGViewResult {
 
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
+		if(common.ClusterNum>1)
+		{
 		try {
 			clustering.setNumClusters(common.ClusterNum);
 			Instances data=matrix2instances( matrix);
@@ -581,6 +583,11 @@ public class NELGViewResult {
 		}
 		DoubleMatrix2D combined=DoubleFactory2D.dense.appendColumns(matrix, clusterlabel);
 		return combined.viewSorted(combined.columns()-1);
+		}
+		else
+		{
+			return matrix;
+		}
 	}
 	public static Instances matrix2instances(DoubleMatrix2D matrix)
 	{
