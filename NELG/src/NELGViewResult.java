@@ -537,7 +537,7 @@ public class NELGViewResult {
 	}
 	public static DoubleMatrix2D clusterReorder_Rowbased(DoubleMatrix2D matrix)
 	{
-		weka.clusterers.AbstractClusterer clustering=null;
+		SimpleKMeans clustering=null;
 		clustering=new SimpleKMeans();
 	//	clustering=new HierarchicalClusterer();
 		
@@ -566,7 +566,7 @@ public class NELGViewResult {
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
-		//	clustering.setNumClusters(10);
+			clustering.setNumClusters(5);
 			Instances data=matrix2instances( matrix);
 			
 			clustering.buildClusterer(data);
