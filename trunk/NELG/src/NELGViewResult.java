@@ -77,6 +77,7 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.trees.RandomForest;
 import weka.clusterers.SimpleKMeans;
+import weka.clusterers.HierarchicalClusterer;
 import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
@@ -536,7 +537,9 @@ public class NELGViewResult {
 	}
 	public static DoubleMatrix2D clusterReorder_Rowbased(DoubleMatrix2D matrix)
 	{
-		SimpleKMeans kmean=new SimpleKMeans();
+		weka.clusterers.AbstractClusterer clustering=null;
+	//	clustering=new SimpleKMeans();
+		clustering=new HierarchicalClusterer();
 		
 		for (int i = 0; i < matrix.rows(); i++) {
 			DoubleMatrix1D vec= matrix.viewRow(i);
@@ -563,12 +566,12 @@ public class NELGViewResult {
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
-			kmean.setNumClusters(10);
+		//	clustering.setNumClusters(10);
 			Instances data=matrix2instances( matrix);
 			
-			kmean.buildClusterer(data);
+			clustering.buildClusterer(data);
 			for (int i = 0; i < matrix.rows(); i++) {
-				clusterlabel.set(i, 0, kmean.clusterInstance(data.instance(i)));
+				clusterlabel.set(i, 0, clustering.clusterInstance(data.instance(i)));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -697,7 +700,7 @@ public class NELGViewResult {
 	        JFreeChart jfreechart = new JFreeChart(title, xyplot);
 	        
 	        try {
-				ChartUtilities.saveChartAsPNG(new File(pngfile), jfreechart, (int)Math.floor(matrix.rows()*0.1),  matrix.rows()*10);
+				ChartUtilities.saveChartAsPNG(new File(pngfile), jfreechart, (int)Math.floor(matrix.rows()*0.1),  matrix.columns()*10);
 				System.out.println("Draw heatmap to file: "+pngfile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
