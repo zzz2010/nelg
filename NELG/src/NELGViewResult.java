@@ -475,6 +475,8 @@ public class NELGViewResult {
 				ii++;
 			}
 			int bgrowCnt=Math.min(temp.rows()/bgFold, temp_bg.rows());
+			if(common.printMode)
+				bgrowCnt=0;
 			int[] rowIndexes=new int[temp.rows()];
 			int[] rowIndexes_bg=new int[bgrowCnt];
 			for (int i = 0; i < temp.rows(); i++) {
@@ -566,7 +568,7 @@ public class NELGViewResult {
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
-			clustering.setNumClusters(5);
+			clustering.setNumClusters(common.ClusterNum);
 			Instances data=matrix2instances( matrix);
 			
 			clustering.buildClusterer(data);

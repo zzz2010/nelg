@@ -13,8 +13,10 @@ public class common {
 	static String predictTarget_debug="";
 	static String selectFeature_debug="";
 	static boolean onlyBestBin=false;
+	static boolean printMode=false;
 	static double AUC_cutoff=0.6;
 	static double Corr_cutoff=0.2;
+	static int ClusterNum=10;
 	static int threadNum=12;
 	static boolean NFSmode=false;
 	static boolean Localmode=false;
