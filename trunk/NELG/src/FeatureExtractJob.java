@@ -143,10 +143,17 @@ public class FeatureExtractJob extends JPPFTask {
 	        			bestBin=i;
 	        			maxScore=score;
 	        		}
+	        		DoubleMatrix1D targetNormValue_sort = targetNormValue.viewSorted();
+	        		boolean trivial=false;
+	        		if(targetNormValue_sort.getQuick(0)==targetNormValue_sort.getQuick(targetNormValue_sort.size()-1))
+	        		{
+	        			trivial=true;
+	        			maxScore=Float.NEGATIVE_INFINITY;
+	        		}
 	        		if(!common.onlyBestBin)
 	        		{	
 	        			logger.debug("corr: "+score);
-				        if(score>=common.Corr_cutoff)
+				        if(score>=common.Corr_cutoff&&!trivial)
 				      	{
 				        	SparseDoubleMatrix1D featureBestBinValue = (SparseDoubleMatrix1D) feature_BinSignal.viewColumn(i);
 				        	
