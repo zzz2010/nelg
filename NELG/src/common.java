@@ -9,6 +9,7 @@ public class common {
 	static String tempDir="./cache/";
 	static String dataDir="./data/";
 	static int SignalRange=10000;
+	static int MaxSampleNum=10000;
 	static int MinimumPeakNum=50;
 	static String predictTarget_debug="";
 	static String selectFeature_debug="";

@@ -71,7 +71,9 @@ return outputSignal;
 
 public	static ArrayList<SimpleBEDFeature> extractPositveSignal(TrackRecord target_signal)
 {
-	int maxExtract=10000;
+	int maxExtract=common.MaxSampleNum;
+	if(common.printMode)
+		maxExtract=Integer.MAX_VALUE;
 	ArrayList<SimpleBEDFeature> outputSignal=new ArrayList<SimpleBEDFeature>();
 	List<SimpleBEDFeature> peaklist=null;
 	//if peak file exist, directly use peak file
