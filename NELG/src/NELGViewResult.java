@@ -92,9 +92,11 @@ public class NELGViewResult {
 	static double corr_cutoff=0;
 	static String outputDir="Figure";
 	static boolean reGen=false;
+//multiscale setting
 //	static int stridesize=8;
 //	static int foldsize=3;
-	static int stridesize=20;
+//equal size binning setting
+	static int stridesize=0;
 	static int foldsize=1;
 	static int bgFold=2;
 	static DoubleMatrix1D clusterIdvec=null;
@@ -471,6 +473,7 @@ public class NELGViewResult {
 			DoubleMatrix2D temp_bg=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey+"_bg");
 			int[] columnIndexes=new int[(int)(temp.columns()/foldsize)];
 			int ii=0;
+			//only choose subset of column to visualize
 			for (int i = foldsize-1; i < temp.columns(); i+=foldsize) {
 				columnIndexes[ii]=i;
 				ii++;
@@ -494,7 +497,11 @@ public class NELGViewResult {
 			if(combined==null)
 				combined= temp;
 			else
+			{	SparseDoubleMatrix2D splitline=new SparseDoubleMatrix2D(temp.rows(), 1);
+				combined=DoubleFactory2D.sparse.appendColumns(combined, splitline);
 				combined=DoubleFactory2D.sparse.appendColumns(combined, temp);
+				stridesize=temp.columns()+1;
+			}
 		}
 			return combined;
 	}
