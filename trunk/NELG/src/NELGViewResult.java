@@ -497,8 +497,7 @@ public class NELGViewResult {
 			if(combined==null)
 				combined= temp;
 			else
-			{	DenseDoubleMatrix2D splitline=new DenseDoubleMatrix2D(temp.rows(), 1);
-				splitline.assign(Double.NEGATIVE_INFINITY);
+			{	SparseDoubleMatrix2D splitline=new SparseDoubleMatrix2D(temp.rows(), 1);
 				combined=DoubleFactory2D.sparse.appendColumns(combined, splitline);
 				combined=DoubleFactory2D.sparse.appendColumns(combined, temp);
 				stridesize=temp.columns()+1;
@@ -556,20 +555,20 @@ public class NELGViewResult {
 			DoubleMatrix1D vec= matrix.viewRow(i);
 			for(int ii=0;ii<matrix.columns()-stridesize;ii+=stridesize)
 			{
-				double median=vec.viewPart(ii, stridesize).viewSorted().get(stridesize/2);  //vec.zSum()/vec.size();
+				double median=vec.viewPart(ii, stridesize-1).viewSorted().get((stridesize-1)/2);  //vec.zSum()/vec.size();
 				if(Double.isNaN(median))
 					median=1;
 				if(median<5)
 					median=5;
 				if(median>-2)
 				{
-					for (int j = ii; j < ii+stridesize; j++) {
+					for (int j = ii; j < ii+stridesize-1; j++) {
 						double temp=Math.log((vec.getQuick(j)+1)/(median+1));
 						vec.set(j, temp);
 					}
 				}
 				else
-					for (int j = ii; j < ii+stridesize; j++) {
+					for (int j = ii; j < ii+stridesize-1; j++) {
 						vec.set(j, Double.NaN);
 					}
 			}
