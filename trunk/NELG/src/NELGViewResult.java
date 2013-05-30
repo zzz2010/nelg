@@ -660,7 +660,7 @@ public class NELGViewResult {
 		 featName.add("targetValue");
 		 String[] strAttr=new String[matrix.columns()];
 		 for (int i = 0; i < matrix.columns(); i++) {
-			if((i%stride)==(stride/2)&&(i/stride)<featName.size())
+			if((i%stride)==(int)(stride/2)&&(i/stride)<featName.size())
 			{
 					strAttr[i]=featName.get(i/stride);
 			}
