@@ -144,7 +144,10 @@ public class ChildModeler {
 		
 		int crossValNum=5;
 		if(common.printMode)
+		{
 			bestModeler=modelerSet.get(0);
+			bestscore=1;
+		}
 		else
 		for (int i = 0; i < modelerSet.size(); i++) {
 			
@@ -286,7 +289,10 @@ public class ChildModeler {
 		
 		int crossValNum=5;
 		if(common.printMode)
+		{
 			bestModeler=modelerSet.get(0);
+			bestscore=1;
+		}
 		else
 		for (int i = 0; i < modelerSet.size(); i++) {
 			
