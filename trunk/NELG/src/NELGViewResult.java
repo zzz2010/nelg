@@ -497,10 +497,10 @@ public class NELGViewResult {
 			if(combined==null)
 				combined= temp;
 			else
-			{	SparseDoubleMatrix2D splitline=new SparseDoubleMatrix2D(temp.rows(), 1);
+			{	SparseDoubleMatrix2D splitline=new SparseDoubleMatrix2D(temp.rows(), 2);
 				combined=DoubleFactory2D.sparse.appendColumns(combined, splitline);
 				combined=DoubleFactory2D.sparse.appendColumns(combined, temp);
-				stridesize=temp.columns()+1;
+				stridesize=temp.columns()+2;
 			}
 		}
 			return combined;
@@ -555,20 +555,20 @@ public class NELGViewResult {
 			DoubleMatrix1D vec= matrix.viewRow(i);
 			for(int ii=0;ii<matrix.columns()-stridesize;ii+=stridesize)
 			{
-				double median=vec.viewPart(ii, stridesize-1).viewSorted().get((stridesize-1)/2);  //vec.zSum()/vec.size();
+				double median=vec.viewPart(ii, stridesize-2).viewSorted().get((stridesize-2)/2);  //vec.zSum()/vec.size();
 				if(Double.isNaN(median))
 					median=1;
 				if(median<5)
 					median=5;
 				if(median>-2)
 				{
-					for (int j = ii; j < ii+stridesize-1; j++) {
+					for (int j = ii; j < ii+stridesize-2; j++) {
 						double temp=Math.log((vec.getQuick(j)+1)/(median+1));
 						vec.set(j, temp);
 					}
 				}
 				else
-					for (int j = ii; j < ii+stridesize-1; j++) {
+					for (int j = ii; j < ii+stridesize-2; j++) {
 						vec.set(j, Double.NaN);
 					}
 			}
@@ -661,7 +661,7 @@ public class NELGViewResult {
 		 for (int i = 0; i < matrix.columns(); i++) {
 			if((i%stride)==(int)(stride/2)&&(i/stride)<featName.size())
 			{
-					strAttr[i]=featName.get(i/stride);
+					strAttr[i]=featName.get((int)i/stride);
 			}
 			else
 			{
