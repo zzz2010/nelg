@@ -97,6 +97,7 @@ public class NELGViewResult {
 	static int stridesize=20;
 	static int foldsize=1;
 	static int bgFold=2;
+	static DoubleMatrix1D clusterIdvec=null;
 	/**
 	 * @param args
 	 */
@@ -582,6 +583,7 @@ public class NELGViewResult {
 			e.printStackTrace();
 		}
 		DoubleMatrix2D combined=DoubleFactory2D.dense.appendColumns(matrix, clusterlabel);
+		clusterIdvec=combined.viewColumn(combined.columns()-1);
 		return combined.viewSorted(combined.columns()-1);
 		}
 		else

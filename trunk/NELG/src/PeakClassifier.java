@@ -205,7 +205,15 @@ public class PeakClassifier {
 						 ClassificationResult Result=(ClassificationResult)in.readObject();
 						
 						 NELGViewResult.ViewClassificationResult(Result);
-						
+						//write cluster BED
+						 if(NELGViewResult.clusterIdvec!=null&&NELGViewResult.clusterIdvec.size()==FSJob.target_signal_filtered.size())
+						 {
+							 System.out.println("write out the clustered BED file");
+							 for (int i = 0; i < NELGViewResult.clusterIdvec.size(); i++) {
+								 FSJob.target_signal_filtered.get(i).setName(String.valueOf(NELGViewResult.clusterIdvec.get(i)));
+							}
+							 SimpleBEDFeature.toFile(FSJob.target_signal_filtered, peakfile1+".clust"); 
+						 }
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						System.out.println(e.getMessage());
