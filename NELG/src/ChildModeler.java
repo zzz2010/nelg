@@ -143,15 +143,17 @@ public class ChildModeler {
 			
 		
 		int crossValNum=5;
-		if(common.printMode)
-			crossValNum=1;
+
 		for (int i = 0; i < modelerSet.size(); i++) {
 			
 		
 		Classifier modeler = modelerSet.get(i);
 		try {
 			Evaluation eval1 = new Evaluation(data2);
-			eval1.crossValidateModel(modeler, data2, crossValNum, new Random(1));
+			if(common.printMode)
+				eval1.evaluateModel(modeler, data2);
+			else
+				eval1.crossValidateModel(modeler, data2, crossValNum, new Random(1));
 			auc=eval1.areaUnderROC(1);
 			logger.debug(modeler.getClass().getName()+" auc:"+auc);
 			 System.out.println(modeler.getClass().getName()+" auc:"+auc);
@@ -281,15 +283,19 @@ public class ChildModeler {
 //			modelerSet.add(new SMOreg());
 		}
 			
+		
+		int crossValNum=5;
+
 		for (int i = 0; i < modelerSet.size(); i++) {
 			
-		int crossValNum=5;
-		if(common.printMode)
-			crossValNum=1;
+
 		Classifier modeler = modelerSet.get(i);
 		try {
 			Evaluation eval = new Evaluation(data2);
-			eval.crossValidateModel(modeler, data2, crossValNum, new Random(1));
+			if(common.printMode)
+				eval.evaluateModel(modeler, data2);
+			else
+				eval.crossValidateModel(modeler, data2, crossValNum, new Random(1));
 			corr=eval.correlationCoefficient();
 			logger.debug(modeler.getClass().getName()+" corr:"+corr);
 			if(bestscore<corr)
