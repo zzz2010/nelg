@@ -141,13 +141,17 @@ public class ChildModeler {
 			modelerSet.add(new AdaBoostM1());
 		}
 			
+		
+		int crossValNum=5;
+		if(common.printMode)
+			crossValNum=1;
 		for (int i = 0; i < modelerSet.size(); i++) {
 			
 		
 		Classifier modeler = modelerSet.get(i);
 		try {
 			Evaluation eval1 = new Evaluation(data2);
-			eval1.crossValidateModel(modeler, data2, 5, new Random(1));
+			eval1.crossValidateModel(modeler, data2, crossValNum, new Random(1));
 			auc=eval1.areaUnderROC(1);
 			logger.debug(modeler.getClass().getName()+" auc:"+auc);
 			 System.out.println(modeler.getClass().getName()+" auc:"+auc);
@@ -279,11 +283,13 @@ public class ChildModeler {
 			
 		for (int i = 0; i < modelerSet.size(); i++) {
 			
-		
+		int crossValNum=5;
+		if(common.printMode)
+			crossValNum=1;
 		Classifier modeler = modelerSet.get(i);
 		try {
 			Evaluation eval = new Evaluation(data2);
-			eval.crossValidateModel(modeler, data2, 5, new Random(1));
+			eval.crossValidateModel(modeler, data2, crossValNum, new Random(1));
 			corr=eval.correlationCoefficient();
 			logger.debug(modeler.getClass().getName()+" corr:"+corr);
 			if(bestscore<corr)
