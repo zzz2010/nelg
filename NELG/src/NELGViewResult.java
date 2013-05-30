@@ -497,7 +497,8 @@ public class NELGViewResult {
 			if(combined==null)
 				combined= temp;
 			else
-			{	SparseDoubleMatrix2D splitline=new SparseDoubleMatrix2D(temp.rows(), 1);
+			{	DenseDoubleMatrix2D splitline=new DenseDoubleMatrix2D(temp.rows(), 1);
+				splitline.assign(Double.NEGATIVE_INFINITY);
 				combined=DoubleFactory2D.sparse.appendColumns(combined, splitline);
 				combined=DoubleFactory2D.sparse.appendColumns(combined, temp);
 				stridesize=temp.columns()+1;
