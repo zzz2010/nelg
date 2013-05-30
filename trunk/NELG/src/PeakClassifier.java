@@ -206,7 +206,7 @@ public class PeakClassifier {
 						
 						 NELGViewResult.ViewClassificationResult(Result);
 						//write cluster BED
-						 if(NELGViewResult.clusterIdvec!=null&&NELGViewResult.clusterIdvec.size()==FSJob.target_signal_filtered.size())
+						 if(common.ClusterNum>1&&NELGViewResult.clusterIdvec!=null&&NELGViewResult.clusterIdvec.size()==FSJob.target_signal_filtered.size())
 						 {
 							 System.out.println("write out the clustered BED file");
 							 for (int i = 0; i < NELGViewResult.clusterIdvec.size(); i++) {
