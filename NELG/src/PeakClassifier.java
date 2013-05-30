@@ -210,7 +210,7 @@ public class PeakClassifier {
 						 {
 							 System.out.println("write out the clustered BED file");
 							 for (int i = 0; i < NELGViewResult.clusterIdvec.size(); i++) {
-								 FSJob.target_signal_filtered.get(i).setName(String.valueOf(NELGViewResult.clusterIdvec.get(i)));
+								 FSJob.target_signal_filtered.get(i).setScore((float) NELGViewResult.clusterIdvec.get(i));
 							}
 							 SimpleBEDFeature.toFile(FSJob.target_signal_filtered, peakfile1+".clust"); 
 						 }
