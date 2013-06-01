@@ -93,11 +93,12 @@ public class NELGViewResult {
 	static String outputDir="Figure";
 	static boolean reGen=false;
 //multiscale setting
-//	static int stridesize=8;
-//	static int foldsize=3;
+	static int stridesize=8;
+	static int foldsize=3;
 //equal size binning setting
-	static int stridesize=0;
-	static int foldsize=1;
+//	static int stridesize=0;
+//	static int foldsize=1;
+	
 	static int bgFold=2;
 	static DoubleMatrix1D clusterIdvec=null;
 	/**
