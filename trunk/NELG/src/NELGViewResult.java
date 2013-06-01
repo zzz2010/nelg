@@ -256,11 +256,7 @@ public class NELGViewResult {
 				eval = new Evaluation(data2);
 				predictValue=eval.evaluateModel(result.LearnedModel, data2);
 				System.out.println(eval.toSummaryString("\nFittingResults\n======\n", false));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+
 			
 			if(reGen==false&&(new File(outputDir+"/"+result.JobTitle+".bar.png").exists()))
 			{
@@ -335,6 +331,11 @@ public class NELGViewResult {
 				//draw
 				DrawBarChart(featRankResult,result.JobTitle,"AUC");
 			}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 	}
 	
