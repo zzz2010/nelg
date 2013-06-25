@@ -297,10 +297,12 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 					    int start=query.getStart();
 					    float sumValues=0;
 					    int stepWidth=(query.getEnd()-start)/numbin;
+					    //make sure ,every bin is equal, so may need to extend last bin
+					    query.setEnd(start+numbin*stepWidth);
 					    int binId=0;
 					    if(stepWidth<1)
 					    	continue;
-						 while(iter.hasNext())
+						 while(iter.hasNext()&&binId<numbin)
 					    {
 					    	WigItem nextRecord = iter.next();	
 //					    	float recordlen=nextRecord.getEndBase()-nextRecord.getStartBase()+1;
@@ -316,7 +318,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 					    		else
 					    			outputSignal.set(queryid, binId, sumValues+outputSignal.get(queryid, binId));
 						sumValues=0;
-					    		//check whether jump several bins
+					    		//check whether jump several bins to reach the item
 					    		int jumpNum=(nextRecord.getStartBase()-start)/stepWidth;
 					    		for (int j = 0; j < jumpNum; j++) {
 					    				binId+=1;
@@ -325,12 +327,12 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 					    	}
 				    		if(binId>=numbin)
 				    			break;
-					    	if((nextRecord.getEndBase()-stepWidth)>=start)
+					    	if((nextRecord.getEndBase()-stepWidth)>=start) //that mean the item is longer than one bin
 					    	{
 					    		int rstart=nextRecord.getStartBase();
 					    		while(start<=nextRecord.getEndBase()-stepWidth)
 					    		{
-						    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-rstart);
+						    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-rstart); //the portion contribute to the current bin
 								if(query.getStrand()== Strand.NEGATIVE)
 						    		{
 						    			outputSignal.set(queryid,numbin-binId-1, sumValues+outputSignal.get(queryid,numbin-binId-1));
