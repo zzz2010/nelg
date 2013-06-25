@@ -55,6 +55,7 @@ public class PeakClassifier {
 			options.addOption("dataDir", true, "folder with bigWig data");
 			options.addOption("clusternum", true, "number of clusters in heatmap (default: 10)");
 			options.addOption("outputDir", true, "folder for output data");
+			options.addOption("winsize", true, "if 0, mean no fix window size (default 4000)");
 			options.addOption("peakfile1", true, "first set of peaks(bed format)");
 			options.addOption("print", false, "fast mode for generating figures");
 			options.addOption("peakfile2", true, "second set of peaks(bed format)");
@@ -66,7 +67,7 @@ public class PeakClassifier {
 			String peakfile2="";
 			common.Localmode=true;
 			common.NFSmode=false;
-			
+			int windowsize=4000;
 			//parsing paramters
 			try {
 				String appPath=new File(".").getCanonicalPath()+"/";
@@ -75,6 +76,10 @@ public class PeakClassifier {
 				{
 					max_threadNum=Integer.parseInt(cmd.getOptionValue("threadnum"));
 					common.threadNum=max_threadNum;
+				}
+				if(cmd.hasOption("winsize"))
+				{
+					windowsize=Integer.parseInt(cmd.getOptionValue("winsize"));
 				}
 				if(cmd.hasOption("print"))
 					common.printMode=true;
@@ -136,6 +141,7 @@ public class PeakClassifier {
 			
 			JPPFClient jppfCLient = null;
 			FeatureSelectionJob FSJob=null;
+			
 			try
 			{
 			////////////////////single peak file clustering //////////////
@@ -143,7 +149,9 @@ public class PeakClassifier {
 			{
 				System.out.println("only one peak file, clustering analysis");
 				 FSJob=new FeatureSelectionJob(peakTrack1,SignalPool,jppfCLient);
-				common.SignalRange=4000;
+				 common.SignalRange=windowsize;
+				 if(common.SignalRange==0);
+					System.out.println("no fix window size!");
 				common.AUC_cutoff=-1;
 				//common.Corr_cutoff=-1;
 				common.topNfeatures=1000000;

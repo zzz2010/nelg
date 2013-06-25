@@ -64,6 +64,9 @@ public class FeatureSelectionJob implements  Runnable {
 		executor=Executor;
 		this.target_signal = target_signal;
 		SignalPool = signalPool;
+		if(common.SignalRange==0)
+			target_signal_bg=SignalTransform.extractPositveSignal(target_bg_track);
+		else
 		target_signal_bg=SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_bg_track),common.SignalRange,true);
 		//make negative score
 		for (int i = 0; i < target_signal_bg.size(); i++) {
