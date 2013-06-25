@@ -152,7 +152,10 @@ public class FeatureSelectionJob implements  Runnable {
 	  	target_signal_filtered= StateRecovery.loadCache_BEDFeatureList(storekey);
 	  	if(target_signal_filtered==null)
 	  	{
-	  		target_signal_filtered=SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),common.SignalRange,true);
+	  		if(common.SignalRange==0)
+	  			target_signal_filtered=SignalTransform.extractPositveSignal(target_signal);
+	  		else
+	  			target_signal_filtered=SignalTransform.fixRegionSize(SignalTransform.extractPositveSignal(target_signal),common.SignalRange,true);
 	  		StateRecovery.saveCache_BEDFeatureList(target_signal_filtered, storekey);
 	  	}
 	  		if(target_signal_filtered.size()<common.MinimumPeakNum)
