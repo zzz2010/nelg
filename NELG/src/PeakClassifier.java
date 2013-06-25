@@ -150,7 +150,7 @@ public class PeakClassifier {
 				System.out.println("only one peak file, clustering analysis");
 				 FSJob=new FeatureSelectionJob(peakTrack1,SignalPool,jppfCLient);
 				 common.SignalRange=windowsize;
-				 if(common.SignalRange==0);
+				 if(common.SignalRange==0)
 					System.out.println("no fix window size!");
 				common.AUC_cutoff=-1;
 				//common.Corr_cutoff=-1;
