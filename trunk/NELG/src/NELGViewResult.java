@@ -739,7 +739,7 @@ public class NELGViewResult {
 	        JFreeChart jfreechart = new JFreeChart(title, xyplot);
 	        
 	        try {
-				ChartUtilities.saveChartAsPNG(new File(pngfile), jfreechart, (int)Math.floor(matrix.rows()*0.1),  matrix.columns()*5);
+				ChartUtilities.saveChartAsPNG(new File(pngfile), jfreechart, Math.max(1000,(int)Math.floor(matrix.rows()*0.1)),  matrix.columns()*5);
 				System.out.println("Draw heatmap to file: "+pngfile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
