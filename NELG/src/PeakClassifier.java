@@ -124,8 +124,7 @@ public class PeakClassifier {
 			// change the auto tick unit selection to integer units only...
 			        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 			        rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
-			        NumberAxis domain = (NumberAxis) plot.getDomainAxis();
-			        domain.setRange(-20*100, 20*100);
+
 			        ChartPanel chartPanel = new ChartPanel(chart);
 			        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
 			      //  setContentPane(chartPanel);
