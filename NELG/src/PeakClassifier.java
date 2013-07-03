@@ -139,7 +139,7 @@ public class PeakClassifier {
 						
 					       for(int i=1; i<dataset.getSeries().size();i+=2)
 					       {
-					    	   		renderer.setSeriesFillPaint(i, renderer.getSeriesPaint(i-1));
+					    	   		renderer.setSeriesFillPaint(i, chart.getXYPlot().getRenderer().getSeriesPaint(i-1));
 					    	   		renderer.setSeriesStroke(i, 
 					    	   	            new BasicStroke(
 					    	   	                2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 
