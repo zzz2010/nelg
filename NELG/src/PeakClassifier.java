@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,6 +17,17 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.PropertyConfigurator;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RectangleInsets;
 import org.jppf.client.JPPFClient;
 import org.jppf.utils.FileUtils;
 
@@ -45,6 +57,85 @@ public class PeakClassifier {
 					NELGViewResult.drawSignalAroundPeakCurve(temp, targetValue, feat.ExperimentId, targetName);
 				}
 					
+			}
+			public static void drawSignalAroundPeakBatch2(Collection<TrackRecord> signalPool,String targetName,List<SimpleBEDFeature> query)
+			{
+				String pngfile= common.outputDir+"/"+targetName+"_allcurve"+".png";
+				DoubleMatrix1D targetvalue = SignalTransform.BedFeatureToValues(query);
+				EqualBinFeatureExtractor FE=new EqualBinFeatureExtractor(20);
+				XYSeriesCollection dataset = new XYSeriesCollection(); 
+				for (TrackRecord feat : signalPool) {
+					
+					DoubleMatrix2D signal_matrix=FE.extractSignalFeature(feat, query);
+				//////////////prepare data points/////////////////
+			
+				XYSeries posData=new XYSeries( "+"+feat.ExperimentId);
+				XYSeries negData=new XYSeries( "-"+feat.ExperimentId);
+				double[] tempdata1=new double[signal_matrix.columns()];
+				double[] tempdata2=new double[signal_matrix.columns()];
+				int poscount=0;
+				int negcount=0;
+				for (int i = 0; i < signal_matrix.rows(); i++) {
+					if(targetvalue.get(i)>=0)
+					{
+						poscount++;
+						for (int j = 0; j < signal_matrix.columns(); j++) {
+							tempdata1[j]+=signal_matrix.get(i, j);
+						}
+					}
+					else
+					{
+						negcount++;
+						for (int j = 0; j < signal_matrix.columns(); j++) {
+							tempdata2[j]+=signal_matrix.get(i, j);
+						}
+					}
+				}
+				for (int i = 0; i < tempdata2.length; i++) {
+					posData.add(i, tempdata1[i]/poscount);
+					negData.add(i,tempdata2[i]/negcount);
+				}
+				dataset.addSeries(posData);
+				dataset.addSeries(negData);
+				}
+				//////////////ploting/////////////////
+				 
+				 JFreeChart chart = ChartFactory.createXYLineChart(
+						 targetName, // chart title
+			                "Position Around Peak", // x axis label
+			                "Signal Count", // y axis label
+			                dataset, // data
+			                PlotOrientation.VERTICAL,
+			                true, // include legend
+			                true, // tooltips
+			                false // urls
+			                );
+			// NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
+			        chart.setBackgroundPaint(Color.white);
+			// get a reference to the plot for further customisation...
+			        XYPlot plot = (XYPlot) chart.getPlot();
+			        plot.setBackgroundPaint(Color.white);
+			        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+			        plot.setDomainGridlinePaint(Color.white);
+			        plot.setRangeGridlinePaint(Color.white);
+			        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
+			        renderer.setShapesVisible(true);
+			        renderer.setShapesFilled(true);
+			// change the auto tick unit selection to integer units only...
+			        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+			        rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
+			        NumberAxis domain = (NumberAxis) plot.getDomainAxis();
+			        domain.setRange(-20*100, 20*100);
+			        ChartPanel chartPanel = new ChartPanel(chart);
+			        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+			      //  setContentPane(chartPanel);
+			        try {
+						ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 800, 600);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				
 			}
 			
 		public static void main(String[] args) {
@@ -197,7 +288,7 @@ public class PeakClassifier {
 					SelectedSignalPool.add(signal_track);
 				}
 			}
-		    drawSignalAroundPeakBatch(SelectedSignalPool, peakTrack1.ExperimentId, query);
+		    drawSignalAroundPeakBatch2(SelectedSignalPool, peakTrack1.ExperimentId, query);
 		    /////////////////view result///////////////////////
 		    String resultfile="";
 		    File outdir=new File(common.outputDir);
