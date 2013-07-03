@@ -1,3 +1,4 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,7 +63,10 @@ public class PeakClassifier {
 			{
 				String pngfile= common.outputDir+"/"+targetName+"_allcurve"+".png";
 				DoubleMatrix1D targetvalue = SignalTransform.BedFeatureToValues(query);
-				EqualBinFeatureExtractor FE=new EqualBinFeatureExtractor(20);
+				
+				int nbin=20;
+				float binsize= (float)common.SignalRange/nbin;
+				EqualBinFeatureExtractor FE=new EqualBinFeatureExtractor(nbin);
 				XYSeriesCollection dataset = new XYSeriesCollection(); 
 				for (TrackRecord feat : signalPool) {
 					
@@ -92,8 +96,8 @@ public class PeakClassifier {
 					}
 				}
 				for (int i = 0; i < tempdata2.length; i++) {
-					posData.add(i, tempdata1[i]/poscount);
-					negData.add(i,tempdata2[i]/negcount);
+					posData.add(-common.SignalRange/2+i*binsize, tempdata1[i]/poscount);
+					negData.add(-common.SignalRange/2+i*binsize,tempdata2[i]/negcount);
 				}
 				dataset.addSeries(posData);
 				dataset.addSeries(negData);
@@ -125,6 +129,17 @@ public class PeakClassifier {
 			        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 			        rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 
+			       for(int i=1; i<dataset.getSeries().size();i+=2)
+			       {
+			    	   		renderer.setSeriesFillPaint(i, renderer.getSeriesFillPaint(i-1));
+			    	   		renderer.setSeriesStroke(i, 
+			    	   	            new BasicStroke(
+			    	   	                2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 
+			    	   	                1.0f, new float[] {10.0f, 6.0f}, 0.0f
+			    	   	            )
+			    	   	            );
+			       }
+			        
 			        ChartPanel chartPanel = new ChartPanel(chart);
 			        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
 			      //  setContentPane(chartPanel);
