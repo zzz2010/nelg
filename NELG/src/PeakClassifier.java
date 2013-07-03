@@ -23,6 +23,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -131,7 +132,7 @@ public class PeakClassifier {
 
 			       for(int i=1; i<dataset.getSeries().size();i+=2)
 			       {
-			    	   		renderer.setSeriesFillPaint(i, renderer.lookupSeriesPaint(i-1));
+			    	   		renderer.setSeriesFillPaint(i, DefaultDrawingSupplier.DEFAULT_FILL_PAINT_SEQUENCE[i-1]);
 			    	   		renderer.setSeriesStroke(i, 
 			    	   	            new BasicStroke(
 			    	   	                2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 
