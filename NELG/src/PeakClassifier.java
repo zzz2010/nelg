@@ -23,7 +23,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -130,22 +129,26 @@ public class PeakClassifier {
 			        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 			        rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 
-			       for(int i=1; i<dataset.getSeries().size();i+=2)
-			       {
-			    	   		renderer.setSeriesFillPaint(i, DefaultDrawingSupplier.DEFAULT_FILL_PAINT_SEQUENCE[i-1]);
-			    	   		renderer.setSeriesStroke(i, 
-			    	   	            new BasicStroke(
-			    	   	                2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 
-			    	   	                1.0f, new float[] {10.0f, 6.0f}, 0.0f
-			    	   	            )
-			    	   	            );
-			       }
+
 			        
 			        ChartPanel chartPanel = new ChartPanel(chart);
 			        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
 			      //  setContentPane(chartPanel);
 			        try {
 						ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 800, 600);
+						
+					       for(int i=1; i<dataset.getSeries().size();i+=2)
+					       {
+					    	   		renderer.setSeriesFillPaint(i, renderer.getSeriesPaint(i-1));
+					    	   		renderer.setSeriesStroke(i, 
+					    	   	            new BasicStroke(
+					    	   	                2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 
+					    	   	                1.0f, new float[] {10.0f, 6.0f}, 0.0f
+					    	   	            )
+					    	   	            );
+					       }
+					       ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 800, 600);
+					       
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
