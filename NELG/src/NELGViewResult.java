@@ -578,22 +578,22 @@ public class NELGViewResult {
 
 			}
 		//normalized across different types data in region
-		int numFeature=(matrix.columns()/stridesize-1);
-		for (int i = 0; i < matrix.rows(); i++) {
-			DoubleMatrix1D vec= matrix.viewRow(i);
-			
-			for(int ii=0;ii<stridesize-2;ii+=1)
-			{
-				double mean=vec.viewPart(ii,numFeature*stridesize).viewStrides(stridesize).zSum()/numFeature;  //vec.zSum()/vec.size();
-				if(Double.isNaN(mean))
-					mean=0;
-					for (int j = 0; j < numFeature; j++) {
-						double temp=vec.getQuick(ii+stridesize*j)-mean;
-						vec.set(j, temp);
-					}
-			}
-
-		}
+//		int numFeature=(matrix.columns()/stridesize-1);
+//		for (int i = 0; i < matrix.rows(); i++) {
+//			DoubleMatrix1D vec= matrix.viewRow(i);
+//			
+//			for(int ii=0;ii<stridesize-2;ii+=1)
+//			{
+//				double mean=vec.viewPart(ii,numFeature*stridesize).viewStrides(stridesize).zSum()/numFeature;  //vec.zSum()/vec.size();
+//				if(Double.isNaN(mean))
+//					mean=0;
+//					for (int j = 0; j < numFeature; j++) {
+//						double temp=vec.getQuick(ii+stridesize*j)-mean;
+//						vec.set(j, temp);
+//					}
+//			}
+//
+//		}
 		
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		if(common.ClusterNum>1)
