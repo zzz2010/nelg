@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +46,8 @@ public class PeakClassifier {
 		 * @param args
 		 */
 		 public static int max_threadNum=4;
+		 
+		 public static ArrayList<String> selectedClusterFeature=null;
 		 
 		 
 			public static void drawSignalAroundPeakBatch(Collection<TrackRecord> signalPool,String targetName,List<SimpleBEDFeature> query)
@@ -160,14 +163,15 @@ public class PeakClassifier {
 			PropertyConfigurator.configure( "./log4j.properties" ); 
 			// TODO Auto-generated method stub
 			Options options = new Options();
-			options.addOption("threadnum", true, "maximum thread number");
-			options.addOption("dataDir", true, "folder with bigWig data");
+			options.addOption("threadnum", true, "maximum number of threads can be used in extract the feature data");
+			options.addOption("dataDir", true, "the path of the folder with bigWig data");
 			options.addOption("clusternum", true, "number of clusters in heatmap (default: 10)");
-			options.addOption("outputDir", true, "folder for output data");
+			options.addOption("outputDir", true, "the path of folder for output data");
 			options.addOption("winsize", true, "if 0, mean no fix window size (default 4000)");
-			options.addOption("peakfile1", true, "first set of peaks(bed format)");
-			options.addOption("print", false, "fast mode for generating figures");
-			options.addOption("peakfile2", true, "second set of peaks(bed format)");
+			options.addOption("peakfile1", true, "target peaks set  (bed format)");
+			options.addOption("print", false, "fast mode for only generating figures (default: false)");
+			options.addOption("peakfile2", true, "background peaks set(bed format)");
+			options.addOption("clusterfeatures", true, "comma separated list of bigwig file names");
 	
 			CommandLineParser parser = new GnuParser();
 			CommandLine cmd;
@@ -215,6 +219,13 @@ public class PeakClassifier {
 				if(cmd.hasOption("outputDir"))
 				{
 					common.outputDir=cmd.getOptionValue("outputDir");
+				}
+				
+				if(cmd.hasOption("clusterfeatures"))
+				{
+					String clusterfeatures=cmd.getOptionValue("clusterfeatures");
+					selectedClusterFeature=new ArrayList<String>();
+					selectedClusterFeature.addAll(Arrays.asList(clusterfeatures.split(",")));			
 				}
 				
 			} catch (ParseException e) {
@@ -269,10 +280,7 @@ public class PeakClassifier {
 				NELGViewResult.bgFold=5;//remove bgsignal
 				common.filterFeature=false;
 				FeatureSelectionJob.featureExtractor=new EqualBinFeatureExtractor(20);
-
 				FSJob.run();
-
-
 			}
 			else
 			{
