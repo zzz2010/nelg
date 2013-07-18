@@ -302,6 +302,7 @@ public class NELGViewResult {
 				ArrayList<String> selFeatNames2=new ArrayList<String>();
 				for (String fea : selFeatNames) {
 					boolean selFlag=false;
+					System.out.println(fea);
 					for (String usersel : PeakClassifier.selectedClusterFeature) {
 							if(fea.contains(usersel))
 							{
