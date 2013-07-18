@@ -305,6 +305,7 @@ public class NELGViewResult {
 							if(fea.contains(usersel))
 							{
 								selFeatNames2.add(fea);
+								System.out.println("feature for clustering: "+fea);
 								selFlag=true;
 								break;
 							}
@@ -316,8 +317,7 @@ public class NELGViewResult {
 				common.ClusterNum=1;
 				
 				}
-				
-				
+
 				int targetColorwidth=stridesize;
 				SparseDoubleMatrix2D targetvalue2=new SparseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
 				for (int i = 0; i < targetvalue.size(); i++) {
