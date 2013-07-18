@@ -286,7 +286,20 @@ public class PeakClassifier {
 			{
 			//////////////////extract feature data////////////////////
 			FeatureSelectionJob.resultsListener=new ClassificationResultListener();
-				 
+			if(common.printMode)
+			{
+				 common.SignalRange=windowsize;
+				 if(common.SignalRange==0)
+					System.out.println("no fix window size!");
+				common.AUC_cutoff=-1;
+				//common.Corr_cutoff=-1;
+				common.topNfeatures=1000000;
+				NELGViewResult.stridesize=20;
+				NELGViewResult.foldsize=1;
+				NELGViewResult.bgFold=5;//remove bgsignal
+				common.filterFeature=false;
+				FeatureSelectionJob.featureExtractor=new EqualBinFeatureExtractor(20);
+			}
 		     FSJob=new FeatureSelectionJob(peakTrack1, peakTrack2,SignalPool,jppfCLient);
 		    FSJob.run();
 			}
