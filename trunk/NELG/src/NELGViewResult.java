@@ -330,6 +330,7 @@ public class NELGViewResult {
 				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
 				if(PeakClassifier.selectedClusterFeature!=null)
 				{
+					System.out.println(clusterIdvec);
 					DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(clusterIdvec.size(), 1);
 					for (int i = 0; i < clusterIdvec.size(); i++) {
 						clusterlabel.set(i, 0, clusterIdvec.get(i));
