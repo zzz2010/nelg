@@ -298,6 +298,7 @@ public class NELGViewResult {
 				//if the clusterFeatures is set, then filter the selFeatNames based on the clusterFeature
 				if(PeakClassifier.selectedClusterFeature!=null)
 				{
+					System.out.println(PeakClassifier.selectedClusterFeature);
 				ArrayList<String> selFeatNames2=new ArrayList<String>();
 				for (String fea : selFeatNames) {
 					boolean selFlag=false;
