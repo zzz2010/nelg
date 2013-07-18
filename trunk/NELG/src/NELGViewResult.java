@@ -295,16 +295,28 @@ public class NELGViewResult {
 				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_(?!.*_)")[0]); //only split the last "_"
 				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
 				
+				//if the clusterFeatures is set, then filter the selFeatNames based on the clusterFeature
+				if(PeakClassifier.selectedClusterFeature!=null)
+				{
+				ArrayList<String> selFeatNames2=new ArrayList<String>();
+				for (String fea : selFeatNames) {
+					boolean selFlag=false;
+					for (String usersel : PeakClassifier.selectedClusterFeature) {
+							if(fea.contains(usersel))
+							{
+								selFeatNames2.add(fea);
+								selFlag=true;
+								break;
+							}
+					}
+				}
+				DoubleMatrix2D featureMatrix2=LoadFeatureData(selFeatNames2,result.JobTitle.split("_(?!.*_)")[0]); 
+				DoubleMatrix2D combinedP_order=clusterReorder_Rowbased(featureMatrix2);	
+				//to this point, clusterIdvec is set
+				common.ClusterNum=1;
 				
-			//	drawSignalAroundPeakBatch(selFeatNames, result.JobTitle.split("_(?!.*_)")[0], targetvalue);
-//				int countneg=0;
-//				for (int i = 0; i < targetvalue.size(); i++) {
-//					if(targetvalue.get(i)>1)//if(Double.isNaN(targetvalue.get(i)))
-//					{
-//						targetvalue.set(i, -1);
-//						countneg++;
-//					}
-//				}
+				}
+				
 				
 				int targetColorwidth=stridesize;
 				SparseDoubleMatrix2D targetvalue2=new SparseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
@@ -316,6 +328,10 @@ public class NELGViewResult {
 				}
 				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
 				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
+				if(PeakClassifier.selectedClusterFeature!=null)
+				{
+					combined=DoubleFactory2D.sparse.appendColumns(combined,  clusterIdvec.like2D(clusterIdvec.size(), 1));
+				}
 				DoubleMatrix2D combinedP_order=clusterReorder_Rowbased(combined);
 				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,stridesize);
 				
@@ -600,8 +616,7 @@ public class NELGViewResult {
 		{
 		try {
 			clustering.setNumClusters(common.ClusterNum);
-			Instances data=matrix2instances( matrix);
-			
+			Instances data=matrix2instances(matrix);
 			clustering.buildClusterer(data);
 			for (int i = 0; i < matrix.rows(); i++) {
 				clusterlabel.set(i, 0, clustering.clusterInstance(data.instance(i)));
