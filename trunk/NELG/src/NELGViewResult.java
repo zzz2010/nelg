@@ -330,7 +330,11 @@ public class NELGViewResult {
 				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
 				if(PeakClassifier.selectedClusterFeature!=null)
 				{
-					combined=DoubleFactory2D.sparse.appendColumns(combined,  clusterIdvec.like2D(clusterIdvec.size(), 1));
+					DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(clusterIdvec.size(), 1);
+					for (int i = 0; i < clusterIdvec.size(); i++) {
+						clusterlabel.set(i, 0, clusterIdvec.get(i));
+					}
+					combined=DoubleFactory2D.sparse.appendColumns(combined,clusterlabel);
 				}
 				DoubleMatrix2D combinedP_order=clusterReorder_Rowbased(combined);
 				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,stridesize);
