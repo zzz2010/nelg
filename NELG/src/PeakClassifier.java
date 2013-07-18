@@ -170,7 +170,7 @@ public class PeakClassifier {
 			options.addOption("winsize", true, "if 0, mean no fix window size (default 4000)");
 			options.addOption("peakfile1", true, "target peaks set  (bed format)");
 			options.addOption("print", false, "fast mode for only generating figures (default: false)");
-			options.addOption("peakfile2", true, "background peaks set(bed format)");
+			options.addOption("peakfile2", true, "background peaks set (bed format, optional) ");
 			options.addOption("clusterfeatures", true, "comma separated list of bigwig file names");
 	
 			CommandLineParser parser = new GnuParser();
