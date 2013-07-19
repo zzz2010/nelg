@@ -338,8 +338,11 @@ public class NELGViewResult {
 					}
 					combined=DoubleFactory2D.sparse.appendColumns(combined,clusterlabel);
 					combined=combined.viewSorted(combined.columns()-1);
+					
+					result.JobTitle=PeakClassifier.selectedClusterFeature.toString();
 				}
 				DoubleMatrix2D combinedP_order=clusterReorder_Rowbased(combined);
+				
 				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,stridesize);
 				
 				
