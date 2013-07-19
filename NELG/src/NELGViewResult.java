@@ -316,8 +316,7 @@ public class NELGViewResult {
 				DoubleMatrix2D featureMatrix2=LoadFeatureData(selFeatNames2,result.JobTitle.split("_(?!.*_)")[0]); 
 				DoubleMatrix2D combinedP_order=clusterReorder_Rowbased(featureMatrix2);	
 				//to this point, clusterIdvec is set
-				common.ClusterNum=1;
-				
+				common.ClusterNum=1;				
 				}
 
 				int targetColorwidth=stridesize;
