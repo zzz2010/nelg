@@ -330,6 +330,7 @@ public class PeakClassifier {
 		    drawSignalAroundPeakBatch2(SelectedSignalPool, peakTrack1.ExperimentId, query);
 		    /////////////////view result///////////////////////
 		    String resultfile="";
+		    NELGViewResult.outputDir=common.outputDir;
 		    File outdir=new File(common.outputDir);
 		    for(File fl :outdir.listFiles())
 		    {
