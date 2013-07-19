@@ -226,7 +226,7 @@ public class PeakClassifier {
 					String clusterfeatures=cmd.getOptionValue("clusterfeatures");
 					selectedClusterFeature=new ArrayList<String>();
 					selectedClusterFeature.addAll(Arrays.asList(clusterfeatures.split(",")));	
-					common.outputDir+=clusterfeatures.replace(",", "_");
+					
 				}
 				
 			} catch (ParseException e) {
