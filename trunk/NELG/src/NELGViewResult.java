@@ -327,7 +327,7 @@ public class NELGViewResult {
 					//use half brand for target value, first half as separate line to feature
 					for (int j = 0; j < targetColorwidth/2; j++) {
 						//map the target value to the color scale here
-						targetvalue2.set(i, targetColorwidth/2+j, targetvalue.getQuick(i)/targetVscale);
+						targetvalue2.set(i, targetColorwidth/2+j, Math.log(targetvalue.getQuick(i)));
 					}
 				}
 				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
