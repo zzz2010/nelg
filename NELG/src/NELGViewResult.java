@@ -322,7 +322,7 @@ public class NELGViewResult {
 				int targetColorwidth=stridesize;
 				SparseDoubleMatrix2D targetvalue2=new SparseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
 				//max fold change to the mean 
-				double targetVscale=targetvalue.viewSorted().getQuick(targetvalue.size()-1)/(targetvalue.zSum()/targetvalue.size());
+				double targetVscale=targetvalue.viewSorted().getQuick(targetvalue.size()-1)/10;
 				for (int i = 0; i < targetvalue.size(); i++) {
 					//use half brand for target value, first half as separate line to feature
 					for (int j = 0; j < targetColorwidth/2; j++) {
