@@ -58,6 +58,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.util.ArrayUtilities;
+import org.jppf.utils.FileUtils;
 import org.tc33.jheatchart.HeatChart;
 
 
@@ -198,6 +199,7 @@ public class NELGViewResult {
 		System.out.println(result.toString());
 		String[] comps_str=result.JobTitle.split("_");
 		outputDir=outputDir+"/"+comps_str[0];
+		FileUtils.deletePath(new File(outputDir));
 		(new File(outputDir)).mkdir();
 		try {
 			FileWriter outFile = new FileWriter(outputDir+"/"+comps_str[1]+".txt");
