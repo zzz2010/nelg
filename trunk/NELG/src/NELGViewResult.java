@@ -585,7 +585,7 @@ public class NELGViewResult {
 	//normalized by local region
 		for (int i = 0; i < matrix.rows(); i++) {
 			DoubleMatrix1D vec= matrix.viewRow(i);
-			for(int ii=0;ii<matrix.columns()-2*stridesize;ii+=stridesize) //skip the last brand : target value
+			for(int ii=0;ii<matrix.columns()-stridesize;ii+=stridesize) //skip the last brand : target value
 			{
 				DoubleMatrix1D sortedVec = vec.viewPart(ii, stridesize-2).viewSorted();
 				double median=sortedVec.get((stridesize-2)/2);  //vec.zSum()/vec.size();
