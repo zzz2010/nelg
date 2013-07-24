@@ -809,12 +809,12 @@ public class NELGViewResult {
    
    stepsize=(point2-point1)/numscale;
    for (int i = 0; i < num_trans; i++) {
-	   ps.add(valPoint=valPoint+stepsize, blend(Color.GREEN,Color.blue,((double)i)/(num_trans)));
+	   ps.add(valPoint=valPoint+stepsize, blend(Color.white,Color.blue,((double)i)/(num_trans)));
   }
    
    stepsize=(max-point2)/numscale;
    for (int i = 0; i < num_trans; i++) {
-	   ps.add(valPoint=valPoint+stepsize, blend(Color.RED,Color.GREEN,((double)i)/(num_trans)));
+	   ps.add(valPoint=valPoint+stepsize, blend(Color.RED,Color.white,((double)i)/(num_trans)));
   }
    ps.add(Double.MAX_VALUE,Color.RED);
     return ps;
