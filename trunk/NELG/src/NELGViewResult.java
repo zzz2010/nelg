@@ -590,6 +590,8 @@ public class NELGViewResult {
 				DoubleMatrix1D sortedVec = vec.viewPart(ii, stridesize-2).viewSorted();
 				double median=sortedVec.get((stridesize-2)/2);  //vec.zSum()/vec.size();
 				double max=sortedVec.getQuick(stridesize-3);
+				if(median==max)
+					median=1;  //no need to normalize
 				double pesudoCnt=Math.max(0.1, Math.min(max/2, 1));
 				if(Double.isNaN(median))
 					median=1;
