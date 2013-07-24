@@ -294,7 +294,7 @@ public class NELGViewResult {
 				//load 1/2 background peak
 				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_(?!.*_)")[0]); //only split the last "_"
 				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
-				
+				System.err.println(targetvalue);
 				//if the clusterFeatures is set, then filter the selFeatNames based on the clusterFeature
 				if(PeakClassifier.selectedClusterFeature!=null)
 				{
