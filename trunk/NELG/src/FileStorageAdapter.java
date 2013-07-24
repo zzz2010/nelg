@@ -177,7 +177,7 @@ public class FileStorageAdapter implements StorageAdapter{
 			iter = reader.iterator();
 	        for (BEDFeature feat : iter) {
 	        	peakList.add(new SimpleBEDFeature(feat));   
-	        	System.err.println(feat.getScore());
+	      
 			}
 	        reader.close();
 		} catch (Exception e) {
