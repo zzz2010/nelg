@@ -301,20 +301,18 @@ public class NELGViewResult {
 					System.out.println(PeakClassifier.selectedClusterFeature);
 				ArrayList<String> selFeatNames2=new ArrayList<String>();
 				for (String fea : selFeatNames) {
-					boolean selFlag=false;
 					System.out.println(fea);
 					for (String usersel : PeakClassifier.selectedClusterFeature) {
 							if(fea.contains(usersel))
 							{
 								selFeatNames2.add(fea);
 								System.out.println("feature for clustering: "+fea);
-								selFlag=true;
 								break;
 							}
 					}
 				}
 				DoubleMatrix2D featureMatrix2=LoadFeatureData(selFeatNames2,result.JobTitle.split("_(?!.*_)")[0]); 
-				DoubleMatrix2D combinedP_order=clusterReorder_Rowbased(featureMatrix2);	
+				clusterReorder_Rowbased(featureMatrix2);	
 				//to this point, clusterIdvec is set
 				common.ClusterNum=1;				
 				}
@@ -322,12 +320,12 @@ public class NELGViewResult {
 				int targetColorwidth=stridesize;
 				SparseDoubleMatrix2D targetvalue2=new SparseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
 				//max fold change to the mean 
-				double targetVscale=targetvalue.viewSorted().getQuick(targetvalue.size()-1)/10;
+				double targetVscale=targetvalue.viewSorted().getQuick(targetvalue.size()/2-1);
 				for (int i = 0; i < targetvalue.size(); i++) {
 					//use half brand for target value, first half as separate line to feature
 					for (int j = 0; j < targetColorwidth/2; j++) {
 						//map the target value to the color scale here
-						targetvalue2.set(i, targetColorwidth/2+j, Math.log(targetvalue.getQuick(i)));
+						targetvalue2.set(i, targetColorwidth/2+j, Math.log(targetvalue.getQuick(i)/targetVscale));
 					}
 				}
 				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
