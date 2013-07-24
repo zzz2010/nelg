@@ -584,7 +584,10 @@ public class NELGViewResult {
 			DoubleMatrix1D vec= matrix.viewRow(i);
 			for(int ii=0;ii<matrix.columns()-stridesize;ii+=stridesize)
 			{
-				double median=vec.viewPart(ii, stridesize-2).viewSorted().get((stridesize-2)/2);  //vec.zSum()/vec.size();
+				DoubleMatrix1D sortedVec = vec.viewPart(ii, stridesize-2).viewSorted();
+				double median=sortedVec.get((stridesize-2)/2);  //vec.zSum()/vec.size();
+				double max=sortedVec.getQuick(stridesize-3);
+				double pesudoCnt=Math.max(0.1, Math.min(max/2, 1));
 				if(Double.isNaN(median))
 					median=1;
 				if(median<5)
@@ -592,7 +595,7 @@ public class NELGViewResult {
 				if(median>-2)
 				{
 					for (int j = ii; j < ii+stridesize-2; j++) {
-						double temp=Math.log((vec.getQuick(j)+1)/(median+1));
+						double temp=Math.log((vec.getQuick(j)+pesudoCnt)/(median+pesudoCnt));
 						vec.set(j, temp);
 					}
 				}
