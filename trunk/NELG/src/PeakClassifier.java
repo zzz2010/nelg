@@ -241,10 +241,9 @@ public class PeakClassifier {
 			common.SynonymCheck=false;
 			 NELGViewResult.reGen=true;
 			FileUtils.deletePath(new File(common.tempDir));
-		//	FileUtils.deletePath(new File(common.outputDir));
+			FileUtils.deletePath(new File(common.outputDir));
 			//create directory
-			if(!(new File(common.outputDir)).exists())
-				(new File(common.outputDir)).mkdir();
+			(new File(common.outputDir)).mkdir();
 			(new File(common.tempDir)).mkdir();
 			
 			File datafolder=new File(common.dataDir);
