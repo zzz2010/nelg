@@ -294,8 +294,7 @@ public class NELGViewResult {
 				//load 1/2 background peak
 				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_(?!.*_)")[0]); //only split the last "_"
 				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
-				System.err.println(targetvalue);
-				System.exit(1);
+
 				//if the clusterFeatures is set, then filter the selFeatNames based on the clusterFeature
 				if(PeakClassifier.selectedClusterFeature!=null)
 				{
@@ -322,10 +321,13 @@ public class NELGViewResult {
 
 				int targetColorwidth=stridesize;
 				SparseDoubleMatrix2D targetvalue2=new SparseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
+				//max fold change to the mean 
+				double targetVscale=targetvalue.viewSorted().getQuick(targetvalue.size()-1)/(targetvalue.zSum()/targetvalue.size());
 				for (int i = 0; i < targetvalue.size(); i++) {
 					//use half brand for target value, first half as separate line to feature
 					for (int j = 0; j < targetColorwidth/2; j++) {
-						targetvalue2.set(i, targetColorwidth/2+j, targetvalue.getQuick(i));
+						//map the target value to the color scale here
+						targetvalue2.set(i, targetColorwidth/2+j, targetvalue.getQuick(i)/targetVscale);
 					}
 				}
 				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
@@ -583,7 +585,7 @@ public class NELGViewResult {
 	//normalized by local region
 		for (int i = 0; i < matrix.rows(); i++) {
 			DoubleMatrix1D vec= matrix.viewRow(i);
-			for(int ii=0;ii<matrix.columns()-stridesize;ii+=stridesize)
+			for(int ii=0;ii<matrix.columns()-2*stridesize;ii+=stridesize) //skip the last brand : target value
 			{
 				DoubleMatrix1D sortedVec = vec.viewPart(ii, stridesize-2).viewSorted();
 				double median=sortedVec.get((stridesize-2)/2);  //vec.zSum()/vec.size();
