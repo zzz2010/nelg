@@ -581,7 +581,7 @@ public class NELGViewResult {
 		SimpleKMeans clustering=null;
 		clustering=new SimpleKMeans();
 	//	clustering=new HierarchicalClusterer();
-		
+		double maxValue=Double.NEGATIVE_INFINITY;
 	//normalized by local region
 		for (int i = 0; i < matrix.rows(); i++) {
 			DoubleMatrix1D vec= matrix.viewRow(i);
@@ -590,18 +590,21 @@ public class NELGViewResult {
 				DoubleMatrix1D sortedVec = vec.viewPart(ii, stridesize-2).viewSorted();
 				double median=sortedVec.get((stridesize-2)/2);  //vec.zSum()/vec.size();
 				double max=sortedVec.getQuick(stridesize-3);
-				if(median==max)
-					median=0.11;  //no need to normalize
+
 				double pesudoCnt=Math.max(0.1, Math.min(max/2, 1));
-				if(Double.isNaN(median))
-					median=1;
 				if(median<5)
 					median=5;
+//				if(median==max)
+//					median=0.11;  //no need to normalize
+				if(Double.isNaN(median))
+					median=1;
 				if(median>-2)
 				{
 					for (int j = ii; j < ii+stridesize-2; j++) {
 						double temp=Math.log((vec.getQuick(j)+pesudoCnt)/(median+pesudoCnt));
 						vec.set(j, temp);
+						if(maxValue<temp)
+							maxValue=temp;
 					}
 				}
 				else
@@ -637,7 +640,7 @@ public class NELGViewResult {
 			Instances data=matrix2instances(matrix);
 			clustering.buildClusterer(data);
 			for (int i = 0; i < matrix.rows(); i++) {
-				clusterlabel.set(i, 0, clustering.clusterInstance(data.instance(i)));
+				clusterlabel.set(i, 0, maxValue/common.ClusterNum*clustering.clusterInstance(data.instance(i)));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -784,9 +787,9 @@ public class NELGViewResult {
  	public static PaintScale getPaintScale(DoubleMatrix2D matrix)
 {
  		
- 		DoubleMatrix1D vecD =matrix.viewRow(0);
- 		for (int i = 1; i <matrix.rows(); i++) {
- 			vecD=DoubleFactory1D.dense.append(vecD, matrix.viewRow(i));
+ 		DoubleMatrix1D vecD =matrix.viewColumn(2);
+ 		for (int i = 3; i <matrix.columns(); i++) {
+ 			vecD=DoubleFactory1D.dense.append(vecD, matrix.viewColumn(i));
 		}
  		DoubleMatrix1D vecSortD = vecD.viewSorted();
        //... Setting PaintScale ...//
