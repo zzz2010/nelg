@@ -24,6 +24,7 @@ public class common {
 	static boolean SynonymCheck=true;
 	static int topNfeatures=100;
 	static boolean filterFeature=true;
+	static boolean normalizedSignalSum=false;
 	
 	
 	static DoubleMatrix2D RowNormalizeMatrix(DoubleMatrix2D matrix)
