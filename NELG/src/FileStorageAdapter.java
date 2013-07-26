@@ -659,7 +659,7 @@ public static Index getIntervalTree(String bedfile)
 						
 					      // get zoom level data
 				        int zoomLevels = bbReader.getZoomLevelCount();
-				        totalsum+= bbReader.getTotalSummaryBlock().getSumData();
+				        totalsum+= bbReader.getTotalSummaryBlock().getBasesCovered();
 				        bbReader.getBBFis().close();
 					}
 			catch (IOException e) {
