@@ -602,7 +602,7 @@ public class NELGViewResult {
 				if(median>-2)
 				{
 					for (int j = ii; j < ii+stridesize-2; j++) {
-						double temp=((vec.getQuick(j)+pesudoCnt)/(median+pesudoCnt)); //Math.log
+						double temp=Math.log((vec.getQuick(j)+pesudoCnt)/(median+pesudoCnt)); //
 						vec.set(j, temp);
 						if(maxValue<temp)
 							maxValue=temp;
