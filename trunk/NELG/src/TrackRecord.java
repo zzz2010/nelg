@@ -88,7 +88,11 @@ public class TrackRecord implements Serializable{
 		return DBoperator.overlapBinSignal_fixStepSize(this, query_regions, stepsize);
 	}
 
-	
+	public double GetTotalSignalSum()
+	{
+		
+		return 0;
+	}
 	public String toString() {
 		// TODO Auto-generated method stub
 		return FilePrefix;

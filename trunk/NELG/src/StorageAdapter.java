@@ -14,6 +14,7 @@ public interface StorageAdapter extends Serializable{
 	List<TrackRecord> getTrackId_inCellLine(String assemble,String CellLineName);
 	TrackRecord getTrackById(String trackId);
 	List<SimpleBEDFeature> getPeakData(TrackRecord tr);
+	double GetTotalSignalSum(TrackRecord tr);
 	List<SimpleBEDFeature> getSignalContigRegion(TrackRecord tr);
 	SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord feature_signal, List<SimpleBEDFeature> query_regions,int numbin);
 	List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(

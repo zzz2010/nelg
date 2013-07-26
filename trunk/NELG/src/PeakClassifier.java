@@ -158,7 +158,10 @@ public class PeakClassifier {
 					}
 				
 			}
-			
+		
+		static boolean	heatmap_log=false;
+		static boolean	heatmap_medianNorm=false;
+		
 		public static void main(String[] args) {
 			PropertyConfigurator.configure( "./log4j.properties" ); 
 			// TODO Auto-generated method stub
@@ -172,6 +175,9 @@ public class PeakClassifier {
 			options.addOption("print", false, "fast mode for only generating figures (default: false)");
 			options.addOption("peakfile2", true, "background peaks set (bed format, optional) ");
 			options.addOption("clusterfeatures", true, "comma separated list of bigwig file names");
+			options.addOption("log", false, "log transform in the heatmap plotting (default: no)");
+			options.addOption("medianNorm", false, "normalized by the median value in the window size in the heatmap plotting (default: no)");
+			options.addOption("sumNorm", false, "signal values are normalized to the same sequencing depth.(default: no)");
 	
 			CommandLineParser parser = new GnuParser();
 			CommandLine cmd;
@@ -196,6 +202,23 @@ public class PeakClassifier {
 				}
 				if(cmd.hasOption("print"))
 					common.printMode=true;
+				
+				if(cmd.hasOption("log"))
+				{
+					System.out.println("log transform for the heatmap plotting.");
+					heatmap_log=true;
+				}
+				if(cmd.hasOption("medianNorm"))
+				{
+					System.out.println("median normalization for the heatmap plotting.");
+					heatmap_medianNorm=true;
+				}
+				if(cmd.hasOption("sumNorm"))
+				{
+					System.out.println("signal values are normalized to the same sequencing depth.");
+					common.normalizedSignalSum=true;
+				}
+				
 				if(cmd.hasOption("clusternum"))
 				{
 					common.ClusterNum=Integer.parseInt(cmd.getOptionValue("clusternum"));

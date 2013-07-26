@@ -611,7 +611,11 @@ public class NELGViewResult {
 				if(median>-2)
 				{
 					for (int j = ii; j < ii+stridesize-2; j++) {
-						double temp=Math.log((vec.getQuick(j)+pesudoCnt)/(median+pesudoCnt)); //
+						double temp=(vec.getQuick(j)+pesudoCnt); 
+						if(PeakClassifier.heatmap_medianNorm)
+							temp=temp/(median+pesudoCnt);
+						if(PeakClassifier.heatmap_log)
+							temp=Math.log(temp);
 						vec.set(j, temp);
 						if(maxValue<temp)
 							maxValue=temp;

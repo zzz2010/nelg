@@ -271,7 +271,10 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 	///need to consider strand direction
 	SparseDoubleMatrix2D outputSignal=new SparseDoubleMatrix2D(query_regions.size(), numbin);
 	//initialize
-
+	double normfactor=1;
+	if(common.normalizedSignalSum)
+		normfactor=1000000/tr.GetTotalSignalSum(); //normalize to 1M signal
+	
 	if(tr.hasSignal)
 	{
 		for (int i = 0; i < tr.ReplicateSuffix.size(); i++) {
@@ -282,6 +285,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 					
 				      // get zoom level data
 			        int zoomLevels = bbReader.getZoomLevelCount();
+			       
 			        int queryid=-1;
 			       HashSet<String> chromNames=new HashSet<String>(bbReader.getChromosomeNames()) ;
 					for(SimpleBEDFeature query:query_regions)
@@ -313,11 +317,11 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 					    		 //add the previous one
 								if(query.getStrand()== Strand.NEGATIVE)
 					    		{
-								outputSignal.set(queryid, numbin-binId-1, sumValues+outputSignal.get(queryid, numbin-binId-1));
+								outputSignal.set(queryid, numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid, numbin-binId-1));
 					    			
 					    		}
 					    		else
-					    			outputSignal.set(queryid, binId, sumValues+outputSignal.get(queryid, binId));
+					    			outputSignal.set(queryid, binId, sumValues*normfactor+outputSignal.get(queryid, binId));
 						sumValues=0;
 					    		//check whether jump several bins to reach the item
 					    		int jumpNum=(nextRecord.getStartBase()-start)/stepWidth;
@@ -336,10 +340,10 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 						    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-rstart); //the portion contribute to the current bin
 								if(query.getStrand()== Strand.NEGATIVE)
 						    		{
-						    			outputSignal.set(queryid,numbin-binId-1, sumValues+outputSignal.get(queryid,numbin-binId-1));
+						    			outputSignal.set(queryid,numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid,numbin-binId-1));
 						    		}
 						    		else
-						    			outputSignal.set(queryid,binId, sumValues+outputSignal.get(queryid,binId));
+						    			outputSignal.set(queryid,binId, sumValues*normfactor+outputSignal.get(queryid,binId));
 						    		binId+=1;
 						    		if(binId>=numbin)
 						    			break;
@@ -360,11 +364,11 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 						 //add the final one
 								if(query.getStrand()== Strand.NEGATIVE)
 					    		{
-								outputSignal.set(queryid, numbin-binId-1, sumValues+outputSignal.get(queryid, numbin-binId-1));
+								outputSignal.set(queryid, numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid, numbin-binId-1));
 					    			
 					    		}
 					    		else
-					    			outputSignal.set(queryid, binId, sumValues+outputSignal.get(queryid, binId));
+					    			outputSignal.set(queryid, binId, sumValues*normfactor+outputSignal.get(queryid, binId));
 						 }
 					}
 					bbReader.getBBFis().close();
@@ -397,11 +401,11 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 				float sumValues=intervalTree.overlapSumValue(query.getChr(), query.getStart()+binId1*stepWidth, query.getStart()+(binId1+1)*stepWidth);
 				if(query.getStrand()== Strand.NEGATIVE)
 	    		{
-				outputSignal.set(queryid, numbin-binId1-1, sumValues+outputSignal.get(queryid, numbin-binId1-1));
+				outputSignal.set(queryid, numbin-binId1-1, sumValues*normfactor+outputSignal.get(queryid, numbin-binId1-1));
 	    			
 	    		}
 	    		else
-	    			outputSignal.set(queryid, binId1, sumValues+outputSignal.get(queryid, binId1));
+	    			outputSignal.set(queryid, binId1, sumValues*normfactor+outputSignal.get(queryid, binId1));
 					 
 			}	 
 			
@@ -417,7 +421,10 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 	///need to consider strand direction
 	List<SparseDoubleMatrix1D>outputSignal=new ArrayList<SparseDoubleMatrix1D>(query_regions.size());
 	//initialize
-
+	double normfactor=1;
+	if(common.normalizedSignalSum)
+		normfactor=1000000/tr.GetTotalSignalSum(); //normalize to 1M signal
+	
 	for (int i = 0; i < query_regions.size(); i++) {
 		int numbin=(int) Math.ceil((query_regions.get(i).getEnd()-query_regions.get(i).getStart())/(double)StepSize);
 		outputSignal.add( new SparseDoubleMatrix1D(numbin));
@@ -460,10 +467,10 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 								 //add the previous one
 								 if(query.getStrand()== Strand.NEGATIVE)
 						    		{
-						    			outputSignal.get(queryid).set(numbin-binId-1, sumValues+outputSignal.get(queryid).get(numbin-binId-1));
+						    			outputSignal.get(queryid).set(numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId-1));
 						    		}
 						    		else
-						    			outputSignal.get(queryid).set(binId, sumValues+outputSignal.get(queryid).get(binId));
+						    			outputSignal.get(queryid).set(binId, sumValues*normfactor+outputSignal.get(queryid).get(binId));
 						sumValues=0;
 					    		//check whether jump several bins
 					    		int jumpNum=(nextRecord.getStartBase()-start)/stepWidth;
@@ -484,10 +491,10 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 
 								if(query.getStrand()== Strand.NEGATIVE)
 						    		{
-						    			outputSignal.get(queryid).set(numbin-binId-1, sumValues+outputSignal.get(queryid).get(numbin-binId-1));
+						    			outputSignal.get(queryid).set(numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId-1));
 						    		}
 						    		else
-						    			outputSignal.get(queryid).set(binId, sumValues+outputSignal.get(queryid).get(binId));
+						    			outputSignal.get(queryid).set(binId, sumValues*normfactor+outputSignal.get(queryid).get(binId));
 						    		binId+=1;
 						    		if(binId>=numbin)
 						    			break;
@@ -508,10 +515,10 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 						 //add the final one
 						 if(query.getStrand()== Strand.NEGATIVE)
 				    		{
-				    			outputSignal.get(queryid).set(numbin-binId-1, sumValues+outputSignal.get(queryid).get(numbin-binId-1));
+				    			outputSignal.get(queryid).set(numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId-1));
 				    		}
 				    		else
-				    			outputSignal.get(queryid).set(binId, sumValues+outputSignal.get(queryid).get(binId));
+				    			outputSignal.get(queryid).set(binId, sumValues*normfactor+outputSignal.get(queryid).get(binId));
 						 }
 					}
 					bbReader.getBBFis().close();
@@ -543,10 +550,10 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 				float sumValues=intervalTree.overlapSumValue(query.getChr(), query.getStart()+binId1*stepWidth, query.getStart()+(binId1+1)*stepWidth);
 				if(query.getStrand()== Strand.NEGATIVE)
 	    		{
-	    			outputSignal.get(queryid).set(numbin-binId1-1, sumValues+outputSignal.get(queryid).get(numbin-binId1-1));
+	    			outputSignal.get(queryid).set(numbin-binId1-1, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId1-1));
 	    		}
 	    		else
-	    			outputSignal.get(queryid).set(binId1, sumValues+outputSignal.get(queryid).get(binId1));
+	    			outputSignal.get(queryid).set(binId1, sumValues*normfactor+outputSignal.get(queryid).get(binId1));
 					 
 			}	 
 			
@@ -636,6 +643,48 @@ public static Index getIntervalTree(String bedfile)
         record += String.format("Sum squares = %f\n", zoomDataRecord.getSumSquares());
         System.out.println(record);
     }
+
+	@Override
+	public double GetTotalSignalSum(TrackRecord tr) {
+		// TODO Auto-generated method stub
+		//initialize
+		double totalsum=0;
+		if(tr.hasSignal)
+		{
+			for (int i = 0; i < tr.ReplicateSuffix.size(); i++) {
+				String filename=dataDir+"/"+tr.FilePrefix+tr.ReplicateSuffix.get(i);		
+					BBFileReader bbReader;
+					try {
+						bbReader = new BBFileReader(filename);
+						
+					      // get zoom level data
+				        int zoomLevels = bbReader.getZoomLevelCount();
+				        totalsum+= bbReader.getTotalSummaryBlock().getSumData();
+				        bbReader.getBBFis().close();
+					}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+	   }
+		else //bed data
+		{
+			for (SimpleBEDFeature iterable_element : tr.getPeakData()) {
+				double score=iterable_element.getScore();
+				if(Double.isNaN(score))
+					score=iterable_element.end-iterable_element.start;
+				totalsum+=score;
+			} 
+			
+				
+			
+			
+		}
+		return totalsum;
+	}
 
 
 }
