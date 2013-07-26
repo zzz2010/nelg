@@ -592,7 +592,7 @@ public class NELGViewResult {
 				double max=sortedVec.getQuick(stridesize-3);
 			
 				double pesudoCnt=Math.max(0.1, Math.min(max/2, 1));
-
+				median=1;
 				if(median==max)
 					median=0.11;  //no need to normalize
 				else if(median<1)
