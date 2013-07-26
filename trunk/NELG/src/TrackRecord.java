@@ -91,7 +91,7 @@ public class TrackRecord implements Serializable{
 	public double GetTotalSignalSum()
 	{
 		
-		return 0;
+		return DBoperator.GetTotalSignalSum(this);
 	}
 	public String toString() {
 		// TODO Auto-generated method stub
