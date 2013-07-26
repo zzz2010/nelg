@@ -313,10 +313,19 @@ public class NELGViewResult {
 							}
 					}
 				}
-				DoubleMatrix2D featureMatrix2=LoadFeatureData(selFeatNames2,result.JobTitle.split("_(?!.*_)")[0]); 
-				clusterReorder_Rowbased(featureMatrix2);	
-				//to this point, clusterIdvec is set
-				common.ClusterNum=1;				
+				if(selFeatNames2.size()>0)
+					{
+					DoubleMatrix2D featureMatrix2=LoadFeatureData(selFeatNames2,result.JobTitle.split("_(?!.*_)")[0]); 
+					clusterReorder_Rowbased(featureMatrix2);	
+					//to this point, clusterIdvec is set
+					common.ClusterNum=1;				
+					}
+				else
+				{
+					System.err.println("Feature Names "+PeakClassifier.selectedClusterFeature+"Not Found! Use all the features for clustering instead.");
+					PeakClassifier.selectedClusterFeature=null;
+					
+				}
 				}
 
 				int targetColorwidth=stridesize;
