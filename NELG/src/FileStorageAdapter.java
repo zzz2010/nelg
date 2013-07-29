@@ -282,9 +282,6 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 				BBFileReader bbReader;
 				try {
 					bbReader = new BBFileReader(filename);
-					
-				      // get zoom level data
-			        int zoomLevels = bbReader.getZoomLevelCount();
 			       
 			        int queryid=-1;
 			       HashSet<String> chromNames=new HashSet<String>(bbReader.getChromosomeNames()) ;
@@ -656,10 +653,13 @@ public static Index getIntervalTree(String bedfile)
 					BBFileReader bbReader;
 					try {
 						bbReader = new BBFileReader(filename);
-						
-					      // get zoom level data
-				        int zoomLevels = bbReader.getZoomLevelCount();
-				        totalsum+= bbReader.getTotalSummaryBlock().getBasesCovered();
+						BigWigIterator iter = bbReader.getBigWigIterator();
+						while(iter.hasNext())
+						{
+							WigItem item=iter.next();
+							totalsum+=item.getWigValue()*(item.getEndBase()-item.getStartBase());
+						}
+				       // totalsum+= bbReader.getTotalSummaryBlock().getBasesCovered();
 				        bbReader.getBBFis().close();
 					}
 			catch (IOException e) {
