@@ -161,6 +161,7 @@ public class PeakClassifier {
 		
 		static boolean	heatmap_log=false;
 		static boolean	heatmap_medianNorm=false;
+		static boolean	heatmap_sort=false;
 		
 		public static void main(String[] args) {
 			PropertyConfigurator.configure( "./log4j.properties" ); 
@@ -178,6 +179,7 @@ public class PeakClassifier {
 			options.addOption("log", false, "log transform in the heatmap plotting (default: no)");
 			options.addOption("medianNorm", false, "normalized by the median value in the window size in the heatmap plotting (default: no)");
 			options.addOption("sumNorm", false, "signal values are normalized to the same sequencing depth.(default: no)");
+			options.addOption("sort", false, "sorted by the sum of all signals within each cluster (default: no)");
 	
 			CommandLineParser parser = new GnuParser();
 			CommandLine cmd;
@@ -207,6 +209,11 @@ public class PeakClassifier {
 				{
 					System.out.println("log transform for the heatmap plotting.");
 					heatmap_log=true;
+				}
+				if(cmd.hasOption("sort"))
+				{
+					System.out.println("sorted signal within each cluster for the heatmap plotting.");
+					heatmap_sort=true;
 				}
 				if(cmd.hasOption("medianNorm"))
 				{
