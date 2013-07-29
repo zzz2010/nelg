@@ -317,6 +317,7 @@ public class NELGViewResult {
 					{
 					DoubleMatrix2D featureMatrix2=LoadFeatureData(selFeatNames2,result.JobTitle.split("_(?!.*_)")[0]); 
 					clusterReorder_Rowbased(featureMatrix2);	
+					
 					//to this point, clusterIdvec is set
 					common.ClusterNum=1;				
 					}
@@ -662,6 +663,18 @@ public class NELGViewResult {
 		}
 		DoubleMatrix2D combined=DoubleFactory2D.dense.appendColumns(matrix, clusterlabel);
 		clusterIdvec=combined.viewColumn(combined.columns()-1);
+		if(PeakClassifier.heatmap_sort)
+		{
+			for (int i = 0; i < matrix.rows(); i++) {
+				combined.set(i, combined.columns()-1, combined.viewRow(i).viewPart(0, combined.columns()-3).zSum());
+			}
+			//sort by sum signal first
+			combined=combined.viewSorted(combined.columns()-1);
+			//reset last column to the cluster id
+			for (int i = 0; i < matrix.rows(); i++) {
+				combined.set(i, combined.columns()-1, clusterlabel.getQuick(i, 0));
+			}
+		}
 		return combined.viewSorted(combined.columns()-1);
 		}
 		else
