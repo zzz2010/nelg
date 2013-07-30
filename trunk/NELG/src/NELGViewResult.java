@@ -833,7 +833,8 @@ public class NELGViewResult {
     LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, color0);
     int numscale=10;
    
-  
+    System.out.println("min value is "+min);
+    System.exit(1);
     Color purle=new Color(255, 0, 255);
     ps.add(Double.NEGATIVE_INFINITY, Color.BLUE);
     double valPoint=min;
