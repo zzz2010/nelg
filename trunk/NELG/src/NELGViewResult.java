@@ -826,18 +826,15 @@ public class NELGViewResult {
  		double max=vecSortD.get(vecSortD.size()-1);
  	
  		Color color0=Color.white;
- 	    Color color1=blend(Color.RED,Color.white,0.25);
- 	    Color color2=blend(Color.RED,Color.white,0.5);
+ 	    Color color1=blend(Color.RED,Color.white,0.1);
+ 	    Color color2=blend(Color.RED,Color.white,0.25);
  	    Color color3=Color.RED;
  	    
     LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, color0);
     int numscale=10;
    
-    System.out.println("min value is "+min);
-    System.out.println("the number of column is "+matrix.columns());
-    System.exit(1);
     Color purle=new Color(255, 0, 255);
-    ps.add(Double.NEGATIVE_INFINITY, Color.BLUE);
+    ps.add(Double.NEGATIVE_INFINITY,color0);
     double valPoint=min;
     int num_trans=numscale;
     double stepsize=(point1-min)/numscale;
