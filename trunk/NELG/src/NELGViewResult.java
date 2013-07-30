@@ -828,8 +828,8 @@ public class NELGViewResult {
     LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, Color.gray);
     int numscale=10;
     Color color0=Color.white;
-    Color color1=Color.white;
-    Color color2=Color.RED;
+    Color color1=blend(Color.RED,Color.white,0.25);
+    Color color2=blend(Color.RED,Color.white,0.5);
     Color color3=Color.RED;
   
     Color purle=new Color(255, 0, 255);
