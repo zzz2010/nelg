@@ -834,6 +834,7 @@ public class NELGViewResult {
     int numscale=10;
    
     System.out.println("min value is "+min);
+    System.out.println("the number of column is "+matrix.columns());
     System.exit(1);
     Color purle=new Color(255, 0, 255);
     ps.add(Double.NEGATIVE_INFINITY, Color.BLUE);
