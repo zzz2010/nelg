@@ -341,7 +341,7 @@ public class NELGViewResult {
 					}
 				}
 				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
-				DoubleMatrix2D combined=DoubleFactory2D.sparse.appendColumns(featureMatrix, targetvalue2);
+				DoubleMatrix2D combined=DoubleFactory2D.dense.appendColumns(featureMatrix, targetvalue2);
 				if(PeakClassifier.selectedClusterFeature!=null)
 				{
 					
@@ -349,7 +349,7 @@ public class NELGViewResult {
 					for (int i = 0; i < clusterIdvec.size(); i++) {
 						clusterlabel.set(i, 0, clusterIdvec.get(i));
 					}
-					combined=DoubleFactory2D.sparse.appendColumns(combined,clusterlabel);
+					combined=DoubleFactory2D.dense.appendColumns(combined,clusterlabel);
 					combined=combined.viewSorted(combined.columns()-1);
 					
 					result.JobTitle=PeakClassifier.selectedClusterFeature.toString();
@@ -534,13 +534,13 @@ public class NELGViewResult {
 			if(temp==null)
 				continue;
 			//append backgound
-			temp=DoubleFactory2D.sparse.appendRows(temp, temp_bg);
+			temp=DoubleFactory2D.dense.appendRows(temp, temp_bg);
 			if(combined==null)
 				combined= temp;
 			else
-			{	SparseDoubleMatrix2D splitline=new SparseDoubleMatrix2D(temp.rows(), 2);
-				combined=DoubleFactory2D.sparse.appendColumns(combined, splitline);
-				combined=DoubleFactory2D.sparse.appendColumns(combined, temp);
+			{	SparseDoubleMatrix2D splitline=new SparseDoubleMatrix2D(temp.rows(), 2); //gap for space between two features
+				combined=DoubleFactory2D.dense.appendColumns(combined, splitline);
+				combined=DoubleFactory2D.dense.appendColumns(combined, temp);
 				stridesize=temp.columns()+2;
 			}
 		}
