@@ -835,7 +835,7 @@ public class NELGViewResult {
    
   
     Color purle=new Color(255, 0, 255);
-    ps.add(Double.NEGATIVE_INFINITY, Color.gray);
+    ps.add(Double.NEGATIVE_INFINITY, Color.BLUE);
     double valPoint=min;
     int num_trans=numscale;
     double stepsize=(point1-min)/numscale;
