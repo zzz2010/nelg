@@ -595,16 +595,17 @@ public class NELGViewResult {
 	//normalized by local region
 		for (int i = 0; i < matrix.rows(); i++) {
 			DoubleMatrix1D vec= matrix.viewRow(i);
+			double pesudoCnt=0.001;
 			for(int ii=0;ii<matrix.columns()-stridesize;ii+=stridesize) //skip the last brand : target value
 			{
 				DoubleMatrix1D sortedVec = vec.viewPart(ii, stridesize-2).viewSorted();
 				double median=sortedVec.get((stridesize-2)/2);  //vec.zSum()/vec.size();
 				double max=sortedVec.getQuick(stridesize-3);
 			
-				double pesudoCnt=Math.max(0.1, Math.min(max/2, 1));
+				
 //				median=1;
 				if(median==max)
-					median=0.11;  //no need to normalize
+					median=10000;  //no need to normalize
 				else if(median<5)
 					median=5;
 				if(Double.isNaN(median))
@@ -666,13 +667,13 @@ public class NELGViewResult {
 		if(PeakClassifier.heatmap_sort)
 		{
 			for (int i = 0; i < matrix.rows(); i++) {
-				combined.set(i, combined.columns()-1, combined.viewRow(i).viewPart(0, combined.columns()-3).zSum());
+				combined.set(i, combined.columns()-2, combined.viewRow(i).viewPart(0, combined.columns()-3).zSum());
 			}
 			//sort by sum signal first
 			combined=combined.viewSorted(combined.columns()-1);
 			//reset last column to the cluster id
 			for (int i = 0; i < matrix.rows(); i++) {
-				combined.set(i, combined.columns()-1, clusterlabel.getQuick(i, 0));
+				combined.set(i, combined.columns()-2, combined.getQuick(i, combined.columns()-1));
 			}
 		}
 		return combined.viewSorted(combined.columns()-1);
@@ -820,14 +821,14 @@ public class NELGViewResult {
 		}
  		DoubleMatrix1D vecSortD = vecD.viewSorted();
        //... Setting PaintScale ...//
- 		double min=vecSortD.get(0);
+ 		double min=vecSortD.get(0);	
  		double point1=vecSortD.get(vecSortD.size()/3);
  		double point2=vecSortD.get(2*vecSortD.size()/3);
  		double max=vecSortD.get(vecSortD.size()-1);
  	
  		Color color0=Color.white;
- 	    Color color1=blend(Color.RED,Color.white,0.1);
- 	    Color color2=blend(Color.RED,Color.white,0.25);
+ 	    Color color1= Color.white;//blend(Color.RED,Color.white,0.01);
+ 	    Color color2=blend(Color.RED,Color.white,0.05);
  	    Color color3=Color.RED;
  	    
     LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, color0);
