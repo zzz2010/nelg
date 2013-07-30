@@ -825,12 +825,14 @@ public class NELGViewResult {
  		double point2=vecSortD.get(2*vecSortD.size()/3);
  		double max=vecSortD.get(vecSortD.size()-1);
  	
-    LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, Color.gray);
+ 		Color color0=Color.white;
+ 	    Color color1=blend(Color.RED,Color.white,0.25);
+ 	    Color color2=blend(Color.RED,Color.white,0.5);
+ 	    Color color3=Color.RED;
+ 	    
+    LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, color0);
     int numscale=10;
-    Color color0=Color.white;
-    Color color1=blend(Color.RED,Color.white,0.25);
-    Color color2=blend(Color.RED,Color.white,0.5);
-    Color color3=Color.RED;
+   
   
     Color purle=new Color(255, 0, 255);
     ps.add(Double.MIN_VALUE, Color.gray);
