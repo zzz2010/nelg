@@ -827,8 +827,9 @@ public class NELGViewResult {
  	
     LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, Color.gray);
     int numscale=10;
+    Color color0=Color.white;
     Color color1=Color.white;
-    Color color2=Color.white;
+    Color color2=Color.RED;
     Color color3=Color.RED;
   
     Color purle=new Color(255, 0, 255);
@@ -837,7 +838,7 @@ public class NELGViewResult {
     int num_trans=numscale;
     double stepsize=(point1-min)/numscale;
    for (int i = 0; i < num_trans; i++) {
-	   ps.add(valPoint=valPoint+stepsize, blend(color1,Color.gray,((double)i)/(num_trans)));
+	   ps.add(valPoint=valPoint+stepsize, blend(color1,color0,((double)i)/(num_trans)));
   }
    
    stepsize=(point2-point1)/numscale;
