@@ -297,6 +297,8 @@ public class NELGViewResult {
 				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_(?!.*_)")[0]); //only split the last "_"
 				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
 
+				int targetColorwidth=stridesize;
+				SparseDoubleMatrix2D targetvalue2=new SparseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
 				//if the clusterFeatures is set, then filter the selFeatNames based on the clusterFeature
 				if(PeakClassifier.selectedClusterFeature!=null)
 				{
@@ -316,7 +318,7 @@ public class NELGViewResult {
 				if(selFeatNames2.size()>0)
 					{
 					DoubleMatrix2D featureMatrix2=LoadFeatureData(selFeatNames2,result.JobTitle.split("_(?!.*_)")[0]); 
-					clusterReorder_Rowbased(featureMatrix2);	
+					clusterReorder_Rowbased(DoubleFactory2D.dense.appendColumns(featureMatrix2, targetvalue2));	
 					
 					//to this point, clusterIdvec is set
 					common.ClusterNum=1;				
@@ -329,8 +331,7 @@ public class NELGViewResult {
 				}
 				}
 
-				int targetColorwidth=stridesize;
-				SparseDoubleMatrix2D targetvalue2=new SparseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
+
 				//max fold change to the mean 
 				double targetVscale=targetvalue.viewSorted().getQuick(targetvalue.size()/2-1);
 				for (int i = 0; i < targetvalue.size(); i++) {
@@ -342,7 +343,7 @@ public class NELGViewResult {
 				}
 				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
 				DoubleMatrix2D combined=DoubleFactory2D.dense.appendColumns(featureMatrix, targetvalue2);
-				if(PeakClassifier.selectedClusterFeature!=null)
+				if(PeakClassifier.selectedClusterFeature!=null&clusterIdvec!=null)
 				{
 					
 					DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(clusterIdvec.size(), 1);
@@ -592,11 +593,13 @@ public class NELGViewResult {
 		clustering=new SimpleKMeans();
 	//	clustering=new HierarchicalClusterer();
 		double maxValue=Double.NEGATIVE_INFINITY;
+		double minValue=Double.POSITIVE_INFINITY;
 	//normalized by local region
 		for (int i = 0; i < matrix.rows(); i++) {
 			DoubleMatrix1D vec= matrix.viewRow(i);
 			double pesudoCnt=0.001;
-			for(int ii=0;ii<matrix.columns()-stridesize;ii+=stridesize) //skip the last brand : target value
+			int colnum=matrix.columns()-stridesize;
+			for(int ii=0;ii<colnum;ii+=stridesize) //skip the last brand : target value
 			{
 				DoubleMatrix1D sortedVec = vec.viewPart(ii, stridesize-2).viewSorted();
 				double median=sortedVec.get((stridesize-2)/2);  //vec.zSum()/vec.size();
@@ -619,8 +622,11 @@ public class NELGViewResult {
 						if(PeakClassifier.heatmap_log)
 							temp=Math.log(temp);
 						vec.set(j, temp);
+					
 						if(maxValue<temp)
 							maxValue=temp;
+						if(minValue>temp)
+							minValue=temp;
 					}
 				}
 				else
@@ -656,7 +662,7 @@ public class NELGViewResult {
 			Instances data=matrix2instances(matrix);
 			clustering.buildClusterer(data);
 			for (int i = 0; i < matrix.rows(); i++) {
-				clusterlabel.set(i, 0, maxValue/common.ClusterNum*clustering.clusterInstance(data.instance(i)));
+				clusterlabel.set(i, 0, minValue+(maxValue-minValue)/(common.ClusterNum-1)*clustering.clusterInstance(data.instance(i)));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -822,13 +828,13 @@ public class NELGViewResult {
  		DoubleMatrix1D vecSortD = vecD.viewSorted();
        //... Setting PaintScale ...//
  		double min=vecSortD.get(0);	
- 		double point1=vecSortD.get(vecSortD.size()/3);
- 		double point2=vecSortD.get(2*vecSortD.size()/3);
+ 		double point1=vecSortD.get(vecSortD.size()/10);
+ 		double point2=vecSortD.get((int) (vecSortD.size()*0.9));
  		double max=vecSortD.get(vecSortD.size()-1);
  	
- 		Color color0=Color.white;
+ 		Color color0=Color.blue;
  	    Color color1= Color.white;//blend(Color.RED,Color.white,0.01);
- 	    Color color2=blend(Color.RED,Color.white,0.05);
+ 	    Color color2=blend(Color.RED,Color.white,0.5);
  	    Color color3=Color.RED;
  	    
     LookupPaintScale ps = new LookupPaintScale(min, Double.MAX_VALUE, color0);
@@ -844,6 +850,7 @@ public class NELGViewResult {
   }
    
    stepsize=(point2-point1)/numscale;
+   if(stepsize>0)
    for (int i = 0; i < num_trans; i++) {
 	   ps.add(valPoint=valPoint+stepsize, blend(color2,color1,((double)i)/(num_trans)));
   }
