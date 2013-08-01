@@ -273,7 +273,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 	//initialize
 	double normfactor=1;
 	if(common.normalizedSignalSum)
-		normfactor=1000000/tr.GetTotalSignalSum(); //normalize to 1M signal
+		normfactor=10000000/tr.GetTotalSignalSum(); //normalize to 10M signal
 	
 	if(tr.hasSignal)
 	{
@@ -420,7 +420,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 	//initialize
 	double normfactor=1;
 	if(common.normalizedSignalSum)
-		normfactor=1000000/tr.GetTotalSignalSum(); //normalize to 1M signal
+		normfactor=10000000/tr.GetTotalSignalSum(); //normalize to 10M signal
 	
 	for (int i = 0; i < query_regions.size(); i++) {
 		int numbin=(int) Math.ceil((query_regions.get(i).getEnd()-query_regions.get(i).getStart())/(double)StepSize);
