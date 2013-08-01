@@ -616,8 +616,8 @@ public class NELGViewResult {
 //				median=1;
 				if(median==max)
 					median=10000;  //no need to normalize
-				else if(median<5)
-					median=5;
+				else if(median<10)
+					median=10;
 				if(Double.isNaN(median))
 					median=1;
 				if(median>-2)
