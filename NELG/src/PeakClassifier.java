@@ -248,7 +248,7 @@ public class PeakClassifier {
 				
 				if(cmd.hasOption("outputDir"))
 				{
-					common.outputDir=cmd.getOptionValue("outputDir");
+					common.outputDir=cmd.getOptionValue("outputDir")+"/";
 				}
 				
 				if(cmd.hasOption("clusterfeatures"))
@@ -273,7 +273,7 @@ public class PeakClassifier {
 			FileUtils.deletePath(new File(common.tempDir));
 			FileUtils.deletePath(new File(common.outputDir));
 			//create directory
-			(new File(common.outputDir)).mkdir();
+			(new File(common.outputDir)).mkdirs();
 			(new File(common.tempDir)).mkdir();
 			
 			File datafolder=new File(common.dataDir);
