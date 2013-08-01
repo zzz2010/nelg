@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -77,6 +78,8 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.trees.RandomForest;
+import weka.clusterers.Clusterer;
+import weka.clusterers.FarthestFirst;
 import weka.clusterers.SimpleKMeans;
 import weka.clusterers.HierarchicalClusterer;
 import weka.core.Attribute;
@@ -317,7 +320,9 @@ public class NELGViewResult {
 				}
 				if(selFeatNames2.size()>0)
 					{
+					//load the feature signal order by their names
 					DoubleMatrix2D featureMatrix2=LoadFeatureData(selFeatNames2,result.JobTitle.split("_(?!.*_)")[0]); 
+					
 					clusterReorder_Rowbased(DoubleFactory2D.dense.appendColumns(featureMatrix2, targetvalue2));	
 					
 					//to this point, clusterIdvec is set
@@ -342,6 +347,7 @@ public class NELGViewResult {
 					}
 				}
 				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
+				Collections.sort(selFeatNames2); //make sure the feature order by their names
 				DoubleMatrix2D combined=DoubleFactory2D.dense.appendColumns(featureMatrix, targetvalue2);
 				if(PeakClassifier.selectedClusterFeature!=null&clusterIdvec!=null)
 				{
@@ -508,8 +514,9 @@ public class NELGViewResult {
 		
 		featNames.retainAll(featKey.keySet());
 		DoubleMatrix2D combined=null;
-		
-		for (String feat : featNames) {
+		ArrayList<String> sortedNames = new ArrayList<String>(featNames);
+		Collections.sort(sortedNames);
+		for (String feat : sortedNames) {
 			String storekey=featKey.get(feat);
 			DoubleMatrix2D temp=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey);
 			DoubleMatrix2D temp_bg=StateRecovery.loadCache_SparseDoubleMatrix2D(storekey+"_bg");
@@ -589,9 +596,9 @@ public class NELGViewResult {
 	}
 	public static DoubleMatrix2D clusterReorder_Rowbased(DoubleMatrix2D matrix)
 	{
-		SimpleKMeans clustering=null;
-		clustering=new SimpleKMeans();
-	//	clustering=new HierarchicalClusterer();
+		 
+			SimpleKMeans clustering=new SimpleKMeans();
+		// FarthestFirst clustering=new FarthestFirst();
 		double maxValue=Double.NEGATIVE_INFINITY;
 		double minValue=Double.POSITIVE_INFINITY;
 	//normalized by local region
