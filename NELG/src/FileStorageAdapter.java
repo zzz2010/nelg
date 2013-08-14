@@ -79,6 +79,7 @@ public class FileStorageAdapter implements StorageAdapter{
 				}
 				CellLine2TrackId.get(temp.Cell_Line).add(temp.getTrackId());
 				}
+			readbuffer.close();
 	
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
