@@ -235,10 +235,17 @@ public class PeakClassifier {
 					common.dataDir=cmd.getOptionValue("dataDir");;
 					logger.info("using dataDir:"+common.dataDir);
 				}
+				else {
+					throw new ParseException("must provide dataDir !");
+				}
 
 				if(cmd.hasOption("peakfile1"))
 				{
 					peakfile1=cmd.getOptionValue("peakfile1");;
+				}
+				else
+				{
+					throw new ParseException("must provide peakfile1 !");
 				}
 				if(cmd.hasOption("peakfile2"))
 				{
