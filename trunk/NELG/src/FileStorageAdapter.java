@@ -315,7 +315,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 					    		 //add the previous one
 								if(query.getStrand()== Strand.NEGATIVE)
 					    		{
-								outputSignal.set(queryid, numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid, numbin-binId-1));
+								outputSignal.set(queryid, binId, sumValues*normfactor+outputSignal.get(queryid, numbin-binId-1));
 					    			
 					    		}
 					    		else
@@ -338,7 +338,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 						    		sumValues+=nextRecord.getWigValue()*(start+stepWidth-rstart); //the portion contribute to the current bin
 								if(query.getStrand()== Strand.NEGATIVE)
 						    		{
-						    			outputSignal.set(queryid,numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid,numbin-binId-1));
+						    			outputSignal.set(queryid,binId, sumValues*normfactor+outputSignal.get(queryid,numbin-binId-1));
 						    		}
 						    		else
 						    			outputSignal.set(queryid,binId, sumValues*normfactor+outputSignal.get(queryid,binId));
@@ -362,7 +362,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 						 //add the final one
 								if(query.getStrand()== Strand.NEGATIVE)
 					    		{
-								outputSignal.set(queryid, numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid, numbin-binId-1));
+								outputSignal.set(queryid, binId, sumValues*normfactor+outputSignal.get(queryid, numbin-binId-1));
 					    			
 					    		}
 					    		else
@@ -399,7 +399,7 @@ public SparseDoubleMatrix2D overlapBinSignal_fixBinNum(TrackRecord tr, List<Simp
 				float sumValues=intervalTree.overlapSumValue(query.getChr(), query.getStart()+binId1*stepWidth, query.getStart()+(binId1+1)*stepWidth);
 				if(query.getStrand()== Strand.NEGATIVE)
 	    		{
-				outputSignal.set(queryid, numbin-binId1-1, sumValues*normfactor+outputSignal.get(queryid, numbin-binId1-1));
+				outputSignal.set(queryid, binId1, sumValues*normfactor+outputSignal.get(queryid, numbin-binId1-1));
 	    			
 	    		}
 	    		else
@@ -465,7 +465,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 								 //add the previous one
 								 if(query.getStrand()== Strand.NEGATIVE)
 						    		{
-						    			outputSignal.get(queryid).set(numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId-1));
+						    			outputSignal.get(queryid).set(binId, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId-1));
 						    		}
 						    		else
 						    			outputSignal.get(queryid).set(binId, sumValues*normfactor+outputSignal.get(queryid).get(binId));
@@ -489,7 +489,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 
 								if(query.getStrand()== Strand.NEGATIVE)
 						    		{
-						    			outputSignal.get(queryid).set(numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId-1));
+						    			outputSignal.get(queryid).set(binId, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId-1));
 						    		}
 						    		else
 						    			outputSignal.get(queryid).set(binId, sumValues*normfactor+outputSignal.get(queryid).get(binId));
@@ -513,7 +513,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 						 //add the final one
 						 if(query.getStrand()== Strand.NEGATIVE)
 				    		{
-				    			outputSignal.get(queryid).set(numbin-binId-1, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId-1));
+				    			outputSignal.get(queryid).set(binId, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId-1));
 				    		}
 				    		else
 				    			outputSignal.get(queryid).set(binId, sumValues*normfactor+outputSignal.get(queryid).get(binId));
@@ -548,7 +548,7 @@ public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize(TrackRecord tr, L
 				float sumValues=intervalTree.overlapSumValue(query.getChr(), query.getStart()+binId1*stepWidth, query.getStart()+(binId1+1)*stepWidth);
 				if(query.getStrand()== Strand.NEGATIVE)
 	    		{
-	    			outputSignal.get(queryid).set(numbin-binId1-1, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId1-1));
+	    			outputSignal.get(queryid).set(binId1, sumValues*normfactor+outputSignal.get(queryid).get(numbin-binId1-1));
 	    		}
 	    		else
 	    			outputSignal.get(queryid).set(binId1, sumValues*normfactor+outputSignal.get(queryid).get(binId1));
