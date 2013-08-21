@@ -293,7 +293,7 @@ public class NELGViewResult {
 			else
 			{
 
-				
+				int tempClusterNum=common.ClusterNum; //remember the original cluster number, and recover later
 				//heatmap
 				Set<String> selFeatNames=SingleTrackFeatures.keySet();
 				//load 1/2 background peak
@@ -326,6 +326,7 @@ public class NELGViewResult {
 					clusterReorder_Rowbased(DoubleFactory2D.dense.appendColumns(featureMatrix2, targetvalue2));	
 					
 					//to this point, clusterIdvec is set
+					
 					common.ClusterNum=1;				
 					}
 				else
@@ -364,7 +365,7 @@ public class NELGViewResult {
 				DoubleMatrix2D combinedP_order=clusterReorder_Rowbased(combined);
 				
 				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,stridesize);
-				
+				common.ClusterNum=tempClusterNum;
 				
 				//classification result
 				//feature ranking plot
