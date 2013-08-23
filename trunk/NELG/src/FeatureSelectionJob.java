@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
+import org.broad.tribble.annotation.Strand;
 import org.jppf.JPPFException;
 import org.jppf.client.JPPFClient;
 import org.jppf.client.JPPFJob;
@@ -86,13 +87,19 @@ public class FeatureSelectionJob implements  Runnable {
 		 
 		if(target_signal_filtered!=null)//
 		{
-			if(target_signal_filtered.size()<50)
-				return;
+			if(target_signal_filtered.size()<50){
+				System.err.println("Peak number should be at least 50");
+				System.exit(1);
+			}
 			if(target_signal_bg==null)
 				target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
 		  	
 			DoubleMatrix1D targetValue=SignalTransform.BedFeatureToValues(target_signal_filtered);
+			boolean[] strand=new boolean[target_signal_filtered.size()];
 		  	targetValue=DoubleFactory1D.sparse.append(targetValue, SignalTransform.BedFeatureToValues(target_signal_bg));
+		  	for (int i=0;i<strand.length;i++){
+		  		strand[i]=(target_signal_filtered.get(i).strand==Strand.POSITIVE);
+		  	}
 		  
 		  	DoubleMatrix1D targetNormValue=SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_signal_filtered));
 		  	
@@ -107,7 +114,7 @@ public class FeatureSelectionJob implements  Runnable {
 				 else
 				 {			
 						Collections.sort(IsThereFeatures);
-						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
+						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue, strand) ;
 
 						try {
 							IsThereJob.toFile();
@@ -129,7 +136,7 @@ public class FeatureSelectionJob implements  Runnable {
 				 else
 				 {
 				Collections.sort(ValThereFeatures);
-				ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.FilePrefix+"_ValThere", targetNormValue) ;
+				ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.FilePrefix+"_ValThere", targetNormValue, strand) ;
 				ValThereJob.Regression=true;		
 				//executor.execute(ValThereJob);
 //				ValThereJob.run();
@@ -170,7 +177,11 @@ public class FeatureSelectionJob implements  Runnable {
 	  	
 	  	StateRecovery.saveCache_BEDFeatureList(target_signal_bg, storekey+"bg.bed");
 	  	DoubleMatrix1D targetValue=SignalTransform.BedFeatureToValues(target_signal_filtered);
+	  	boolean[] strand=new boolean[target_signal_filtered.size()];
 	  	targetValue=DoubleFactory1D.sparse.append(targetValue, SignalTransform.BedFeatureToValues(target_signal_bg));
+	  	for (int i=0;i<strand.length;i++){
+	  		strand[i]=(target_signal_filtered.get(i).strand==Strand.POSITIVE);
+	  	}
 	  
 	  	DoubleMatrix1D targetNormValue=SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_signal_filtered));
 	  	
@@ -281,7 +292,7 @@ public class FeatureSelectionJob implements  Runnable {
 					if(IsThereJob2==null)
 					{
 						Collections.sort(IsThereFeatures);
-						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue) ;
+						ClassificationJob IsThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( IsThereFeatures.subList(0, Math.min(TopN,IsThereFeatures.size()))), target_signal.FilePrefix+"_IsThere", targetValue, strand) ;
 //						if(executor!=null)
 //							executor.execute(IsThereJob);
 //						else
@@ -307,7 +318,7 @@ public class FeatureSelectionJob implements  Runnable {
 					if(ValThereJob2==null)
 					{
 						Collections.sort(ValThereFeatures);
-						ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.FilePrefix+"_ValThere", targetNormValue) ;
+						ClassificationJob ValThereJob=new ClassificationJob(new ArrayList<FeatureSignal>( ValThereFeatures.subList(0,  Math.min(TopN,ValThereFeatures.size()))), target_signal.FilePrefix+"_ValThere", targetNormValue, strand) ;
 						ValThereJob.Regression=true;		
 						//executor.execute(ValThereJob);
 //						ValThereJob.run();
