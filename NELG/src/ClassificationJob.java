@@ -24,15 +24,17 @@ public class ClassificationJob extends JPPFTask implements  Serializable {
 	String JobTitle;
 	DoubleMatrix1D targetValue;
 	Boolean Regression=false;
+	boolean strand[];
 	
 	
 	
 	public ClassificationJob(List<FeatureSignal> featureMatrix,
-			String jobTitle, DoubleMatrix1D targetValue) {
+			String jobTitle, DoubleMatrix1D targetValue, boolean[] strand) {
 		
 		FeatureMatrix = featureMatrix;
 		JobTitle = jobTitle;
 		this.targetValue = targetValue;
+		this.strand=strand;
 	}
 	
 	 public void run() {

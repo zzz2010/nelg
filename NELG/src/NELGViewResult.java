@@ -299,6 +299,7 @@ public class NELGViewResult {
 				//load 1/2 background peak
 				DoubleMatrix2D featureMatrix=LoadFeatureData(selFeatNames,result.JobTitle.split("_(?!.*_)")[0]); //only split the last "_"
 				DoubleMatrix1D targetvalue=jobdata.targetValue.viewPart(0, featureMatrix.rows());
+				boolean[] strand=jobdata.strand;
 
 				int targetColorwidth=stridesize;
 				SparseDoubleMatrix2D targetvalue2=new SparseDoubleMatrix2D(targetvalue.size(), targetColorwidth);
@@ -342,6 +343,11 @@ public class NELGViewResult {
 				double targetVscale=targetvalue.viewSorted().getQuick(targetvalue.size()/2-1);
 				for (int i = 0; i < targetvalue.size(); i++) {
 					//use half brand for target value, first half as separate line to feature
+					double col=1.0;
+					if (!strand[i])
+						col=-1.0;
+					targetvalue2.set(i, targetColorwidth/4, col);
+					targetvalue2.set(i, targetColorwidth/4+1, col);
 					for (int j = 0; j < targetColorwidth/2; j++) {
 						//map the target value to the color scale here
 						targetvalue2.set(i, targetColorwidth/2+j, Math.log(targetvalue.getQuick(i)/targetVscale));
