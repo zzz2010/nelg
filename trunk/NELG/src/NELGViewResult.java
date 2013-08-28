@@ -344,10 +344,12 @@ public class NELGViewResult {
 				for (int i = 0; i < targetvalue.size(); i++) {
 					//use half brand for target value, first half as separate line to feature
 					double col=1.0;
-					if (!strand[i])
-						col=-1.0;
-					targetvalue2.set(i, targetColorwidth/4, col);
-					targetvalue2.set(i, targetColorwidth/4+1, col);
+					if (strand!=null){
+						if (!strand[i])
+							col=-1.0;
+						targetvalue2.set(i, targetColorwidth/4, col);
+						targetvalue2.set(i, targetColorwidth/4+1, col);
+					}
 					for (int j = 0; j < targetColorwidth/2; j++) {
 						//map the target value to the color scale here
 						targetvalue2.set(i, targetColorwidth/2+j, Math.log(targetvalue.getQuick(i)/targetVscale));
