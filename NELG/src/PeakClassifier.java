@@ -171,7 +171,7 @@ public class PeakClassifier {
 			
 		}
 		
-		public static void drawSignalForDNase(Collection<TrackRecord> signalPool,String targetName,List<SimpleBEDFeature> query, DoubleMatrix1D clust){
+		public static void drawSignalAroundClustBatch(Collection<TrackRecord> signalPool,String targetName,List<SimpleBEDFeature> query, DoubleMatrix1D clust){
 			String pngfile= common.outputDir+"/"+targetName+"_clust"+".png";
 			DoubleMatrix1D targetvalue = SignalTransform.BedFeatureToValues(query);
 			
@@ -181,15 +181,105 @@ public class PeakClassifier {
 			int[] cnt=new int[common.ClusterNum],plus=new int[common.ClusterNum],minus=new int[common.ClusterNum];
 			double[][] sum1=new double[common.ClusterNum][nbin],sum2=new double[common.ClusterNum][nbin];
 			
+			HashMap<Double, Integer> map=new HashMap<Double, Integer>();	
+			EqualBinFeatureExtractor FE=new EqualBinFeatureExtractor(nbin); 				
+			XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();
+			renderer1.setShapesVisible(false);
+			
+			ChartFrame frame=new ChartFrame("",null);
+			frame.setLayout(new GridLayout(signalPool.size(),2,10,10)); 
+	        ind=0;
+	        for (int i=0;i<clust.size();i++){
+	        	if (map.get(clust.get(i))==null){
+	        		map.put(clust.get(i), ind);
+	        		keys[ind]=clust.get(i);
+	        		ind++;
+	        	}
+	        }
+	        map.clear();
+	        Arrays.sort(keys);
+	        for (int i=0;i<common.ClusterNum;i++)
+	        	map.put(keys[i],i);
+	        for (int i=0;i<clust.size();i++){
+	        	ind=map.get(clust.get(i));
+	        	cnt[ind]++;
+	        	if (query.get(i).strand==Strand.POSITIVE)
+	        		plus[ind]++;
+	        	else if (query.get(i).strand==Strand.NEGATIVE)
+	        		minus[ind]++;
+	        }
+			for (TrackRecord feat : signalPool) {
+				DoubleMatrix2D signal_matrix=FE.extractSignalFeature(feat, query);
+				CombinedRangeXYPlot plot0 = new CombinedRangeXYPlot(new NumberAxis(feat.ExperimentId));
+			//////////////prepare data points/////////////////
+				
+				for (int i = 0; i < signal_matrix.rows(); i++) {
+					if(targetvalue.get(i)>=0)
+					{
+						ind=map.get(clust.get(i));
+						for (int j = 0; j < signal_matrix.columns(); j++) {
+							sum1[ind][j]+=signal_matrix.get(i, j);
+						}
+					}
+					/*else
+					{
+						ind=map.get(clust.get(i));
+						for (int j = 0; j < signal_matrix.columns(); j++) {
+							sum2[ind][j]+=signal_matrix.get(i, j);
+						}
+					}*/
+				}
+				for (int i=0;i<common.ClusterNum;i++){
+					XYSeriesCollection dataset = new XYSeriesCollection();
+					XYSeries posData=new XYSeries("+clust");
+					XYSeries negData=new XYSeries("-clust");
+					for (int j=0;j<signal_matrix.columns();j++){
+						posData.add(-common.SignalRange/2+j*binsize, sum1[i][j]/cnt[i]);
+						//negData.add(-common.SignalRange/2+j*binsize, sum2[i][j]/cnt[i]);
+					}
+					dataset.addSeries(posData);
+					//dataset.addSeries(negData);
+					plot0.add(new XYPlot(dataset,  new NumberAxis((i+1)+": "+cnt[i]+"/"+plus[i]+"/"+minus[i]),null, renderer1));
+				}
+				JFreeChart chart=new JFreeChart(targetName,JFreeChart.DEFAULT_TITLE_FONT, plot0, true);
+				chart.removeLegend();
+				ChartPanel chartPanel = new ChartPanel(chart);
+		        chartPanel.setSize(new java.awt.Dimension(150*common.ClusterNum, 200)); 
+		        frame.add(chartPanel);
+			}
+			
+			frame.setVisible(true);
+			frame.setSize(150*common.ClusterNum, signalPool.size()*200);
+			try{
+				final BufferedImage image = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_ARGB);
+				Graphics gr = image.getGraphics();
+				frame.printAll(gr);
+				gr.dispose();
+				ImageIO.write(image, "PNG", new File(pngfile));
+			}
+			catch(Exception ex){
+				ex.printStackTrace();
+			}
+			frame.dispose();
+		}
+		
+		public static void drawSignalForDNase(Collection<TrackRecord> signalPool,String targetName,List<SimpleBEDFeature> query, DoubleMatrix1D clust){
+			String pngfile= common.outputDir+"/"+targetName+"_DNase"+".png";
+			DoubleMatrix1D targetvalue = SignalTransform.BedFeatureToValues(query);
+			
+			int nbin=20, ind;
+			float binsize= (float)common.SignalRange/nbin;
+			double[] keys=new double[common.ClusterNum];
+			int[] cnt=new int[common.ClusterNum],plus=new int[common.ClusterNum],minus=new int[common.ClusterNum];
+			double[][] sum1=new double[common.ClusterNum][nbin],sum2=new double[common.ClusterNum][nbin];
+			
 			HashMap<Double, Integer> map=new HashMap<Double, Integer>();
-			//CombinedRangeXYPlot plot0 = new CombinedRangeXYPlot(new NumberAxis("Signal Count"));			
+			CombinedRangeXYPlot plot0 = new CombinedRangeXYPlot(new NumberAxis("Signal Count"));			
 			EqualBinFeatureExtractor FE=new EqualBinFeatureExtractor(nbin); 				
 			XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();
 			XYSeriesCollection[] dataset = new XYSeriesCollection[common.ClusterNum];
 			renderer1.setShapesVisible(false);
 			
-			ChartFrame frame=new ChartFrame("test1",null);		
-			frame.setLayout(new GridLayout(2,2,10,10)); 
 	        ind=0;
 	        for (int i=0;i<clust.size();i++){
 	        	if (map.get(clust.get(i))==null){
@@ -214,7 +304,6 @@ public class PeakClassifier {
 	        }
 			for (TrackRecord feat : signalPool) {
 				DoubleMatrix2D signal_matrix=FE.extractSignalFeature(feat, query);
-				CombinedRangeXYPlot plot0 = new CombinedRangeXYPlot(new NumberAxis(feat.ExperimentId));
 			//////////////prepare data points/////////////////
 				
 				if (!feat.ExperimentId.contains("plus")&&!feat.ExperimentId.contains("minus"))
@@ -229,14 +318,6 @@ public class PeakClassifier {
 							else sum2[ind][j]+=signal_matrix.get(i, j);
 						}
 					}
-					/*else
-					{
-						ind=map.get(clust.get(i));
-						cnt2[ind]++;
-						for (int j = 0; j < signal_matrix.columns(); j++) {
-							sum2[ind][j]+=signal_matrix.get(i, j);
-						}
-					}*/
 				}
 				for (int i=0;i<common.ClusterNum;i++){
 					String name;
@@ -253,15 +334,9 @@ public class PeakClassifier {
 					}
 					dataset[i].addSeries(posData);
 					//dataset.addSeries(negData);
-					plot0.add(new XYPlot(new XYSeriesCollection(posData),  new NumberAxis("clust"+(i+1)+": "+cnt[i]+"/"+plus[i]+"/"+minus[i]),null, renderer1));
 				}
-				JFreeChart chart=new JFreeChart(targetName,JFreeChart.DEFAULT_TITLE_FONT, plot0, true);
-				chart.removeLegend();
-				ChartPanel chartPanel = new ChartPanel(chart);
-		        chartPanel.setSize(new java.awt.Dimension(150*common.ClusterNum, 200)); 
-		        frame.add(chartPanel);
 			}
-			/*for (int i=0;i<common.ClusterNum;i++){
+			for (int i=0;i<common.ClusterNum;i++){
 				plot0.add(new XYPlot(dataset[i],  new NumberAxis("clust"+(i+1)+": "+cnt[i]+"/"+plus[i]+"/"+minus[i]),null, renderer1));
 			}
 			JFreeChart chart=new JFreeChart(targetName,JFreeChart.DEFAULT_TITLE_FONT, plot0, true);
@@ -271,21 +346,7 @@ public class PeakClassifier {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}*/
-			
-			frame.setVisible(true);
-			frame.setSize(150*common.ClusterNum, signalPool.size()*200);
-			try{
-				final BufferedImage image = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_ARGB);
-				Graphics gr = image.getGraphics();
-				frame.printAll(gr);
-				gr.dispose();
-				ImageIO.write(image, "PNG", new File("WindowCapture.png"));
 			}
-			catch(Exception ex){
-				ex.printStackTrace();
-			}
-			frame.dispose();
 		}
 		
 		static boolean	heatmap_log=false;
@@ -527,8 +588,7 @@ public class PeakClassifier {
 		    		
 		    	}
 		    }
-		    drawSignalForDNase(SelectedSignalPool, peakTrack1.ExperimentId, query, NELGViewResult.clusterIdvec);
-
-		    
+		    drawSignalAroundClustBatch(SelectedSignalPool, peakTrack1.ExperimentId, query, NELGViewResult.clusterIdvec);
+		    //drawSignalForDNase(SelectedSignalPool, peakTrack1.ExperimentId, query, NELGViewResult.clusterIdvec);
 		}
 }
