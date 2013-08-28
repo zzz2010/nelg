@@ -27,7 +27,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.PropertyConfigurator;
+import org.broad.tribble.annotation.Strand;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -39,6 +41,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
@@ -149,8 +152,6 @@ public class PeakClassifier {
 		        //chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
 		      //  setContentPane(chartPanel);
 		        try {
-					//ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 800, 600);
-					
 				       for(int i=1; i<dataset.getSeries().size();i+=2)
 				       {
 				    	   		renderer.setSeriesFillPaint(i, chart.getXYPlot().getRenderer().getSeriesPaint(i-1));
@@ -170,25 +171,25 @@ public class PeakClassifier {
 			
 		}
 		
-		public static void drawSignalAroundCluster(Collection<TrackRecord> signalPool,String targetName,List<SimpleBEDFeature> query, DoubleMatrix1D clust){
+		public static void drawSignalForDNase(Collection<TrackRecord> signalPool,String targetName,List<SimpleBEDFeature> query, DoubleMatrix1D clust){
 			String pngfile= common.outputDir+"/"+targetName+"_clust"+".png";
 			DoubleMatrix1D targetvalue = SignalTransform.BedFeatureToValues(query);
 			
 			int nbin=20, ind;
 			float binsize= (float)common.SignalRange/nbin;
 			double[] keys=new double[common.ClusterNum];
-			int[] cnt=new int[common.ClusterNum];
+			int[] cnt=new int[common.ClusterNum],plus=new int[common.ClusterNum],minus=new int[common.ClusterNum];
 			double[][] sum1=new double[common.ClusterNum][nbin],sum2=new double[common.ClusterNum][nbin];
 			
-			HashMap<Double, Integer> map=new HashMap<Double, Integer>();			
-			CombinedRangeXYPlot plot0 = new CombinedRangeXYPlot(new NumberAxis("Signal Count"));			
+			HashMap<Double, Integer> map=new HashMap<Double, Integer>();
+			//CombinedRangeXYPlot plot0 = new CombinedRangeXYPlot(new NumberAxis("Signal Count"));			
 			EqualBinFeatureExtractor FE=new EqualBinFeatureExtractor(nbin); 				
 			XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();
 			XYSeriesCollection[] dataset = new XYSeriesCollection[common.ClusterNum];
 			renderer1.setShapesVisible(false);
 			
-			//JFrame frame=new JFrame("test1");		
-			//frame.setLayout(new GridLayout(2,2,10,10)); 
+			ChartFrame frame=new ChartFrame("test1",null);		
+			frame.setLayout(new GridLayout(2,2,10,10)); 
 	        ind=0;
 	        for (int i=0;i<clust.size();i++){
 	        	if (map.get(clust.get(i))==null){
@@ -203,8 +204,17 @@ public class PeakClassifier {
 	        	map.put(keys[i],i);
 	        	dataset[i]=new XYSeriesCollection();
 	        }
+	        for (int i=0;i<clust.size();i++){
+	        	ind=map.get(clust.get(i));
+	        	cnt[ind]++;
+	        	if (query.get(i).strand==Strand.POSITIVE)
+	        		plus[ind]++;
+	        	else if (query.get(i).strand==Strand.NEGATIVE)
+	        		minus[ind]++;
+	        }
 			for (TrackRecord feat : signalPool) {
 				DoubleMatrix2D signal_matrix=FE.extractSignalFeature(feat, query);
+				CombinedRangeXYPlot plot0 = new CombinedRangeXYPlot(new NumberAxis(feat.ExperimentId));
 			//////////////prepare data points/////////////////
 				
 				if (!feat.ExperimentId.contains("plus")&&!feat.ExperimentId.contains("minus"))
@@ -213,8 +223,6 @@ public class PeakClassifier {
 					if(targetvalue.get(i)>=0)
 					{
 						ind=map.get(clust.get(i));
-						if (feat.ExperimentId.contains("plus"))
-							cnt[ind]++;
 						for (int j = 0; j < signal_matrix.columns(); j++) {
 							if (feat.ExperimentId.contains("plus"))
 								sum1[ind][j]+=signal_matrix.get(i, j);
@@ -231,7 +239,11 @@ public class PeakClassifier {
 					}*/
 				}
 				for (int i=0;i<common.ClusterNum;i++){
-					XYSeries posData=new XYSeries( "+clust");
+					String name;
+					if (feat.ExperimentId.contains("plus"))
+						name="+clust"+(i+1);
+					else name="-clust"+(i+1);
+					XYSeries posData=new XYSeries(name);
 					XYSeries negData=new XYSeries( "-clust");
 					for (int j=0;j<signal_matrix.columns();j++){
 						if (feat.ExperimentId.contains("plus"))
@@ -241,23 +253,26 @@ public class PeakClassifier {
 					}
 					dataset[i].addSeries(posData);
 					//dataset.addSeries(negData);
+					plot0.add(new XYPlot(new XYSeriesCollection(posData),  new NumberAxis("clust"+(i+1)+": "+cnt[i]+"/"+plus[i]+"/"+minus[i]),null, renderer1));
 				}
+				JFreeChart chart=new JFreeChart(targetName,JFreeChart.DEFAULT_TITLE_FONT, plot0, true);
+				chart.removeLegend();
+				ChartPanel chartPanel = new ChartPanel(chart);
+		        chartPanel.setSize(new java.awt.Dimension(150*common.ClusterNum, 200)); 
+		        frame.add(chartPanel);
 			}
-			for (int i=0;i<common.ClusterNum;i++){
-				plot0.add(new XYPlot(dataset[i],  new NumberAxis("clust"+(i+1)+": "+cnt[i]),null, renderer1));
+			/*for (int i=0;i<common.ClusterNum;i++){
+				plot0.add(new XYPlot(dataset[i],  new NumberAxis("clust"+(i+1)+": "+cnt[i]+"/"+plus[i]+"/"+minus[i]),null, renderer1));
 			}
 			JFreeChart chart=new JFreeChart(targetName,JFreeChart.DEFAULT_TITLE_FONT, plot0, true);
-			//chart.clearSubtitles();
+			chart.removeLegend();
 			try {
 	        	ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 150*common.ClusterNum, 300);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 			
-			/*ChartPanel chartPanel = new ChartPanel(chart);
-	        chartPanel.setSize(new java.awt.Dimension(150*common.ClusterNum, 200)); 
-	        frame.add(chartPanel);
 			frame.setVisible(true);
 			frame.setSize(150*common.ClusterNum, signalPool.size()*200);
 			try{
@@ -269,7 +284,8 @@ public class PeakClassifier {
 			}
 			catch(Exception ex){
 				ex.printStackTrace();
-			}*/
+			}
+			frame.dispose();
 		}
 		
 		static boolean	heatmap_log=false;
@@ -511,7 +527,7 @@ public class PeakClassifier {
 		    		
 		    	}
 		    }
-		    drawSignalAroundCluster(SelectedSignalPool, peakTrack1.ExperimentId, query, NELGViewResult.clusterIdvec);
+		    drawSignalForDNase(SelectedSignalPool, peakTrack1.ExperimentId, query, NELGViewResult.clusterIdvec);
 
 		    
 		}
