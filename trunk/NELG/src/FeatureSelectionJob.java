@@ -95,10 +95,13 @@ public class FeatureSelectionJob implements  Runnable {
 				target_signal_bg = SignalTransform.extractNegativeSignal(target_signal_filtered,2*target_signal_filtered.size());
 		  	
 			DoubleMatrix1D targetValue=SignalTransform.BedFeatureToValues(target_signal_filtered);
-			boolean[] strand=new boolean[target_signal_filtered.size()];
+			boolean[] strand=null;
 		  	targetValue=DoubleFactory1D.sparse.append(targetValue, SignalTransform.BedFeatureToValues(target_signal_bg));
-		  	for (int i=0;i<strand.length;i++){
-		  		strand[i]=(target_signal_filtered.get(i).strand==Strand.POSITIVE);
+		  	if (target_signal_filtered.get(0).strand!=Strand.NONE){
+			  	strand=new boolean[target_signal_filtered.size()];
+			  	for (int i=0;i<strand.length;i++){
+			  		strand[i]=(target_signal_filtered.get(i).strand==Strand.POSITIVE);
+			  	}
 		  	}
 		  
 		  	DoubleMatrix1D targetNormValue=SignalTransform.BedFeatureToValues(SignalTransform.normalizeSignal(target_signal_filtered));
