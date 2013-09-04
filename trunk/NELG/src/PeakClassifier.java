@@ -251,7 +251,7 @@ public class PeakClassifier {
 		        frame.add(chartPanel);
 			}
 	        
-			frame.setUndecorated(true);
+			//frame.setUndecorated(true);
 			frame.setVisible(true);
 			frame.setSize(150*common.ClusterNum, signalPool.size()*200);
 			try{
@@ -260,7 +260,7 @@ public class PeakClassifier {
 				frame.printAll(gr);
 				gr.dispose();
 				ImageIO.write(image, "PNG", new File(pngfile));
-				Thread.sleep(1000);
+				//Thread.sleep(1000);
 			}
 			catch(Exception ex){
 				ex.printStackTrace();
