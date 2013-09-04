@@ -344,7 +344,8 @@ public class NELGViewResult {
 				for (int i = 0; i < targetvalue.size(); i++) {
 					//use half brand for target value, first half as separate line to feature
 					double col=1.0;
-					if (strand!=null){
+					// need to assign strand value for background peaks
+					if (strand!=null&&targetvalue.get(i)>0){
 						if (!strand[i])
 							col=-1.0;
 						targetvalue2.set(i, targetColorwidth/4, col);
