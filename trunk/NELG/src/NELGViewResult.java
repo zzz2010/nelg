@@ -80,7 +80,7 @@ import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.trees.RandomForest;
 import weka.clusterers.Clusterer;
 import weka.clusterers.FarthestFirst;
-import weka.clusterers.SimpleKMeans;
+import weka.clusterers.XMeans;
 import weka.clusterers.HierarchicalClusterer;
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -293,7 +293,7 @@ public class NELGViewResult {
 			else
 			{
 
-				int tempClusterNum=common.ClusterNum; //remember the original cluster number, and recover later
+				int tempClusterNum=10;
 				//heatmap
 				Set<String> selFeatNames=SingleTrackFeatures.keySet();
 				//load 1/2 background peak
@@ -328,7 +328,8 @@ public class NELGViewResult {
 					
 					//to this point, clusterIdvec is set
 					
-					common.ClusterNum=1;				
+					tempClusterNum=common.ClusterNum; //remember the original cluster number, and recover later
+					common.ClusterNum=1;
 					}
 				else
 				{
@@ -345,14 +346,18 @@ public class NELGViewResult {
 					//use half brand for target value, first half as separate line to feature
 					double col=1.0;
 					// need to assign strand value for background peaks
-					if (strand!=null&&targetvalue.get(i)>0){
-						if (!strand[i])
-							col=-1.0;
+					if (strand!=null){
+						if (targetvalue.getQuick(i)>0){
+							if (!strand[i])
+								col=-1.0;
+						}
+						else col=0.0;
 						targetvalue2.set(i, targetColorwidth/4, col);
 						targetvalue2.set(i, targetColorwidth/4+1, col);
 					}
 					for (int j = 0; j < targetColorwidth/2; j++) {
 						//map the target value to the color scale here
+						// if use non-print mode, the targetvalue can be negative and will cause problem here
 						targetvalue2.set(i, targetColorwidth/2+j, Math.log(targetvalue.getQuick(i)/targetVscale));
 					}
 				}
@@ -567,7 +572,7 @@ public class NELGViewResult {
 	
 	public static DoubleMatrix2D clusterReorder(DoubleMatrix2D matrix)
 	{
-		SimpleKMeans kmean=new SimpleKMeans();
+		XMeans xmean=new XMeans();
 		
 		for (int i = 0; i < matrix.columns(); i++) {
 			DoubleMatrix1D vec= matrix.viewColumn(i);
@@ -590,12 +595,13 @@ public class NELGViewResult {
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
-			kmean.setNumClusters(5);
+			xmean.setMinNumClusters(5);
+			xmean.setMaxNumClusters(20);
 			Instances data=matrix2instances( matrix);
 			
-			kmean.buildClusterer(data);
+			xmean.buildClusterer(data);
 			for (int i = 0; i < matrix.rows(); i++) {
-				clusterlabel.set(i, 0, kmean.clusterInstance(data.instance(i)));
+				clusterlabel.set(i, 0, xmean.clusterInstance(data.instance(i)));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -607,7 +613,7 @@ public class NELGViewResult {
 	public static DoubleMatrix2D clusterReorder_Rowbased(DoubleMatrix2D matrix)
 	{
 		 
-			SimpleKMeans clustering=new SimpleKMeans();
+			XMeans clustering=new XMeans();
 		// FarthestFirst clustering=new FarthestFirst();
 		double maxValue=Double.NEGATIVE_INFINITY;
 		double minValue=Double.POSITIVE_INFINITY;
@@ -675,9 +681,11 @@ public class NELGViewResult {
 		if(common.ClusterNum>1)
 		{
 		try {
-			clustering.setNumClusters(common.ClusterNum);
+			clustering.setMinNumClusters(common.ClusterNum);
+			clustering.setMaxNumClusters(20);
 			Instances data=matrix2instances(matrix);
 			clustering.buildClusterer(data);
+			common.ClusterNum=clustering.getClusterCenters().numInstances();
 			for (int i = 0; i < matrix.rows(); i++) {
 				clusterlabel.set(i, 0, minValue+(maxValue-minValue)/(common.ClusterNum-1)*clustering.clusterInstance(data.instance(i)));
 			}
