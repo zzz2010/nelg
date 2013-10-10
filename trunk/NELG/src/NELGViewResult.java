@@ -377,6 +377,7 @@ public class NELGViewResult {
 					result.JobTitle=PeakClassifier.selectedClusterFeature.toString();
 				}
 				DoubleMatrix2D combinedP_order=clusterReorder_Rowbased(combined);
+				tempClusterNum=common.ClusterNum;
 				
 				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,stridesize);
 				common.ClusterNum=tempClusterNum;
@@ -596,7 +597,7 @@ public class NELGViewResult {
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
 			xmean.setMinNumClusters(5);
-			xmean.setMaxNumClusters(20);
+			xmean.setMaxNumClusters(10);
 			Instances data=matrix2instances( matrix);
 			
 			xmean.buildClusterer(data);
@@ -682,7 +683,7 @@ public class NELGViewResult {
 		{
 		try {
 			clustering.setMinNumClusters(common.ClusterNum);
-			clustering.setMaxNumClusters(20);
+			clustering.setMaxNumClusters(10);
 			Instances data=matrix2instances(matrix);
 			clustering.buildClusterer(data);
 			common.ClusterNum=clustering.getClusterCenters().numInstances();
