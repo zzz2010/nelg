@@ -181,7 +181,6 @@ public class PeakClassifier {
 			float binsize= (float)common.SignalRange/nbin;
 			double[] keys=new double[common.ClusterNum];
 			int[] cnt=new int[common.ClusterNum],plus=new int[common.ClusterNum],minus=new int[common.ClusterNum];
-			double[][] sum1=new double[common.ClusterNum][nbin],sum2=new double[common.ClusterNum][nbin];
 			
 			HashMap<Double, Integer> map=new HashMap<Double, Integer>();	
 			EqualBinFeatureExtractor FE=new EqualBinFeatureExtractor(nbin); 				
@@ -213,6 +212,7 @@ public class PeakClassifier {
 			for (TrackRecord feat : signalPool) {
 				DoubleMatrix2D signal_matrix=FE.extractSignalFeature(feat, query);
 				CombinedRangeXYPlot plot0 = new CombinedRangeXYPlot(new NumberAxis("Signal Count"));
+				double[][] sum1=new double[common.ClusterNum][nbin],sum2=new double[common.ClusterNum][nbin];
 				int num=Math.min(signal_matrix.rows(), clust.size());
 			//////////////prepare data points/////////////////
 				
@@ -251,7 +251,7 @@ public class PeakClassifier {
 		        frame.add(chartPanel);
 			}
 	        
-			//frame.setUndecorated(true);
+			frame.setUndecorated(true);
 			frame.setVisible(true);
 			frame.setSize(150*common.ClusterNum, signalPool.size()*200);
 			try{
@@ -375,6 +375,7 @@ public class PeakClassifier {
 			options.addOption("medianNorm", false, "normalized by the median value in the window size in the heatmap plotting (default: no)");
 			options.addOption("sumNorm", false, "signal values are normalized to the same sequencing depth.(default: no)");
 			options.addOption("sort", false, "sorted by the sum of all signals within each cluster (default: no)");
+			options.addOption("mirror", false, "use mirror clustering: put the strong signals to one side of the peaks (default: no)");
 	
 			CommandLineParser parser = new GnuParser();
 			CommandLine cmd;
@@ -419,6 +420,11 @@ public class PeakClassifier {
 				{
 					System.out.println("signal values are normalized to the same sequencing depth.");
 					common.normalizedSignalSum=true;
+				}
+				if(cmd.hasOption("mirror"))
+				{
+					System.out.println("signal values are clustered after putting all strong signals at one side.");
+					common.mirrorCluster=true;
 				}
 				
 				if(cmd.hasOption("clusternum"))
@@ -560,6 +566,7 @@ public class PeakClassifier {
 					SelectedSignalPool.add(signal_track);
 				}
 			}
+		    drawSignalAroundPeakBatch(SelectedSignalPool, peakTrack1.ExperimentId, query);
 		    drawSignalAroundPeakBatch2(SelectedSignalPool, peakTrack1.ExperimentId, query);
 		    /////////////////view result///////////////////////
 		    String resultfile="";
@@ -594,6 +601,6 @@ public class PeakClassifier {
 		    	}
 		    }
 		    drawSignalAroundClustBatch(SelectedSignalPool, peakTrack1.ExperimentId, query, NELGViewResult.clusterIdvec);
-		    drawSignalForDNase(SelectedSignalPool, peakTrack1.ExperimentId, query, NELGViewResult.clusterIdvec);
+		    //drawSignalForDNase(SelectedSignalPool, peakTrack1.ExperimentId, query, NELGViewResult.clusterIdvec);
 		}
 }
