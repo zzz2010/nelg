@@ -25,6 +25,7 @@ public class common {
 	static int topNfeatures=100;
 	static boolean filterFeature=true;
 	static boolean normalizedSignalSum=false;
+	static boolean mirrorCluster=false;
 	
 	
 	static DoubleMatrix2D RowNormalizeMatrix(DoubleMatrix2D matrix)

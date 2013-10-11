@@ -81,11 +81,13 @@ public class TrackRecord implements Serializable{
 	}
 	public SparseDoubleMatrix2D overlapBinSignal_fixBinNum( List<SimpleBEDFeature> query_regions,int numbin)
 	{
-		return DBoperator.overlapBinSignal_fixBinNum(this, query_regions, numbin);
+		SparseDoubleMatrix2D outputSignal=DBoperator.overlapBinSignal_fixBinNum(this, query_regions, numbin);
+		return outputSignal;
 	}
 	public List<SparseDoubleMatrix1D> overlapBinSignal_fixStepSize( List<SimpleBEDFeature> query_regions,int stepsize)
 	{
-		return DBoperator.overlapBinSignal_fixStepSize(this, query_regions, stepsize);
+		List<SparseDoubleMatrix1D> outputSignal=DBoperator.overlapBinSignal_fixStepSize(this, query_regions, stepsize);
+		return outputSignal;
 	}
 
 	public double GetTotalSignalSum()
