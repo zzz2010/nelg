@@ -379,7 +379,9 @@ public class NELGViewResult {
 				
 				// cluster by all features. If features are selected, then add all the other features 
 				DoubleMatrix2D combinedP_order=clusterReorder_Rowbased(combined);
-				tempClusterNum=common.ClusterNum;
+				if (common.ClusterNum>1){ // doesn't perform the previous cluster
+    				    tempClusterNum=common.ClusterNum;
+				}
 				
 				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,stridesize);
 				common.ClusterNum=tempClusterNum;
