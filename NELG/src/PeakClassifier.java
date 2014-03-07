@@ -469,6 +469,7 @@ public class PeakClassifier {
 				
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
+				e.printStackTrace();
 				HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp( "PeakClassifier", options );
 				return;
