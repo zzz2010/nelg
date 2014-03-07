@@ -380,7 +380,6 @@ public class PeakClassifier {
 			
 			//deal with the headless error
 			Properties prop = System.getProperties (); 
-			prop.put ("awt.toolkit", "com.eteks.awt.PJAToolkit"); 
 			prop.put ("java.awt.headless", "true"); 
 			System.setProperties (prop); 
 			
