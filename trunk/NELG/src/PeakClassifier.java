@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -52,7 +53,6 @@ import org.jppf.utils.FileUtils;
 import cern.colt.matrix.DoubleFactory2D;
 import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
-
 import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
 
 
@@ -377,6 +377,13 @@ public class PeakClassifier {
 			options.addOption("sort", false, "sorted by the sum of all signals within each cluster (default: no)");
 			options.addOption("mirror", false, "use mirror clustering: put the strong signals to one side of the peaks (default: no)");
 	
+			
+			//deal with the headless error
+			Properties prop = System.getProperties (); 
+			prop.put ("awt.toolkit", "com.eteks.awt.PJAToolkit"); 
+			prop.put ("java.awt.headless", "true"); 
+			System.setProperties (prop); 
+			
 			CommandLineParser parser = new GnuParser();
 			CommandLine cmd;
 			
