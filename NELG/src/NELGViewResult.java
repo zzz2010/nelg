@@ -221,8 +221,11 @@ public class NELGViewResult {
 			e1.printStackTrace();
 		}
 		ClassificationJob jobdata=StateRecovery.LoadClassificationJob(result.JobTitle);
-		
-		if(jobdata!=null)
+		if(jobdata==null)
+		{
+			System.out.println("cannot find the job data: "+common.tempDir+result.JobTitle+".cj");
+		}
+		else
 		{
 			Instances data = ChildModeler.getDatasetFromJob(jobdata);
 			//take out the selected attribution
