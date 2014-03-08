@@ -145,6 +145,8 @@ public static ArrayList<SimpleBEDFeature> extractNegativeSignal_Gauss(List<Simpl
 	Collections.sort(target_signal_sorted, new BEDPositionComparator());
 	List<SimpleBEDFeature> gaplist=new ArrayList<SimpleBEDFeature>();
 	double sumCoverage=0;
+	
+	//define gap region, or general background region, in order to avoid random pickup the positive region
 	for (int i = 0; i < target_signal_sorted.size()-1; i++) {
 		SimpleBEDFeature bed1=target_signal_sorted.get(i);
 		SimpleBEDFeature bed2=target_signal_sorted.get(i+1);
@@ -155,8 +157,8 @@ public static ArrayList<SimpleBEDFeature> extractNegativeSignal_Gauss(List<Simpl
 			
 			if(mid1+10000<mid2) //ensure have enough gap
 			{
-				//make bg peak at least 500bp away to the real peak
-				SimpleBEDFeature temp=new SimpleBEDFeature(mid1+500,mid2-500, bed1.getChr());
+				//make bg peak must not overlap the positive region, inside the gap region
+				SimpleBEDFeature temp=new SimpleBEDFeature(bed1.getEnd(),bed2.getStart(), bed1.getChr());
 				temp.setScore(-1); //negative sample
 				sumCoverage+=temp.getScore();
 				gaplist.add(temp);
@@ -183,13 +185,14 @@ public static ArrayList<SimpleBEDFeature> extractNegativeSignal_Gauss(List<Simpl
 		int regionlen=gaplist.get(selgap).getEnd()-gaplist.get(selgap).getStart();
 		int start=0;//(int) (gaplist.get(selgap).getStart()+regionlen*(pointer-cumprob.get(selgap)));
 		double deviate=rand.nextGaussian();
+		//define how close to the original site
 		if(deviate<0)
 		{
-			start=(int) (gaplist.get(selgap).getStart()+regionlen*(-deviate/4));
+			start=(int) (gaplist.get(selgap).getStart()+regionlen*(-deviate/10)); 
 		}
 		else
 		{
-			start=(int) (gaplist.get(selgap).getEnd()+regionlen*(-deviate/4));
+			start=(int) (gaplist.get(selgap).getEnd()+regionlen*(-deviate/10));
 		}
 		SimpleBEDFeature temp = new SimpleBEDFeature(start-bgregion_size/2, start+bgregion_size/2, chrom);
 		temp.setScore(-1);

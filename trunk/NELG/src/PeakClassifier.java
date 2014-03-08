@@ -379,9 +379,9 @@ public class PeakClassifier {
 	
 			
 			//deal with the headless error
-			Properties prop = System.getProperties (); 
-			prop.put ("java.awt.headless", "true"); 
-			System.setProperties (prop); 
+//			Properties prop = System.getProperties (); 
+//			prop.put ("java.awt.headless", "true"); 
+//			System.setProperties (prop); 
 			
 			CommandLineParser parser = new GnuParser();
 			CommandLine cmd;
@@ -500,7 +500,7 @@ public class PeakClassifier {
 			List<TrackRecord>  SignalPool=new ArrayList<TrackRecord>();
 			for(File sfl:datafolder.listFiles())
 			{
-				if(!sfl.getName().endsWith("bigWig"))
+				if(!sfl.getName().endsWith("bigWig")&&!sfl.getName().endsWith("bigwig")&&!sfl.getName().endsWith("bw"))
 					continue;
 				SignalPool.add(TrackRecord.createTrackRecord_signal(sfl.getAbsolutePath()));
 			}
