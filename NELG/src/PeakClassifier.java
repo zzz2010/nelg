@@ -268,6 +268,92 @@ public class PeakClassifier {
 			frame.dispose();
 		}
 		
+		public static void drawSignalAroundClustBatch_headless(Collection<TrackRecord> signalPool,String targetName,List<SimpleBEDFeature> query, DoubleMatrix1D clust){
+			
+			DoubleMatrix1D targetvalue = SignalTransform.BedFeatureToValues(query);
+			
+			int nbin=20, ind;
+			float binsize= (float)common.SignalRange/nbin;
+			double[] keys=new double[common.ClusterNum];
+			int[] cnt=new int[common.ClusterNum],plus=new int[common.ClusterNum],minus=new int[common.ClusterNum];
+			
+			HashMap<Double, Integer> map=new HashMap<Double, Integer>();	
+			EqualBinFeatureExtractor FE=new EqualBinFeatureExtractor(nbin); 				
+			XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();
+			renderer1.setShapesVisible(false);
+			
+			
+	        ind=0;
+	        for (int i=0;i<clust.size();i++){
+	        	if (map.get(clust.get(i))==null){
+	        		map.put(clust.get(i), ind);
+	        		keys[ind]=clust.get(i);
+	        		ind++;
+	        	}
+	        }
+	        map.clear();
+	        Arrays.sort(keys);
+	        for (int i=0;i<common.ClusterNum;i++)
+	        	map.put(keys[i],i);
+	        for (int i=0;i<clust.size();i++){
+	        	ind=map.get(clust.get(i));
+	        	cnt[ind]++;
+	        	if (query.get(i).strand==Strand.POSITIVE)
+	        		plus[ind]++;
+	        	else if (query.get(i).strand==Strand.NEGATIVE)
+	        		minus[ind]++;
+	        }
+			for (TrackRecord feat : signalPool) {
+				DoubleMatrix2D signal_matrix=FE.extractSignalFeature(feat, query);
+				CombinedRangeXYPlot plot0 = new CombinedRangeXYPlot(new NumberAxis("Signal Count"));
+				double[][] sum1=new double[common.ClusterNum][nbin],sum2=new double[common.ClusterNum][nbin];
+				int num=Math.min(signal_matrix.rows(), clust.size());
+			//////////////prepare data points/////////////////
+				
+				for (int i = 0; i < num; i++) {
+					if(targetvalue.get(i)>=0)
+					{
+						ind=map.get(clust.get(i));
+						for (int j = 0; j < signal_matrix.columns(); j++) {
+							sum1[ind][j]+=signal_matrix.get(i, j);
+						}
+					}
+					else
+					{
+						ind=map.get(clust.get(i));
+						for (int j = 0; j < signal_matrix.columns(); j++) {
+							sum2[ind][j]+=signal_matrix.get(i, j);
+						}
+					}
+				}
+				for (int i=0;i<common.ClusterNum;i++){
+					XYSeriesCollection dataset = new XYSeriesCollection();
+					XYSeries posData=new XYSeries("+clust");
+					XYSeries negData=new XYSeries("-clust");
+					for (int j=0;j<signal_matrix.columns();j++){
+						posData.add(-common.SignalRange/2+j*binsize, sum1[i][j]/cnt[i]);
+						negData.add(-common.SignalRange/2+j*binsize, sum2[i][j]/cnt[i]);
+					}
+					dataset.addSeries(posData);
+					//dataset.addSeries(negData);
+					plot0.add(new XYPlot(dataset,  new NumberAxis((i+1)+": "+cnt[i]+"/"+plus[i]+"/"+minus[i]),null, renderer1));
+				}
+				JFreeChart chart=new JFreeChart(feat.ExperimentId,JFreeChart.DEFAULT_TITLE_FONT, plot0, true);
+				chart.removeLegend();
+				ChartPanel chartPanel = new ChartPanel(chart);
+		        chartPanel.setSize(new java.awt.Dimension(150*common.ClusterNum, 200)); 
+		        try {
+		        	String pngfile= common.outputDir+"/"+feat.ExperimentId+"_clust"+".png";
+					ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 150*common.ClusterNum, 300);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+	        
+
+		}
+		
 		public static void drawSignalForDNase(Collection<TrackRecord> signalPool,String targetName,List<SimpleBEDFeature> query, DoubleMatrix1D clust){
 			String pngfile= common.outputDir+"/"+targetName+"_DNase"+".png";
 			DoubleMatrix1D targetvalue = SignalTransform.BedFeatureToValues(query);
@@ -614,7 +700,7 @@ public class PeakClassifier {
 		    		
 		    	}
 		    }
-		    drawSignalAroundClustBatch(SelectedSignalPool, peakTrack1.ExperimentId, query, NELGViewResult.clusterIdvec);
+		    drawSignalAroundClustBatch_headless(SelectedSignalPool, peakTrack1.ExperimentId, query, NELGViewResult.clusterIdvec);
 		    //drawSignalForDNase(SelectedSignalPool, peakTrack1.ExperimentId, query, NELGViewResult.clusterIdvec);
 		}
 }
