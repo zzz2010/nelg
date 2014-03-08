@@ -366,6 +366,7 @@ public class PeakClassifier {
 			options.addOption("dataDir", true, "the path of the folder with bigWig data");
 			options.addOption("clusternum", true, "number of clusters in heatmap (default: 10)");
 			options.addOption("outputDir", true, "the path of folder for output data");
+			options.addOption("cacheDir", true, "the path of folder for cache data");
 			options.addOption("winsize", true, "if 0, mean no fix window size (default 4000)");
 			options.addOption("peakfile1", true, "target peaks set  (bed format)");
 			options.addOption("print", false, "fast mode for only generating figures (default: false)");
@@ -444,6 +445,12 @@ public class PeakClassifier {
 				}
 				else {
 					throw new ParseException("must provide dataDir !");
+				}
+				
+				if(cmd.hasOption("cacheDir"))
+				{
+					common.tempDir=cmd.getOptionValue("cacheDir");;
+					logger.info("using cacheDir:"+common.tempDir);
 				}
 
 				if(cmd.hasOption("peakfile1"))
