@@ -194,9 +194,15 @@ public class NELGViewResult {
 	public static void ViewClassificationResult(ClassificationResult result)
 	{
 		if(result.isRegression&&result.Corr<corr_cutoff)
+		{
+			System.out.println("Corr too low:"+result.Corr);
 			return;
+		}
 		if(!result.isRegression&&result.AUC<auc_cutoff)
+		{
+			System.out.println("AUC too low:"+result.AUC);
 			return;
+		}
 		//text summary
 		System.out.println(result.JobTitle);
 		System.out.println(result.toString());
