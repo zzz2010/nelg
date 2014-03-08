@@ -201,7 +201,7 @@ public class NELGViewResult {
 		System.out.println(result.JobTitle);
 		System.out.println(result.toString());
 		String[] comps_str=result.JobTitle.split("_");
-		outputDir=outputDir+"/"+comps_str[0];
+		//outputDir=outputDir+"/"+comps_str[0];
 		
 		(new File(outputDir)).mkdir();
 		try {
