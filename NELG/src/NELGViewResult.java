@@ -164,6 +164,7 @@ public class NELGViewResult {
 				// TODO Auto-generated catch block
 				System.out.println(e.getMessage());
 			} 
+			System.out.println(Result.getClass());
 			//process the result
 			if(Result.getClass().equals(ClassificationResult.class))
 			{
