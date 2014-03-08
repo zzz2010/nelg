@@ -341,7 +341,9 @@ public class NELGViewResult {
 
 
 				//max fold change to the mean 
-				double targetVscale=targetvalue.viewSorted().getQuick(targetvalue.size()/2-1);
+				DoubleMatrix1D targetvalue_sorted = targetvalue.viewSorted();
+				double targetVmin=targetvalue_sorted.getQuick(0)-0.0001; //need a shift in case the target value contain negatives
+				double targetVscale=targetvalue_sorted.getQuick(targetvalue.size()/2-1)-targetVmin;
 				for (int i = 0; i < targetvalue.size(); i++) {
 					//use half brand for target value, first half as separate line to feature
 					double col=1.0;
@@ -358,7 +360,7 @@ public class NELGViewResult {
 					for (int j = 0; j < targetColorwidth/2; j++) {
 						//map the target value to the color scale here
 						// if use non-print mode, the targetvalue can be negative and will cause problem here
-						targetvalue2.set(i, targetColorwidth/2+j, Math.log(targetvalue.getQuick(i)/targetVscale));
+						targetvalue2.set(i, targetColorwidth/2+j, Math.log((targetvalue.getQuick(i)-targetVmin)/targetVscale));
 					}
 				}
 				ArrayList<String> selFeatNames2=new ArrayList<String>(selFeatNames);
