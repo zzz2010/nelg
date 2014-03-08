@@ -598,7 +598,7 @@ public class PeakClassifier {
 							 for (int i = 0; i < NELGViewResult.clusterIdvec.size(); i++) {
 								 FSJob.target_signal_filtered.get(i).setScore((float) NELGViewResult.clusterIdvec.get(i));
 							}
-							 SimpleBEDFeature.toFile(FSJob.target_signal_filtered, peakfile1+".clust"); 
+							 SimpleBEDFeature.toFile(FSJob.target_signal_filtered, common.outputDir+"/"+FileUtils.getFileName(peakfile1) +".clust"); 
 						 }
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
