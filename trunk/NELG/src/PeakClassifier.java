@@ -463,8 +463,8 @@ public class PeakClassifier {
 			options.addOption("sumNorm", false, "signal values are normalized to the same sequencing depth.(default: no)");
 			options.addOption("sort", false, "sorted by the sum of all signals within each cluster (default: no)");
 			options.addOption("mirror", false, "use mirror clustering: put the strong signals to one side of the peaks (default: no)");
+			options.addOption("NFSmode", false, "run the classifier under NFS mode (default: no)");
 	
-			
 			//deal with the headless error
 //			Properties prop = System.getProperties (); 
 //			prop.put ("java.awt.headless", "true"); 
@@ -518,6 +518,12 @@ public class PeakClassifier {
 				{
 					System.out.println("signal values are clustered after putting all strong signals at one side.");
 					common.mirrorCluster=true;
+				}
+				if(cmd.hasOption("NFSmode"))
+				{
+					System.out.println("NFSmode is selected.");
+					common.Localmode=false;
+					common.NFSmode=true;
 				}
 				
 				if(cmd.hasOption("clusternum"))
