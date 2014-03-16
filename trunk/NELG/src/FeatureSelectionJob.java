@@ -205,7 +205,7 @@ public class FeatureSelectionJob implements  Runnable {
 		 PooledExecutor localclient=null;
 		 if(common.NFSmode)
 		 {
-			 NFSclient=executor;//new JPPFClient("nfs executor");
+			 NFSclient=new JPPFClient("nfs executor");
 		 }
 		 else
 		 {

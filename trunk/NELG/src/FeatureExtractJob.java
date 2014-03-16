@@ -75,6 +75,8 @@ public class FeatureExtractJob extends JPPFTask {
 		if(dataProvider!=null)
 		common.loadDataProvider(dataProvider);
 		
+		System.out.println("this is the node extracting feature: "+feature_signal.FilePrefix);
+		
 		logger.debug(feature_signal.ExperimentId+" vs "+target_signal.ExperimentId+" :");
 		IsThereFeatures=new ArrayList<FeatureSignal>();
 		ValThereFeatures=new ArrayList<FeatureSignal>();

@@ -48,6 +48,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 import org.jppf.client.JPPFClient;
+import org.jppf.client.JPPFJob;
 import org.jppf.utils.FileUtils;
 
 import cern.colt.matrix.DoubleFactory2D;
@@ -524,6 +525,20 @@ public class PeakClassifier {
 					System.out.println("NFSmode is selected.");
 					common.Localmode=false;
 					common.NFSmode=true;
+					
+					try {
+						JPPFJob job1 = new JPPFJob();
+						JPPFClient jppfClient=new JPPFClient();
+						job1.setName("JPPF test");
+						job1.addTask(new TemplateJPPFTask(5));
+						job1.addTask(new TemplateJPPFTask(6));
+					    job1.addTask(new TemplateJPPFTask(7));
+					    job1.addTask(new TemplateJPPFTask(8));
+					    job1.setBlocking(true);
+					    jppfClient.submit(job1);
+					    System.out.println("JPPF test passed");
+					}
+					catch (Exception e1){}
 				}
 				
 				if(cmd.hasOption("clusternum"))
