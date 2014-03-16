@@ -392,7 +392,7 @@ public class NELGViewResult {
 				// cluster by all features. If features are selected, then add all the other features 
 				DoubleMatrix2D combinedP_order=clusterReorder_Rowbased(combined);
 				if (common.ClusterNum>1){ // doesn't perform the previous cluster
-    				    tempClusterNum=common.ClusterNum;
+					tempClusterNum=common.ClusterNum;
 				}
 				
 				drawHeatMap( combinedP_order, result.JobTitle,selFeatNames2,stridesize);
@@ -612,7 +612,7 @@ public class NELGViewResult {
 			}
 		DenseDoubleMatrix2D clusterlabel=new DenseDoubleMatrix2D(matrix.rows(), 1);
 		try {
-			xmean.setMinNumClusters(2);
+			xmean.setMinNumClusters(common.ClusterNum);
 			xmean.setMaxNumClusters(5);
 			Instances data=matrix2instances( matrix);
 			
@@ -698,7 +698,7 @@ public class NELGViewResult {
 		if(common.ClusterNum>1)
 		{
 		try {
-			clustering.setMinNumClusters(2);
+			clustering.setMinNumClusters(common.ClusterNum);
 			clustering.setMaxNumClusters(5);
 			Instances data=matrix2instances(matrix);
 			clustering.buildClusterer(data);
