@@ -1,12 +1,14 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,6 +19,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.broad.tribble.annotation.Strand;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
@@ -76,7 +80,7 @@ public class DNaseConsSitesClustering {
 			ChartPanel chartPanel = new ChartPanel(chart);
 	        chartPanel.setSize(new java.awt.Dimension(150*common.ClusterNum, 200)); 
 	        try {
-	        	String pngfile= targetName+"_clust"+".png";
+	        	String pngfile= common.outputDir+targetName+"_clust"+".png";
 				ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 150*common.ClusterNum, 300);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -144,15 +148,105 @@ public class DNaseConsSitesClustering {
 		
 		return ret;
 	}
+	public static ArrayList get_Loci_DNase_Cons(String inputfile) throws FileNotFoundException
+	{
+		ArrayList ret=new ArrayList();
+		Scanner s = new Scanner(new File(inputfile));
+		ArrayList< ArrayList<Float>> DnaseVec=new ArrayList<ArrayList<Float>>();
+		ArrayList< ArrayList<Float>> ConsVec=new ArrayList<ArrayList<Float>>();
+		ArrayList<String> lociList=new ArrayList<String>();
+		while(s.hasNextLine()) {
+	        String line=s.nextLine();
+	        ArrayList<String> comps=new ArrayList<String>(Arrays.asList(line.trim().split("\t")));
+	        List<String> locus = comps.subList(0, 4);
+	        lociList.add(StringUtils.join(locus,'\t'));
+	        int breakI=4+(comps.size()-4)/2;
+	      //normalize the row by median
+	        ArrayList<Float> dnaseVec = MedianNormalization(convertStrArray(comps.subList(4,breakI)));
+	        ArrayList<Float> consVec = MedianNormalization(convertStrArray(comps.subList(breakI, comps.size())));
+	        if(locus.get(3).equalsIgnoreCase("-"))
+	        {
+	        	Collections.reverse(dnaseVec);
+	        	Collections.reverse(consVec);
+	        }
+	        DnaseVec.add(dnaseVec);
+	        ConsVec.add(consVec);
+	    }
+		
+		ret.add(lociList);
+		ret.add(DnaseVec);
+		ret.add(ConsVec);
+		return ret;
+	}
+	
+	static ArrayList<Float> getMeanVec(ArrayList<ArrayList<Float>> input )
+	{
+		ArrayList<Float> meanVec=new ArrayList<Float>(input.get(0));
+		for (int i = 1; i < input.size(); i++) {
+			for (int j = 0; j <meanVec.size(); j++) {
+				meanVec.set(j, meanVec.get(j)+input.get(i).get(j));
+			}
+		}
+		for (int j = 0; j <meanVec.size(); j++) {
+			meanVec.set(j, meanVec.get(j)/input.size());
+		}
+		
+		return meanVec;
+	}
+	
+	static NormalDistribution getNullDistribution(ArrayList<Float> mean, ArrayList<ArrayList<Float>> input)
+	{
+		
+		PearsonsCorrelation pcorr = new PearsonsCorrelation();
+		double[] meanD=new double[mean.size()];
+		for (int i = 0; i < meanD.length; i++) {
+			meanD[i]=mean.get(i);
+		}
+		double sum=0;
+		double sumsq=0;
+		for (int i = 0; i <input.size(); i++) {
+			double[] inputD=new double[mean.size()];
+			for (int j = 0; j < meanD.length; j++) {
+				inputD[j]=input.get(i).get(j);
+			}
+			double c=pcorr.correlation(meanD, inputD);
+			if(Double.isNaN(c))
+				c=0;
+			sum+=c;
+			sumsq+=c*c;
+		}
+		double m=sum/input.size();
+		NormalDistribution dist=new NormalDistribution(m, Math.sqrt(sumsq/input.size()-m*m));
+		
+		return dist;		
+	}
+	static double PearsonCorrelation(ArrayList<Float> p1, ArrayList<Float> p2)
+	{
+		PearsonsCorrelation pcorr = new PearsonsCorrelation();
+		double[] meanD=new double[p1.size()];
+		for (int i = 0; i < meanD.length; i++) {
+			meanD[i]=p1.get(i);
+		}
+		double[] meanD2=new double[p2.size()];
+		for (int i = 0; i < meanD.length; i++) {
+			meanD2[i]=p2.get(i);
+		}
+		double r=pcorr.correlation(meanD, meanD2);
+		if(Double.isNaN(r))
+			r=0;
+		return r;
+	}
 	
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Options options = new Options();
 		options.addOption("inputfile", true, "first 4 column: chr,st,ed,strand (bed format), + DNase feature + Cons feature");
-
+		options.addOption("ctrlfile", true, "first 4 column: chr,st,ed,strand (bed format), + DNase feature + Cons feature");
+		options.addOption("outdir", true, "output directory");
 		CommandLineParser parser = new GnuParser();
 		String inputFile="";
+		String controlFile="";
 		CommandLine cmd;
 		try {
 			String appPath=new File(".").getCanonicalPath()+"/";
@@ -164,6 +258,14 @@ public class DNaseConsSitesClustering {
 			else
 			{
 				throw new ParseException("must provide inputFile !");
+			}
+			if(cmd.hasOption("outdir"))
+			{
+				common.outputDir=cmd.getOptionValue("outdir");;
+			}
+			if(cmd.hasOption("ctrlfile"))
+			{
+				controlFile=cmd.getOptionValue("ctrlfile");;
 			}
 		}catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -182,27 +284,43 @@ public class DNaseConsSitesClustering {
 			 
 ///////////////// process the input file to weka instances /////////////////
 			 System.out.println("processing text file:"+inputFile);
-			Scanner s = new Scanner(new File(inputFile));
-			ArrayList< ArrayList<Float>> DnaseVec=new ArrayList<ArrayList<Float>>();
-			ArrayList< ArrayList<Float>> ConsVec=new ArrayList<ArrayList<Float>>();
-			ArrayList<String> lociList=new ArrayList<String>();
-			while(s.hasNextLine()) {
-		        String line=s.nextLine();
-		        ArrayList<String> comps=new ArrayList<String>(Arrays.asList(line.trim().split("\t")));
-		        List<String> locus = comps.subList(0, 4);
-		        lociList.add(StringUtils.join(locus,'\t'));
-		        int breakI=4+(comps.size()-4)/2;
-		      //normalize the row by median
-		        ArrayList<Float> dnaseVec = MedianNormalization(convertStrArray(comps.subList(4,breakI)));
-		        ArrayList<Float> consVec = MedianNormalization(convertStrArray(comps.subList(breakI, comps.size())));
-		        if(locus.get(3).equalsIgnoreCase("-"))
-		        {
-		        	Collections.reverse(dnaseVec);
-		        	Collections.reverse(consVec);
-		        }
-		        DnaseVec.add(dnaseVec);
-		        ConsVec.add(consVec);
-		    }
+			 ArrayList InputLoci_DNase_Cons = get_Loci_DNase_Cons(inputFile);
+			ArrayList< ArrayList<Float>> DnaseVec=(ArrayList<ArrayList<Float>>) InputLoci_DNase_Cons.get(1);
+			ArrayList< ArrayList<Float>> ConsVec=(ArrayList<ArrayList<Float>>) InputLoci_DNase_Cons.get(2);
+			ArrayList<String> lociList=(ArrayList<String>) InputLoci_DNase_Cons.get(0);
+
+			/////////////////process control file/////////////////
+			HashSet<Integer> filterByCtrl=new HashSet<Integer>();
+			if(controlFile!="")
+			{
+				double cutoff=0.01;
+				 ArrayList CtrlLoci_DNase_Cons = get_Loci_DNase_Cons(controlFile);
+					ArrayList< ArrayList<Float>> ctrlDnaseVec=(ArrayList<ArrayList<Float>>) CtrlLoci_DNase_Cons.get(1);
+					ArrayList< ArrayList<Float>> ctrlConsVec=(ArrayList<ArrayList<Float>>) CtrlLoci_DNase_Cons.get(2);
+					ArrayList<String> ctrllociList=(ArrayList<String>) CtrlLoci_DNase_Cons.get(0);
+					
+					//get mean vector
+					ArrayList<Float> ctrlDnaseMean = getMeanVec(ctrlDnaseVec);
+					ArrayList<Float> ctrlConsMean = getMeanVec(ctrlConsVec);
+					NormalDistribution DNorm = getNullDistribution(ctrlDnaseMean, ctrlDnaseVec);
+					NormalDistribution CNorm = getNullDistribution(ctrlConsMean, ctrlConsVec);
+					for (int i = 0; i < lociList.size(); i++) {
+						double dcorr=PearsonCorrelation(ctrlDnaseMean, DnaseVec.get(i));
+						double ccorr=PearsonCorrelation(ctrlConsMean, ConsVec.get(i));
+						double dPval=DNorm.cumulativeProbability(dcorr);
+						dPval=Math.min(1-dPval, dPval);
+						double cPval=CNorm.cumulativeProbability(ccorr);
+						cPval=Math.min(1-cPval, cPval);
+						double finalPval=Math.min(dPval, cPval);
+						if(finalPval>cutoff)
+						{
+							filterByCtrl.add(i);
+						
+						}
+						
+					}
+					
+			}
 			
 			/////////////////clustering //////////////////////////
 			 System.out.println("clustering...");
@@ -220,18 +338,28 @@ public class DNaseConsSitesClustering {
 			 }
 			 
 			 Instances data = matrix2instances(matrix);
-		
+			 //vanish the contrl filter set
+			 if(filterByCtrl.size()>0)
+			 {
+				for (Integer ii : filterByCtrl) {
+					data.instance(ii).setWeight(0);
+				}	 
+			 }
 			
 			
     			 XMeans xmean=new XMeans();
 //				xmean.setMinNumClusters(2);
 //				xmean.setMaxNumClusters(5);	
 				xmean.buildClusterer(data);
-			
+				xmean.setMaxNumClusters(4);
+				
 				
 			/////////////////determine the which cluster is background set ////////////////
+
 			 System.out.println("Identifying background cluster...");
 			int num_class=xmean.numberOfClusters();
+			 if(filterByCtrl.size()>0)
+				 num_class+=1; //the last cluster is bgclass
 			ArrayList< DenseDoubleMatrix1D> Dnase_clust=new ArrayList< DenseDoubleMatrix1D>(num_class);
 			ArrayList< DenseDoubleMatrix1D> Cons_clust=new ArrayList< DenseDoubleMatrix1D>(num_class);
 			int[] clustCount=new int[num_class];
@@ -239,14 +367,23 @@ public class DNaseConsSitesClustering {
 				Dnase_clust.add(new DenseDoubleMatrix1D(new double[num_feature/2]));
 				Cons_clust.add(new DenseDoubleMatrix1D(new double[num_feature/2]));
 			}
+			
+			ArrayList<Integer> classLabel=new ArrayList<Integer>();
 				for (int i = 0; i < matrix.rows(); i++) {
 					int clsid=xmean.clusterInstance(data.instance(i));		
+					if(filterByCtrl.contains(i))
+					{
+						clsid=num_class-1;//the last cluster is bgclass
+					}
+					classLabel.add(clsid);
 					clustCount[clsid]+=1;
 					Dnase_clust.set(clsid, (DenseDoubleMatrix1D) Dnase_clust.get(clsid).assign(matrix.viewRow(i).viewPart(0, num_feature/2),PlusMult.plusMult(1)));
 					Cons_clust.set(clsid, (DenseDoubleMatrix1D) Cons_clust.get(clsid).assign(matrix.viewRow(i).viewPart(num_feature/2, num_feature/2),PlusMult.plusMult(1)));
 				}
 				
-				int bgCls=0;
+				int bgCls=-1;
+		if(controlFile=="") 
+		{
 				double minMaxHeight=Double.MAX_VALUE;
 				for (int i = 0; i < num_class; i++) {
 					for (int j = 0; j <num_feature/2; j++) {
@@ -261,10 +398,25 @@ public class DNaseConsSitesClustering {
 					}
 				}
 				 System.out.println("Background Class is "+bgCls);
+		 }
+		else if(filterByCtrl.size()>0)
+		{
+			bgCls=num_class-1;
+		}
 			/////////////////output clustering result////////////////////
 				 System.out.println("Outputing Result...");
+				 if(! new File(common.outputDir).exists())
+				 {
+					 (new File(common.outputDir)).mkdirs();
+				 }
+				 String outname=new File(inputFile).getName();
 				//output clustBed
-			     
+				 PrintWriter out = new PrintWriter(common.outputDir+"/"+outname+".clust");
+				 for (int i = 0; i < lociList.size(); i++) {
+					 if(classLabel.get(i)!=bgCls)
+						 out.println(lociList.get(i)+"\t"+classLabel.get(i));
+				}
+				 out.close();
 				
 				//output figure
 				 ArrayList<XYSeries> dnaseDataList=new ArrayList<XYSeries>();
@@ -279,7 +431,7 @@ public class DNaseConsSitesClustering {
 					 dnaseDataList.add(dnaseData);
 					 consDataList.add(consData);
 				 }
-				 drawSignalAroundClust_headless(inputFile,dnaseDataList,consDataList,clustCount);
+				 drawSignalAroundClust_headless(outname,dnaseDataList,consDataList,clustCount);
 				
 			
 		} catch (FileNotFoundException e) {
