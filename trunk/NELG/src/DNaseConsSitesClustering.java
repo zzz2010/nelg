@@ -86,8 +86,6 @@ public class DNaseConsSitesClustering {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		
-        
 
 	}
 //	public static Instances lists2instances(List<ArrayList<Float>> Dnase, List<ArrayList<Float>> Cons)
@@ -134,18 +132,37 @@ public class DNaseConsSitesClustering {
 	{
 		ArrayList<Float> vec_sorted = new ArrayList<Float>(vec);
 		Collections.sort(vec_sorted);
+
 		Float maxv = vec_sorted.get(vec.size()-1);
 		Float minv = vec_sorted.get(0);
-		Float median = vec_sorted.get(vec.size()/2)-minv+maxv/100;
+		Float pseudoCount=(float) 0.01;
+		
+//		double sum=0;
+//		for (int i = 0; i < vec_sorted.size(); i++) {
+//			sum+=vec_sorted.get(i)+pseudoCount-minv;
+//		}
+//		
+		Float median = vec_sorted.get(vec.size()/2)-minv+pseudoCount;
 		ArrayList<Float> ret=new ArrayList<Float>();
-		
+
+		float allmax=0;
+		float halfmax=0;
 		for (int i = 0; i < vec.size(); i++) {
-			if(median==0)
-				ret.add((float) 0.0);
-			else
-			ret.add((vec.get(i)-minv)/median);
+			float t=1;
+			if(median>0)
+				t=(vec.get(i)-minv+pseudoCount)/median;
+			
+			ret.add(t);
+
+			allmax=Math.max(allmax, t);
+			if(i<vec.size()/2)
+				halfmax=Math.max(halfmax, t);
 		}
-		
+		if(mirror)
+		{
+			if(halfmax<allmax)
+			Collections.reverse(ret);
+		}
 		return ret;
 	}
 	public static ArrayList get_Loci_DNase_Cons(String inputfile) throws FileNotFoundException
@@ -164,7 +181,7 @@ public class DNaseConsSitesClustering {
 	      //normalize the row by median
 	        ArrayList<Float> dnaseVec = MedianNormalization(convertStrArray(comps.subList(4,breakI)));
 	        ArrayList<Float> consVec = MedianNormalization(convertStrArray(comps.subList(breakI, comps.size())));
-	        if(locus.get(3).equalsIgnoreCase("-"))
+	        if(locus.get(3).equalsIgnoreCase("-")&&!mirror)
 	        {
 	        	Collections.reverse(dnaseVec);
 	        	Collections.reverse(consVec);
@@ -182,16 +199,56 @@ public class DNaseConsSitesClustering {
 	static ArrayList<Float> getMeanVec(ArrayList<ArrayList<Float>> input )
 	{
 		ArrayList<Float> meanVec=new ArrayList<Float>(input.get(0));
+
 		for (int i = 1; i < input.size(); i++) {
 			for (int j = 0; j <meanVec.size(); j++) {
 				meanVec.set(j, meanVec.get(j)+input.get(i).get(j));
 			}
 		}
 		for (int j = 0; j <meanVec.size(); j++) {
-			meanVec.set(j, meanVec.get(j)/input.size());
+			double t=meanVec.get(j)/input.size();
+			meanVec.set(j,(float) t );
+
+		}
+
+		return meanVec;
+
+	}
+	
+	
+	static ArrayList<NormalDistribution> getBinNormalDists(ArrayList<ArrayList<Float>> input )
+	{
+		int binNum=input.get(0).size();
+		ArrayList<NormalDistribution> normVec=new ArrayList<NormalDistribution>(binNum);
+
+		for (int j = 0; j <binNum; j++) {
+			double m=0;
+			double m2=0;
+		for (int i = 0; i < input.size(); i++) {	
+			double t=input.get(i).get(j);
+				m+=t;
+				m2+=t*t;
+			}
+				m=m/input.size();
+				m2=m2/input.size();
+				NormalDistribution normD=new NormalDistribution(m, Math.sqrt(m2-m*m));
+				normVec.add(normD);
+		}
+
+		
+		return normVec;
+	}
+	
+	static double getPValFromBinNormalVec(ArrayList<Float> test,ArrayList<NormalDistribution> model)
+	{
+		double pval=1;
+		for (int i = 0; i < test.size(); i++) {	
+			double t=model.get(i).cumulativeProbability(test.get(i));
+			t=Math.min(t, 1-t);
+			pval=Math.min(t, pval);
 		}
 		
-		return meanVec;
+		return pval;//*test.size(); //multi-test correction
 	}
 	
 	static NormalDistribution getNullDistribution(ArrayList<Float> mean, ArrayList<ArrayList<Float>> input)
@@ -211,7 +268,7 @@ public class DNaseConsSitesClustering {
 			}
 			double c=pcorr.correlation(meanD, inputD);
 			if(Double.isNaN(c))
-				c=0;
+				c=1;
 			sum+=c;
 			sumsq+=c*c;
 		}
@@ -237,13 +294,14 @@ public class DNaseConsSitesClustering {
 		return r;
 	}
 	
-	
+	static boolean mirror=false;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Options options = new Options();
 		options.addOption("inputfile", true, "first 4 column: chr,st,ed,strand (bed format), + DNase feature + Cons feature");
 		options.addOption("ctrlfile", true, "first 4 column: chr,st,ed,strand (bed format), + DNase feature + Cons feature");
 		options.addOption("outdir", true, "output directory");
+		options.addOption("mirror", false, "combine mirror cluster");
 		CommandLineParser parser = new GnuParser();
 		String inputFile="";
 		String controlFile="";
@@ -251,6 +309,10 @@ public class DNaseConsSitesClustering {
 		try {
 			String appPath=new File(".").getCanonicalPath()+"/";
 			cmd = parser.parse( options, args);
+			if(cmd.hasOption("mirror"))
+			{
+				mirror=true;
+			}
 			if(cmd.hasOption("inputfile"))
 			{
 				inputFile=cmd.getOptionValue("inputfile");;
@@ -283,7 +345,7 @@ public class DNaseConsSitesClustering {
 		 try {
 			 
 ///////////////// process the input file to weka instances /////////////////
-			 System.out.println("processing text file:"+inputFile);
+			 System.out.println("processing input file:"+inputFile);
 			 ArrayList InputLoci_DNase_Cons = get_Loci_DNase_Cons(inputFile);
 			ArrayList< ArrayList<Float>> DnaseVec=(ArrayList<ArrayList<Float>>) InputLoci_DNase_Cons.get(1);
 			ArrayList< ArrayList<Float>> ConsVec=(ArrayList<ArrayList<Float>>) InputLoci_DNase_Cons.get(2);
@@ -293,29 +355,34 @@ public class DNaseConsSitesClustering {
 			HashSet<Integer> filterByCtrl=new HashSet<Integer>();
 			if(controlFile!="")
 			{
-				double cutoff=0.01;
+				double cutoff=0.05;
+				 System.out.println("processing control file:"+controlFile);
 				 ArrayList CtrlLoci_DNase_Cons = get_Loci_DNase_Cons(controlFile);
 					ArrayList< ArrayList<Float>> ctrlDnaseVec=(ArrayList<ArrayList<Float>>) CtrlLoci_DNase_Cons.get(1);
 					ArrayList< ArrayList<Float>> ctrlConsVec=(ArrayList<ArrayList<Float>>) CtrlLoci_DNase_Cons.get(2);
 					ArrayList<String> ctrllociList=(ArrayList<String>) CtrlLoci_DNase_Cons.get(0);
 					
 					//get mean vector
-					ArrayList<Float> ctrlDnaseMean = getMeanVec(ctrlDnaseVec);
-					ArrayList<Float> ctrlConsMean = getMeanVec(ctrlConsVec);
-					NormalDistribution DNorm = getNullDistribution(ctrlDnaseMean, ctrlDnaseVec);
-					NormalDistribution CNorm = getNullDistribution(ctrlConsMean, ctrlConsVec);
+					ArrayList<NormalDistribution> ctrlDnaseMean = getBinNormalDists(ctrlDnaseVec);
+					ArrayList<NormalDistribution> ctrlConsMean = getBinNormalDists(ctrlConsVec);
+					
+					 ArrayList<Float> dummy=new ArrayList<Float>();
+					 for (int i = 0; i < 20; i++) {
+						 dummy.add((float) 1);
+					}
+
+					
+
 					for (int i = 0; i < lociList.size(); i++) {
-						double dcorr=PearsonCorrelation(ctrlDnaseMean, DnaseVec.get(i));
-						double ccorr=PearsonCorrelation(ctrlConsMean, ConsVec.get(i));
-						double dPval=DNorm.cumulativeProbability(dcorr);
-						dPval=Math.min(1-dPval, dPval);
-						double cPval=CNorm.cumulativeProbability(ccorr);
-						cPval=Math.min(1-cPval, cPval);
+
+						double dPval=getPValFromBinNormalVec(DnaseVec.get(i), ctrlDnaseMean);
+
+						double cPval=getPValFromBinNormalVec(ConsVec.get(i), ctrlConsMean);
+
 						double finalPval=Math.min(dPval, cPval);
 						if(finalPval>cutoff)
 						{
 							filterByCtrl.add(i);
-						
 						}
 						
 					}
@@ -397,12 +464,13 @@ public class DNaseConsSitesClustering {
 						minMaxHeight=height;
 					}
 				}
-				 System.out.println("Background Class is "+bgCls);
+				 
 		 }
 		else if(filterByCtrl.size()>0)
 		{
 			bgCls=num_class-1;
 		}
+		System.out.println("Background Class is "+bgCls);
 			/////////////////output clustering result////////////////////
 				 System.out.println("Outputing Result...");
 				 if(! new File(common.outputDir).exists())
