@@ -137,12 +137,12 @@ public class DNaseConsSitesClustering {
 		Float minv = vec_sorted.get(0);
 		Float pseudoCount=(float) 0.01;
 		
-//		double sum=0;
-//		for (int i = 0; i < vec_sorted.size(); i++) {
-//			sum+=vec_sorted.get(i)+pseudoCount-minv;
-//		}
+		double sum=0;
+		for (int i = 0; i < vec_sorted.size(); i++) {
+			sum+=vec_sorted.get(i)+pseudoCount-minv;
+		}
 //		
-		Float median = vec_sorted.get(vec.size()/2)-minv+pseudoCount;
+		Float median = (float) sum;//vec_sorted.get(vec.size()/2)-minv+pseudoCount;
 		ArrayList<Float> ret=new ArrayList<Float>();
 
 		float allmax=0;
@@ -242,12 +242,14 @@ public class DNaseConsSitesClustering {
 	static double getPValFromBinNormalVec(ArrayList<Float> test,ArrayList<NormalDistribution> model)
 	{
 		double pval=1;
+		double logPVal=0;
 		for (int i = 0; i < test.size(); i++) {	
 			double t=model.get(i).cumulativeProbability(test.get(i));
 			t=Math.min(t, 1-t);
-			pval=Math.min(t, pval);
+			pval=Math.min(t*2, pval);
+//			logPVal+=Math.log(t*2);
 		}
-		
+//		pval=Math.exp(logPVal/test.size());
 		return pval;//*test.size(); //multi-test correction
 	}
 	
@@ -295,6 +297,7 @@ public class DNaseConsSitesClustering {
 	}
 	
 	static boolean mirror=false;
+	static boolean noClustering=false;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Options options = new Options();
@@ -368,10 +371,10 @@ public class DNaseConsSitesClustering {
 					
 					 ArrayList<Float> dummy=new ArrayList<Float>();
 					 for (int i = 0; i < 20; i++) {
-						 dummy.add((float) 1);
+						 dummy.add((float) 1/20);
 					}
 
-					
+					double Pval=getPValFromBinNormalVec(dummy, ctrlDnaseMean);
 
 					for (int i = 0; i < lociList.size(); i++) {
 
@@ -417,16 +420,22 @@ public class DNaseConsSitesClustering {
     			 XMeans xmean=new XMeans();
 //				xmean.setMinNumClusters(2);
 //				xmean.setMaxNumClusters(5);	
+//    			 xmean.setMaxNumClusters(4);
+    			 if(!noClustering)
+    			 {
 				xmean.buildClusterer(data);
-				xmean.setMaxNumClusters(4);
+    			 }
 				
 				
 			/////////////////determine the which cluster is background set ////////////////
 
 			 System.out.println("Identifying background cluster...");
-			int num_class=xmean.numberOfClusters();
+			int num_class=1;
+			if(!noClustering)
+				num_class=xmean.numberOfClusters();
 			 if(filterByCtrl.size()>0)
 				 num_class+=1; //the last cluster is bgclass
+			 
 			ArrayList< DenseDoubleMatrix1D> Dnase_clust=new ArrayList< DenseDoubleMatrix1D>(num_class);
 			ArrayList< DenseDoubleMatrix1D> Cons_clust=new ArrayList< DenseDoubleMatrix1D>(num_class);
 			int[] clustCount=new int[num_class];
@@ -437,7 +446,9 @@ public class DNaseConsSitesClustering {
 			
 			ArrayList<Integer> classLabel=new ArrayList<Integer>();
 				for (int i = 0; i < matrix.rows(); i++) {
-					int clsid=xmean.clusterInstance(data.instance(i));		
+					int clsid=0;
+					if(!noClustering)
+						clsid=xmean.clusterInstance(data.instance(i));		
 					if(filterByCtrl.contains(i))
 					{
 						clsid=num_class-1;//the last cluster is bgclass
@@ -449,24 +460,27 @@ public class DNaseConsSitesClustering {
 				}
 				
 				int bgCls=-1;
-		if(controlFile=="") 
-		{
+		
+		
 				double minMaxHeight=Double.MAX_VALUE;
 				for (int i = 0; i < num_class; i++) {
 					for (int j = 0; j <num_feature/2; j++) {
 						Dnase_clust.get(i).set(j, Dnase_clust.get(i).getQuick(j)/clustCount[i]);
 						Cons_clust.get(i).set(j, Cons_clust.get(i).getQuick(j)/clustCount[i]);
 					}
+					if(controlFile=="") 
+					{
 					double height=getMaxHeight(Dnase_clust.get(i));
 					if(height<minMaxHeight)
 					{
 						bgCls=i;
 						minMaxHeight=height;
 					}
+					}
 				}
 				 
-		 }
-		else if(filterByCtrl.size()>0)
+		 
+	    if(filterByCtrl.size()>0)
 		{
 			bgCls=num_class-1;
 		}
