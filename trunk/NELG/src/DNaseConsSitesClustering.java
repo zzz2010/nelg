@@ -418,8 +418,8 @@ public class DNaseConsSitesClustering {
 			
 			
     			 XMeans xmean=new XMeans();
-//				xmean.setMinNumClusters(2);
-//				xmean.setMaxNumClusters(5);	
+				xmean.setMinNumClusters(10);
+				xmean.setMaxNumClusters(15);	
 //    			 xmean.setMaxNumClusters(4);
     			 if(!noClustering)
     			 {
