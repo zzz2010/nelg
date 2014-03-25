@@ -40,6 +40,7 @@ import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.jet.math.PlusMult;
 import weka.clusterers.DBScan;
 import weka.clusterers.EM;
+import weka.clusterers.FarthestFirst;
 import weka.clusterers.HierarchicalClusterer;
 import weka.clusterers.SimpleKMeans;
 import weka.clusterers.XMeans;
@@ -61,7 +62,7 @@ public class DNaseConsSitesClustering {
 		return retlist;
 	}
 	
-	public static void drawSignalAroundClust_headless(String targetName,List<XYSeries> dnaseDataList,List<XYSeries> consDataList,int[] clustCount){
+	public static void drawSignalAroundClust_headless(String targetName,List<XYSeries> dnaseDataList,List<XYSeries> consDataList,int[] clustCount, int bgClass){
 		XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();
 		renderer1.setShapesVisible(false);
 		CombinedRangeXYPlot plot0 = new CombinedRangeXYPlot(new NumberAxis("Signal"));
@@ -73,7 +74,12 @@ public class DNaseConsSitesClustering {
 
 				dataset.addSeries(posData);
 				dataset.addSeries(negData);
-				plot0.add(new XYPlot(dataset,  new NumberAxis((i)+": "+clustCount[i]),null, renderer1));
+				if(i==bgClass)
+				{
+					plot0.add(new XYPlot(dataset,  new NumberAxis("background : "+clustCount[i]),null, renderer1));
+				}
+				else
+				plot0.add(new XYPlot(dataset,  new NumberAxis("cluster"+(i)+": "+clustCount[i]),null, renderer1));
 			}
 			JFreeChart chart=new JFreeChart(targetName,JFreeChart.DEFAULT_TITLE_FONT, plot0, true);
 			//chart.removeLegend();
@@ -81,7 +87,7 @@ public class DNaseConsSitesClustering {
 	        chartPanel.setSize(new java.awt.Dimension(150*common.ClusterNum, 200)); 
 	        try {
 	        	String pngfile= common.outputDir+targetName+"_clust"+".png";
-				ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 150*common.ClusterNum, 300);
+				ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 300*dnaseDataList.size(), 300);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -135,7 +141,7 @@ public class DNaseConsSitesClustering {
 
 		Float maxv = vec_sorted.get(vec.size()-1);
 		Float minv = vec_sorted.get(0);
-		Float pseudoCount=(float) 0.01;
+		Float pseudoCount=(float) 1;
 		
 		double sum=0;
 		for (int i = 0; i < vec_sorted.size(); i++) {
@@ -215,6 +221,31 @@ public class DNaseConsSitesClustering {
 
 	}
 	
+	
+	static ArrayList<NormalDistribution> getUniformNormalDists(ArrayList<ArrayList<Float>> input )
+	{
+		int binNum=input.get(0).size();
+		ArrayList<NormalDistribution> normVec=new ArrayList<NormalDistribution>(binNum);
+		double m=0;
+		double m2=0;
+		for (int j = 0; j <binNum; j++) {
+
+		for (int i = 0; i < input.size(); i++) {	
+			double t=input.get(i).get(j);
+				m+=t;
+				m2+=t*t;
+			}
+		}
+		m=m/input.size()/binNum;
+		m2=m2/input.size()/binNum;
+		NormalDistribution normD=new NormalDistribution(m, Math.sqrt(m2-m*m));
+		for (int j = 0; j <binNum; j++) {
+			normVec.add(normD);
+		}
+
+		
+		return normVec;
+	}
 	
 	static ArrayList<NormalDistribution> getBinNormalDists(ArrayList<ArrayList<Float>> input )
 	{
@@ -356,9 +387,10 @@ public class DNaseConsSitesClustering {
 
 			/////////////////process control file/////////////////
 			HashSet<Integer> filterByCtrl=new HashSet<Integer>();
+			double cutoff=0.01;
 			if(controlFile!="")
 			{
-				double cutoff=0.05;
+				
 				 System.out.println("processing control file:"+controlFile);
 				 ArrayList CtrlLoci_DNase_Cons = get_Loci_DNase_Cons(controlFile);
 					ArrayList< ArrayList<Float>> ctrlDnaseVec=(ArrayList<ArrayList<Float>>) CtrlLoci_DNase_Cons.get(1);
@@ -369,12 +401,12 @@ public class DNaseConsSitesClustering {
 					ArrayList<NormalDistribution> ctrlDnaseMean = getBinNormalDists(ctrlDnaseVec);
 					ArrayList<NormalDistribution> ctrlConsMean = getBinNormalDists(ctrlConsVec);
 					
-					 ArrayList<Float> dummy=new ArrayList<Float>();
-					 for (int i = 0; i < 20; i++) {
-						 dummy.add((float) 1/20);
-					}
-
-					double Pval=getPValFromBinNormalVec(dummy, ctrlDnaseMean);
+//					 ArrayList<Float> dummy=new ArrayList<Float>();
+//					 for (int i = 0; i < 20; i++) {
+//						 dummy.add((float) 1/20);
+//					}
+//
+//					double Pval=getPValFromBinNormalVec(dummy, ctrlDnaseMean);
 
 					for (int i = 0; i < lociList.size(); i++) {
 
@@ -390,6 +422,27 @@ public class DNaseConsSitesClustering {
 						
 					}
 					
+			}
+			boolean useUniformBG=true;
+			if(useUniformBG)
+			{
+				System.out.println("use uniform background");
+				ArrayList<NormalDistribution> ctrlDnaseMean = getUniformNormalDists(DnaseVec);
+				ArrayList<NormalDistribution> ctrlConsMean = getUniformNormalDists(ConsVec);
+				for (int i = 0; i < lociList.size(); i++) {
+
+					double dPval=getPValFromBinNormalVec(DnaseVec.get(i), ctrlDnaseMean);
+
+					double cPval=getPValFromBinNormalVec(ConsVec.get(i), ctrlConsMean);
+
+					double finalPval=Math.min(dPval, cPval);
+					if(finalPval>cutoff)
+					{
+						filterByCtrl.add(i);
+					}
+					
+				}
+				
 			}
 			
 			/////////////////clustering //////////////////////////
@@ -417,9 +470,11 @@ public class DNaseConsSitesClustering {
 			 }
 			
 			
+//			 weka.clusterers.FarthestFirst  xmean=new FarthestFirst();
+//			 xmean.setNumClusters(2);
     			 XMeans xmean=new XMeans();
-				xmean.setMinNumClusters(10);
-				xmean.setMaxNumClusters(15);	
+				xmean.setMinNumClusters(1);
+				xmean.setMaxNumClusters(5);	
 //    			 xmean.setMaxNumClusters(4);
     			 if(!noClustering)
     			 {
@@ -468,7 +523,7 @@ public class DNaseConsSitesClustering {
 						Dnase_clust.get(i).set(j, Dnase_clust.get(i).getQuick(j)/clustCount[i]);
 						Cons_clust.get(i).set(j, Cons_clust.get(i).getQuick(j)/clustCount[i]);
 					}
-					if(controlFile=="") 
+					if(controlFile==""&&!useUniformBG) 
 					{
 					double height=getMaxHeight(Dnase_clust.get(i));
 					if(height<minMaxHeight)
@@ -500,20 +555,30 @@ public class DNaseConsSitesClustering {
 				}
 				 out.close();
 				
-				//output figure
+				 out = new PrintWriter(common.outputDir+"/"+outname+".mean");
+				 //output figure
 				 ArrayList<XYSeries> dnaseDataList=new ArrayList<XYSeries>();
 				 ArrayList<XYSeries> consDataList=new ArrayList<XYSeries>();
+				 
 				 for (int i = 0; i < num_class; i++) {
 					 XYSeries dnaseData=new XYSeries("DNase");
-					 XYSeries consData=new XYSeries("Cons");
+					 XYSeries consData=new XYSeries("PhyloP");
+					 String outstrD="DNase\t"+i;
+					 String outstrC="PhyloP\t"+i;
 					 for (int j = 0; j <num_feature/2; j++) {
 						 dnaseData.add(j,Dnase_clust.get(i).get(j));
 						 consData.add(j,Cons_clust.get(i).get(j));
+						 outstrD+="\t"+Dnase_clust.get(i).get(j);
+						 outstrC+="\t"+Cons_clust.get(i).get(j);
 					 }
+					 out.println(outstrD);
+					 out.println(outstrC);
 					 dnaseDataList.add(dnaseData);
 					 consDataList.add(consData);
 				 }
-				 drawSignalAroundClust_headless(outname,dnaseDataList,consDataList,clustCount);
+				 out.close();
+				 
+				 drawSignalAroundClust_headless(outname,dnaseDataList,consDataList,clustCount,bgCls);
 				
 			
 		} catch (FileNotFoundException e) {
