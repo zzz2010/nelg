@@ -201,11 +201,11 @@ public class FeatureSelectionJob implements  Runnable {
 		 JPPFJob localjob = new JPPFJob(common.getDataProvider());
 		 localjob.setName("local_"+target_signal.FilePrefix);
 		 
-		 JPPFClient NFSclient=null;
+		 JPPFClient Jclient=null;
 		 PooledExecutor localclient=null;
-		 if(common.NFSmode)
+		 if(!common.Localmode)
 		 {
-			 NFSclient=new JPPFClient("nfs executor");
+			 Jclient=new JPPFClient("JPPF executor");
 		 }
 		 else
 		 {
@@ -228,7 +228,7 @@ public class FeatureSelectionJob implements  Runnable {
 		        	try {
 		        		FEJob.setTimeoutSchedule(new JPPFSchedule(1000*60*60));
 						localjob.addTask(FEJob);
-						if(!common.NFSmode)
+						if(common.Localmode)
 							localclient.execute(FEJob);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -248,10 +248,10 @@ public class FeatureSelectionJob implements  Runnable {
 			 localjob.getSLA().setCancelUponClientDisconnect(false);
 			 localjob.getSLA().setJobExpirationSchedule(new JPPFSchedule(1000*60*60));
 			 List<JPPFTask> jobresult =null;
-			if(common.NFSmode)
+			if(!common.Localmode)
 			{
 //				while (!executor.hasAvailableConnection()) Thread.sleep(1L);
-				jobresult=NFSclient.submit(localjob);
+				jobresult=Jclient.submit(localjob);
 				
 			}
 			else
@@ -359,17 +359,17 @@ public class FeatureSelectionJob implements  Runnable {
 			   {
                   for (JPPFTask iterable_element : job.getTasks()) {
                 	  iterable_element.run();
-                	ClassificationResult reslut=(ClassificationResult) iterable_element.getResult();
-                	 reslut.toFile();
+                	ClassificationResult result=(ClassificationResult) iterable_element.getResult();
+                	 result.toFile();
 				} 
 			   }
 			   else
 			   {
-				   if(common.NFSmode||resultsListener==null)//NFSmode using node to write, no need to send back
+				   if(!common.Localmode||resultsListener==null)
 				   {
 				    resultsListener=new JPPFResultCollector(job);		  
 				   }
-				   if(!common.NFSmode)
+				   if(!common.NFSmode) //NFSmode using node to write, no need to send back
 				   {
 				     job.setResultListener(resultsListener);
 				   }
