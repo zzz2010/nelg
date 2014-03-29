@@ -206,6 +206,8 @@ public class FeatureSelectionJob implements  Runnable {
 		 if(!common.Localmode)
 		 {
 			 Jclient=new JPPFClient("JPPF executor");
+			 if (executor==null)
+				 executor=Jclient;
 		 }
 		 else
 		 {
