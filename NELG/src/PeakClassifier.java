@@ -464,7 +464,7 @@ public class PeakClassifier {
 			options.addOption("sumNorm", false, "signal values are normalized to the same sequencing depth.(default: no)");
 			options.addOption("sort", false, "sorted by the sum of all signals within each cluster (default: no)");
 			options.addOption("mirror", false, "use mirror clustering: put the strong signals to one side of the peaks (default: no)");
-			options.addOption("NFSmode", false, "run the classifier under NFS mode (default: no)");
+			options.addOption("JPPFmode", true, "run the classifier under JPPF mode [0: no JPPF (default), 1: JPPF without NFS, 2: JPPF with NFS]");
 	
 			//deal with the headless error
 //			Properties prop = System.getProperties (); 
@@ -520,25 +520,30 @@ public class PeakClassifier {
 					System.out.println("signal values are clustered after putting all strong signals at one side.");
 					common.mirrorCluster=true;
 				}
-				if(cmd.hasOption("NFSmode"))
+				if(cmd.hasOption("JPPFmode"))
 				{
-					System.out.println("NFSmode is selected.");
-					common.Localmode=false;
-					common.NFSmode=true;
-					
-					try {
-						JPPFJob job1 = new JPPFJob();
-						JPPFClient jppfClient=new JPPFClient();
-						job1.setName("JPPF test");
-						job1.addTask(new TemplateJPPFTask(5));
-						job1.addTask(new TemplateJPPFTask(6));
-					    job1.addTask(new TemplateJPPFTask(7));
-					    job1.addTask(new TemplateJPPFTask(8));
-					    job1.setBlocking(true);
-					    jppfClient.submit(job1);
-					    System.out.println("JPPF test passed");
+					int jppfMode=Integer.parseInt(cmd.getOptionValue("JPPFmode"));
+					if (jppfMode>0){
+						common.Localmode=false;
+						if (jppfMode>1){
+							common.NFSmode=true;
+							System.out.println("JPPFmode with NFS is selected.");
+						}
+						else System.out.println("JPPFmode without NFS is selected.");
+						try {
+							JPPFJob job1 = new JPPFJob();
+							JPPFClient jppfClient=new JPPFClient();
+							job1.setName("JPPF test");
+							job1.addTask(new TemplateJPPFTask(5));
+							job1.addTask(new TemplateJPPFTask(6));
+						    job1.addTask(new TemplateJPPFTask(7));
+						    job1.addTask(new TemplateJPPFTask(8));
+						    job1.setBlocking(true);
+						    jppfClient.submit(job1);
+						    System.out.println("JPPF test passed");
+						}
+						catch (Exception e1){}
 					}
-					catch (Exception e1){}
 				}
 				
 				if(cmd.hasOption("clusternum"))
