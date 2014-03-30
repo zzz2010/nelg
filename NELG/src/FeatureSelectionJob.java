@@ -254,7 +254,6 @@ public class FeatureSelectionJob implements  Runnable {
 			{
 //				while (!executor.hasAvailableConnection()) Thread.sleep(1L);
 				jobresult=Jclient.submit(localjob);
-				
 			}
 			else
 			{
@@ -275,7 +274,7 @@ public class FeatureSelectionJob implements  Runnable {
 				 if (result1.getException() != null) {
 				       // process the exception here ...
 					// logger.debug(result1.feature_signal.ExperimentId+" got exception.");
-					 logger.debug(result1.getException().getMessage());
+					 logger.debug("FEjob Exception: "+result1.getException().getMessage());
 				     } else {
 				       // process the result here ...
 							IsThereFeatures.addAll(result1.IsThereFeatures);
@@ -369,7 +368,7 @@ public class FeatureSelectionJob implements  Runnable {
 			   {
 				   if(!common.Localmode||resultsListener==null)
 				   {
-				    resultsListener=new JPPFResultCollector(job);		  
+					   resultsListener=new JPPFResultCollector(job);		  
 				   }
 				   if(!common.NFSmode) //NFSmode using node to write, no need to send back
 				   {
@@ -379,7 +378,14 @@ public class FeatureSelectionJob implements  Runnable {
 				   job.getSLA().setCancelUponClientDisconnect(false);
 				   job.setBlocking(false);
 //				while (!executor.hasAvailableConnection()) Thread.sleep(1L);
-				 executor.submit(job);
+				   executor.submit(job);
+				   List<JPPFTask> resultLst=((JPPFResultCollector)resultsListener).waitForResults();
+				   if (!common.NFSmode){
+					   for (JPPFTask iterable_element : resultLst) {
+						   ClassificationResult result=(ClassificationResult) iterable_element.getResult();
+						   result.toFile();
+						} 
+				   }
 			   }
 			
 		} catch (Exception e) {
