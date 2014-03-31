@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
@@ -60,6 +61,43 @@ public class DNaseConsSitesClustering {
 		}
 		
 		return retlist;
+	}
+	
+	public static void drawSignalArrayList(ArrayList<ArrayList<Float>> curvelist)
+	{
+		ArrayList<XYSeries> dnaseDataList = new ArrayList<XYSeries>();
+		 for (int i = 0; i < curvelist.size(); i++) {
+			 XYSeries dnaseData=new XYSeries(i);
+			 for (int j = 0; j <curvelist.get(i).size(); j++) {
+				 dnaseData.add(j,curvelist.get(i).get(j));
+			 }
+			 dnaseDataList.add(dnaseData);
+		 }
+		 
+			XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();
+			renderer1.setShapesVisible(false);
+			CombinedRangeXYPlot plot0 = new CombinedRangeXYPlot(new NumberAxis("Signal"));
+			
+				for (int i=0;i<dnaseDataList.size();i++){
+					XYSeriesCollection dataset = new XYSeriesCollection();
+					XYSeries posData=dnaseDataList.get(i);
+
+					dataset.addSeries(posData);
+					plot0.add(new XYPlot(dataset,  new NumberAxis(String.valueOf(i)),null, renderer1));
+				}
+				JFreeChart chart=new JFreeChart("debug",JFreeChart.DEFAULT_TITLE_FONT, plot0, true);
+				//chart.removeLegend();
+				ChartPanel chartPanel = new ChartPanel(chart);
+		        chartPanel.setSize(new java.awt.Dimension(150*common.ClusterNum, 200)); 
+		        try {
+		        	String pngfile= common.outputDir+"debug"+".png";
+					ChartUtilities.saveChartAsPNG(new File(pngfile), chart, 300*dnaseDataList.size(), 300);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		 
+		
 	}
 	
 	public static void drawSignalAroundClust_headless(String targetName,List<XYSeries> dnaseDataList,List<XYSeries> consDataList,int[] clustCount, int bgClass){
@@ -424,6 +462,8 @@ public class DNaseConsSitesClustering {
 					
 			}
 			boolean useUniformBG=true;
+			ArrayList<ArrayList<Float>>sampleDebugList =new ArrayList<ArrayList<Float>>();
+			Random rand=new Random();
 			if(useUniformBG)
 			{
 				System.out.println("use uniform background");
@@ -440,9 +480,12 @@ public class DNaseConsSitesClustering {
 					{
 						filterByCtrl.add(i);
 					}
+//					if(rand.nextDouble()<0.01&&sampleDebugList.size()<30)
+//						sampleDebugList.add(DnaseVec.get(i));
+					
 					
 				}
-				
+//				drawSignalArrayList(sampleDebugList);
 			}
 			
 			/////////////////clustering //////////////////////////
@@ -470,17 +513,17 @@ public class DNaseConsSitesClustering {
 			 }
 			
 			
-//			 weka.clusterers.FarthestFirst  xmean=new FarthestFirst();
-//			 xmean.setNumClusters(2);
-    			 XMeans xmean=new XMeans();
-				xmean.setMinNumClusters(1);
-				xmean.setMaxNumClusters(5);	
+			 weka.clusterers.SimpleKMeans  xmean=new  SimpleKMeans();
+			 xmean.setNumClusters(20);
+//    			 XMeans xmean=new XMeans();
+//    			 xmean.setUseKDTree(true);
+//				xmean.setMinNumClusters(80);
+//				xmean.setMaxNumClusters(80);	
 //    			 xmean.setMaxNumClusters(4);
     			 if(!noClustering)
     			 {
 				xmean.buildClusterer(data);
     			 }
-				
 				
 			/////////////////determine the which cluster is background set ////////////////
 
@@ -510,10 +553,15 @@ public class DNaseConsSitesClustering {
 					}
 					classLabel.add(clsid);
 					clustCount[clsid]+=1;
+					if(clsid==1)
+					{
+						if(rand.nextDouble()<0.1&&sampleDebugList.size()<30)
+						sampleDebugList.add(DnaseVec.get(i));
+					}
 					Dnase_clust.set(clsid, (DenseDoubleMatrix1D) Dnase_clust.get(clsid).assign(matrix.viewRow(i).viewPart(0, num_feature/2),PlusMult.plusMult(1)));
 					Cons_clust.set(clsid, (DenseDoubleMatrix1D) Cons_clust.get(clsid).assign(matrix.viewRow(i).viewPart(num_feature/2, num_feature/2),PlusMult.plusMult(1)));
 				}
-				
+				drawSignalArrayList(sampleDebugList);
 				int bgCls=-1;
 		
 		
