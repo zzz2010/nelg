@@ -42,6 +42,7 @@ import cern.jet.math.PlusMult;
 import weka.clusterers.DBScan;
 import weka.clusterers.EM;
 import weka.clusterers.FarthestFirst;
+import weka.clusterers.FilteredClusterer;
 import weka.clusterers.HierarchicalClusterer;
 import weka.clusterers.SimpleKMeans;
 import weka.clusterers.XMeans;
@@ -49,6 +50,7 @@ import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.unsupervised.attribute.PrincipalComponents;
 
 
 public class DNaseConsSitesClustering {
@@ -434,6 +436,20 @@ public class DNaseConsSitesClustering {
 					ArrayList< ArrayList<Float>> ctrlDnaseVec=(ArrayList<ArrayList<Float>>) CtrlLoci_DNase_Cons.get(1);
 					ArrayList< ArrayList<Float>> ctrlConsVec=(ArrayList<ArrayList<Float>>) CtrlLoci_DNase_Cons.get(2);
 					ArrayList<String> ctrllociList=(ArrayList<String>) CtrlLoci_DNase_Cons.get(0);
+				 if(CtrlLoci_DNase_Cons.size()==InputLoci_DNase_Cons.size()) //direct DNase control experiment instead of shuffle motif
+				 {
+					 for (int i = 0; i < lociList.size(); i++) {
+						 ArrayList<Float> d1 = DnaseVec.get(i);
+						 for (int j = 0; j < d1.size(); j++) {
+							 d1.set(j, d1.get(j)/(ctrlDnaseVec.get(i).get(j)+1/d1.size()));
+						}
+						 DnaseVec.set(i, MedianNormalization(d1));
+					 }
+				 }
+				 else
+				 {
+
+				
 					
 					//get mean vector
 					ArrayList<NormalDistribution> ctrlDnaseMean = getBinNormalDists(ctrlDnaseVec);
@@ -459,6 +475,7 @@ public class DNaseConsSitesClustering {
 						}
 						
 					}
+				 }
 					
 			}
 			boolean useUniformBG=true;
@@ -512,9 +529,15 @@ public class DNaseConsSitesClustering {
 				}	 
 			 }
 			
-			
-			 weka.clusterers.SimpleKMeans  xmean=new  SimpleKMeans();
-			 xmean.setNumClusters(20);
+			 weka.filters.unsupervised.attribute.PrincipalComponents PCA=new PrincipalComponents();
+			 PCA.setMaximumAttributes(7);
+			 weka.clusterers.SimpleKMeans  kmean=new  SimpleKMeans();
+			 kmean.setNumClusters(3);
+			 weka.clusterers.FilteredClusterer xmean=new FilteredClusterer();
+			 xmean.setFilter(PCA);
+			 xmean.setClusterer(kmean);
+//			 weka.clusterers.SimpleKMeans  xmean=new  SimpleKMeans();
+//			 xmean.setNumClusters(20);
 //    			 XMeans xmean=new XMeans();
 //    			 xmean.setUseKDTree(true);
 //				xmean.setMinNumClusters(80);
@@ -553,7 +576,7 @@ public class DNaseConsSitesClustering {
 					}
 					classLabel.add(clsid);
 					clustCount[clsid]+=1;
-					if(clsid==1)
+					if(clsid==0)
 					{
 						if(rand.nextDouble()<0.1&&sampleDebugList.size()<30)
 						sampleDebugList.add(DnaseVec.get(i));
